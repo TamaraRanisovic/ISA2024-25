@@ -9,7 +9,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import MenuItem from '@mui/material/MenuItem';
 
 
 const defaultTheme = createTheme();
@@ -21,13 +21,13 @@ export default function RegistrovanjeAdminSistem() {
   const[drzava,setDrzava]=useState('')
   const[broj,setBroj]=useState('')
   const [brojError, setBrojError] = useState(false);
-  const[info,setInfo]=useState('')
   const[email,setEmail]=useState('')
   const [emailError, setEmailError] = useState(false);
   const[password,setPassword]=useState('')
   const [repeatPassword, setRepeatPassword] = useState(''); // Dodato stanje za ponovljenu lozinku
   const [passwordMismatch, setPasswordMismatch] = useState(false); // Dodato stanje za praćenje neuspešnog podudaranja
   const [errorMessage, setErrorMessage] = useState('');
+  const [uloga, setUloga] = useState('USER'); // Default role
 
   const validateBroj = (inputBroj) => {
     const brojRegex = /^\d{10}$/; // Regex za desetocifren broj
@@ -85,7 +85,7 @@ export default function RegistrovanjeAdminSistem() {
       return;
     }
 
-    if (!ime || !prezime || !grad || !drzava || !broj || !info || !email || !password || !repeatPassword) {
+    if (!ime || !prezime || !grad || !drzava || !broj || !email || !password || !repeatPassword) {
       setErrorMessage('Podaci nisu dobro popunjeni.');
       return;
     }
@@ -95,7 +95,7 @@ export default function RegistrovanjeAdminSistem() {
       setErrorMessage('Email adresa već postoji.');
       return;
     }
-    const korisnik = {ime, prezime, grad, drzava, broj, email, password, info}
+    const korisnik = {ime, prezime, grad, drzava, broj, email, password, uloga}
     console.log(korisnik);
     
     setErrorMessage('');
@@ -113,153 +113,36 @@ export default function RegistrovanjeAdminSistem() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Registruj se
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField fullWidth required label="Ime" value={ime} onChange={(e) => setIme(e.target.value)}  sx={{ mb: 1.5 }} />
+          <TextField fullWidth required label="Prezime" value={prezime} onChange={(e) => setPrezime(e.target.value)}  sx={{ mb: 1.5 }}/>
+          <TextField fullWidth required label="Email" value={email} onChange={handleEmailChange} error={emailError} helperText={emailError ? 'Unesite validnu e-mail adresu' : ''}  sx={{ mb: 1.5 }}/>
+          <TextField fullWidth required label="Lozinka" type="password" value={password} onChange={(e) => setPassword(e.target.value)}  sx={{ mb: 1.5 }} />
+          <TextField fullWidth required label="Ponovi Lozinku" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordMismatch(false); }}  sx={{ mb: 1.5 }}/>
+          {passwordMismatch && <Typography color="error" variant="body2" gutterBottom>Lozinke se ne podudaraju.</Typography>}
+          <TextField fullWidth required label="Grad" value={grad} onChange={(e) => setGrad(e.target.value)}  sx={{ mb: 1.5 }}/>
+          <TextField fullWidth required label="Drzava" value={drzava} onChange={(e) => setDrzava(e.target.value)}  sx={{ mb: 1.5 }}/>
+          <TextField fullWidth required label="Broj Telefona" value={broj} onChange={handleBrojChange} error={brojError} helperText={brojError ? 'Unesite desetocifren broj' : ''} sx={{ mb: 1.5 }} />
+          <TextField select label="Uloga" value={uloga} onChange={(e) => setUloga(e.target.value)} fullWidth required  sx={{ mb: 1.5 }}>
+            <MenuItem value="ADMIN_SISTEMA">ADMIN SISTEMA</MenuItem>
+            <MenuItem value="REGISTROVANI_KORISNIK">REGISTROVANI KORISNIK</MenuItem>
+          </TextField>
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
             Registruj se
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="ime"
-              label="Ime"
-              name="ime"
-              autoComplete="ime"
-              autoFocus
-              value={ime}
-              onChange={(e)=>setIme(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="prezime"
-              label="Prezime"
-              name="prezime"
-              autoComplete="prezime"
-              value={prezime}
-              onChange={(e)=>setPrezime(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={handleEmailChange}
-              error={emailError}
-              helperText={emailError ? 'Unesite validnu e-mail adresu' : ''}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Lozinka"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-            onChange={(e)=>setPassword(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="repeatPassword"
-              label="Ponovi Lozinku"
-             type="password"
-             id="repeatPassword"
-             autoComplete="current-password"
-             value={repeatPassword}
-             onChange={(e) => {
-              setRepeatPassword(e.target.value);
-              setPasswordMismatch(false); // Resetujte stanje neuspešnog podudaranja kada korisnik menja ponovljenu lozinku
-              }}
-            />
-            {passwordMismatch && (
-              <Typography color="error" variant="body2" gutterBottom>
-                Lozinke se ne podudaraju.
-              </Typography>
-            )}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="grad"
-              label="Grad"
-              name="grad"
-              autoComplete="grad"
-              value={grad}
-              onChange={(e)=>setGrad(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="drzava"
-              label="Drzava"
-              name="drzava"
-              autoComplete="drzava"
-              value={drzava}
-              onChange={(e)=>setDrzava(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="broj"
-              label="Broj Telefona"
-              name="broj"
-              autoComplete="broj"
-              value={broj}
-              onChange={handleBrojChange}
-              error={brojError}
-              helperText={brojError ? 'Unesite desetocifren broj' : ''}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="info"
-              label="Dodatne informacije"
-              name="info"
-              autoComplete="info"
-              value={info}
-              onChange={(e)=>setInfo(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Registruj se
-            </Button>
-            {errorMessage && (
-              <Typography color="error" variant="body2" gutterBottom>
-                {errorMessage}
-              </Typography>
-            )}
-          </Box>
+          </Button>
+          {errorMessage && <Typography color="error" variant="body2" gutterBottom>{errorMessage}</Typography>}
         </Box>
-      </Container>
-    </ThemeProvider>
+      </Box>
+    </Container>
+  </ThemeProvider>
   );
 }
