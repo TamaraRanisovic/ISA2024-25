@@ -2,12 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
+import rabbit1 from './photos/onlybuns_logo.png';
+import rabbit2 from './photos/rabbit_hop.jpeg';
+import rabbit3 from './photos/rabbit_carrot.jpg';
+import rabbit4 from './photos/rabbit_sun.jpeg';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import {Grid, Paper, IconButton } from '@mui/material';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 const PrijavljeniKorisnikPregled = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+
+  const rabbitPosts = [
+    { img: rabbit1, user: "bunny123", description: 'Enjoying a sunny day!🌞', likes: 124, comments: 27 },
+    { img: rabbit2, user: "rabbit10", description: 'Hopping through the garden 🐇', likes: 98, comments: 15 },
+    { img: rabbit3, user: "CarrotBunny", description: 'Relaxing with a carrot🥕', likes: 85,  comments: 9 },
+    { img: rabbit4, user: "CuteRabbit", description: 'Taking a nap in the sun🌞', likes: 67,  comments: 17 }
+  ];
 
   // Function to decode the JWT token by calling the backend endpoint
   useEffect(() => {
@@ -47,6 +61,23 @@ const PrijavljeniKorisnikPregled = () => {
               </Typography>
             </Box>
           </Link>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button component={Link} to="/home" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Feed
+            </Button>
+            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Trends
+            </Button>
+            <Button component={Link} to="/about" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Nearby Posts
+            </Button>
+            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Chat
+            </Button>
+            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              My profile
+            </Button>
+          </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
             {token && name ? ( 
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -65,6 +96,49 @@ const PrijavljeniKorisnikPregled = () => {
           </Box>
         </Toolbar>
       </AppBar>
+      {/* Rabbit Post Cards */}
+      <Grid container spacing={3} sx={{ mt: 4 }}>
+        {rabbitPosts.map((post, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
+              <img src={post.img} alt={post.title} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
+              
+              {/* Likes and Comments Row */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  
+                  <IconButton sx={{ color: '#e91e63' }}>
+                    <FavoriteIcon />
+                  </IconButton>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {post.likes}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <IconButton color="secondary">
+                    <ChatBubbleOutlineIcon />
+                  </IconButton>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {post.comments}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Description Row */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {post.user}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                  {post.description}
+                </Typography>
+              </Box>
+
+            </Paper>
+          </Grid>
+        ))}
+    </Grid>
+
     </div>
   );
 };
