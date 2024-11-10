@@ -28,10 +28,13 @@ public class AuthController {
     public ResponseEntity<?> loginKorisnik(@RequestBody LoginDTO loginDTO) {
         Korisnik validCredentials = korisnikService.findByEmailAndPassword(loginDTO.getEmail(), loginDTO.getPassword());
         if (validCredentials != null) {
-            String uloga = korisnikService.getKorisnikUloga(loginDTO.getEmail());
+            Korisnik korisnik = korisnikService.findByEmail(loginDTO.getEmail());
+
+            String ime = korisnik.getIme();
+            String uloga = korisnik.getUloga().toString();
 
             JwtUtil jwtUtil = new JwtUtil();
-            String token = jwtUtil.generateToken(loginDTO.getEmail(), uloga);
+            String token = jwtUtil.generateToken(loginDTO.getEmail(),ime, uloga);
 
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
@@ -51,11 +54,17 @@ public class AuthController {
             // Extract korisnik (email) from the JWT token
             String email = JwtUtil.getEmailFromToken(token);
 
-            // Extract role from the JWT token
+            String name = JwtUtil.getNameFromToken(token);
+
             String role = JwtUtil.getRoleFromToken(token);
 
+            Map<String, String> response = new HashMap<>();
+            response.put("Email", email);
+            response.put("Name", name);
+            response.put("Role", role);
+
             // Return the extracted data in the response
-            return ResponseEntity.ok().body("Email: " + email + ", Role: " + role);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             // Any other exception

@@ -24,7 +24,7 @@ export default function Prijava() {
     const korisnik = { email, password };
     console.log(korisnik);
 
-    fetch("http://localhost:8080/registrovaniKorisnik/login", {
+    fetch("http://localhost:8080/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(korisnik),
@@ -37,7 +37,8 @@ export default function Prijava() {
       })
       .then((data) => {
         console.log(data.message);
-        navigate('/prijavljeniKorisnikPregled', { state: { korisnik: data } }); // Prosledi podatke kroz rutiranje
+        localStorage.setItem("jwtToken", data.token);
+        navigate('/prijavljeniKorisnikPregled'); // Prosledi podatke kroz rutiranje
       })
       .catch((error) => {
         console.error("Error logging in:", error);
