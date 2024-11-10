@@ -1,6 +1,7 @@
 package com.developer.onlybuns.service;
 
 
+import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ObjavaService {
-    List<Objava> findAll();
+    List<ObjavaDTO> findAllObjavaDTO();
 
     Optional<Objava> findById(Integer id);
 

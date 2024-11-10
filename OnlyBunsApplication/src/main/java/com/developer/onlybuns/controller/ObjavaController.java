@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
@@ -22,12 +23,12 @@ public class ObjavaController {
     }
 
     @GetMapping
-    public List<Objava> findAll() {
-        return objavaService.findAll();
+    public List<ObjavaDTO> findAllObjavaDTO() {
+        return objavaService.findAllObjavaDTO();
     }
 
     @GetMapping("/{id}")
-    public Optional<Objava> findRegistrovaniKorisnikById(@PathVariable("id") Integer id) {
+    public Optional<Objava> findById(@PathVariable("id") Integer id) {
         return objavaService.findById(id);
     }
 

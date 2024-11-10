@@ -22,14 +22,14 @@ public class ObjavaDTO {
 
     private String korisnicko_ime;
 
-    private List<Komentar> komentari;
+    private List<KomentarDTO> komentari;
 
-    private List<Lajk> lajkovi;
+    private List<LajkDTO> lajkovi;
 
     public ObjavaDTO() {
     }
 
-    public ObjavaDTO(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<Komentar> komentari, List<Lajk> lajkovi) {
+    public ObjavaDTO(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi) {
         this.id = id;
         this.opis = opis;
         this.slika = slika;
@@ -41,7 +41,7 @@ public class ObjavaDTO {
         this.lajkovi = lajkovi;
     }
 
-    public ObjavaDTO(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<Komentar> komentari, List<Lajk> lajkovi) {
+    public ObjavaDTO(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi) {
         this.opis = opis;
         this.slika = slika;
         this.g_sirina = g_sirina;
@@ -108,19 +108,19 @@ public class ObjavaDTO {
         this.korisnicko_ime = korisnicko_ime;
     }
 
-    public List<Komentar> getKomentari() {
+    public List<KomentarDTO> getKomentari() {
         return komentari;
     }
 
-    public void setKomentari(List<Komentar> komentari) {
+    public void setKomentari(List<KomentarDTO> komentari) {
         this.komentari = komentari;
     }
 
-    public List<Lajk> getLajkovi() {
+    public List<LajkDTO> getLajkovi() {
         return lajkovi;
     }
 
-    public void setLajkovi(List<Lajk> lajkovi) {
+    public void setLajkovi(List<LajkDTO> lajkovi) {
         this.lajkovi = lajkovi;
     }
 }

@@ -1,5 +1,8 @@
 package com.developer.onlybuns.service.impl;
 
+import com.developer.onlybuns.dto.request.KomentarDTO;
+import com.developer.onlybuns.dto.request.LajkDTO;
+import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
@@ -20,9 +23,58 @@ public class ObjavaServiceImpl implements ObjavaService {
         this.objavaRepository = objavaRepository;
     }
 
+    public String getObjavaUsername(Integer id) {
+        Optional<Objava> objava = findById(id);
+        if (objava != null) {
+            String username = objava.get().getRegistrovaniKorisnik().getEmail();
+            return username;
+        } else {
+            return null;
+        }
+    }
+
+    public List<LajkDTO> getObjavaLajkoviDTO(Integer id){
+        Optional<Objava> objava = findById(id);
+        List<LajkDTO> lajkoviDTO = new ArrayList<LajkDTO>();
+        if (objava != null) {
+            List<Lajk> lajkovi = objava.get().getLajkovi();
+            for (Lajk lajk : lajkovi) {
+                LajkDTO lajkDTO = new LajkDTO(lajk.getId(), lajk.getRegistrovaniKorisnik().getEmail(), lajk.getObjava().getId());
+                lajkoviDTO.add(lajkDTO);
+            }
+            return lajkoviDTO;
+        } else {
+            return lajkoviDTO;
+        }
+    }
+
+    public List<KomentarDTO> getObjavaKomentariiDTO(Integer id){
+        Optional<Objava> objava = findById(id);
+        List<KomentarDTO> komentariDTO = new ArrayList<KomentarDTO>();
+        if (objava != null) {
+            List<Komentar> komentari = objava.get().getKomentari();
+            for (Komentar komentar : komentari) {
+                KomentarDTO komentarDTO = new KomentarDTO(komentar.getId(), komentar.getOpis(), komentar.getRegistrovaniKorisnik().getEmail(), komentar.getDatum_kreiranja(), komentar.getObjava().getId());
+                komentariDTO.add(komentarDTO);
+            }
+            return komentariDTO;
+        } else {
+            return komentariDTO;
+        }
+    }
+
     @Override
-    public List<Objava> findAll() {
-        return objavaRepository.findAll();
+    public List<ObjavaDTO> findAllObjavaDTO() {
+        List<Objava> objave = objavaRepository.findAll();
+        List<ObjavaDTO> objaveDTO = new ArrayList<ObjavaDTO>();
+        for (Objava objava : objave) {
+            String korisnicko_ime = getObjavaUsername(objava.getId());
+            List<LajkDTO> lajkoviDTO = getObjavaLajkoviDTO(objava.getId());
+            List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.getId());
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO);
+            objaveDTO.add(objavaDTO);
+        }
+        return objaveDTO;
     }
 
     @Override
