@@ -22,17 +22,19 @@ export default function HomePage() {
       {/* Navigation Bar */}
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
             <img src={logo} alt="OnlyBuns Logo" style={{ height: '40px', marginRight: '10px' }} />
             <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
               OnlyBuns
             </Typography>
           </Box>
+          </Link>
           <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
-            <Button component={Link} to="/sign-in" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to="/registracija" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Sign In
             </Button>
-            <Button component={Link} to="/log-in" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to="/prijava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Log In
             </Button>
           </Box>
@@ -47,7 +49,7 @@ export default function HomePage() {
         <Typography variant="body1" sx={{ mb: 4 }}>
           Share and enjoy the cutest photos of rabbits with the OnlyBuns community.
         </Typography>
-        <Button variant="contained" color="secondary" sx={{ padding: '10px 20px', borderRadius: '20px', fontSize: '1.2rem', fontWeight: 'bold' }}>
+        <Button variant="contained" component={Link} to="/prijava" color="secondary" sx={{ padding: '10px 20px', borderRadius: '20px', fontSize: '1.2rem', fontWeight: 'bold' }}>
           Start Sharing
         </Button>
 
