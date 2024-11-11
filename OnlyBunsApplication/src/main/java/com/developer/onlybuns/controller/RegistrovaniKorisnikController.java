@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +29,12 @@ public class RegistrovaniKorisnikController {
     }
 
     @GetMapping("/followers/{username}")
-    public List<RegistrovaniKorisnik> getAllFollowers(@PathVariable("username") String username) {
+    public List<String> getAllFollowers(@PathVariable("username") String username) {
         return registrovaniKorisnikService.getAllFollowers(username);
     }
 
     @GetMapping("/following/{username}")
-    public List<RegistrovaniKorisnik> getAllFollowing(@PathVariable("username") String username) {
+    public List<String> getAllFollowing(@PathVariable("username") String username) {
         return registrovaniKorisnikService.getAllFollowing(username);
     }
 

@@ -1,4 +1,5 @@
 package com.developer.onlybuns.service;
+import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 
 import java.util.List;
@@ -17,9 +18,9 @@ public interface RegistrovaniKorisnikService {
 
     List<String> getAllUsernames();
 
-    List<RegistrovaniKorisnik> getAllFollowers(String username);
+    List<String> getAllFollowers(String username);
 
-    List<RegistrovaniKorisnik> getAllFollowing(String username);
+    List<String> getAllFollowing(String username);
 
 
     RegistrovaniKorisnik proveriKorisnika(String email, String password);

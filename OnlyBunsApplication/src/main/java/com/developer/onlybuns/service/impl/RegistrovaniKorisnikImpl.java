@@ -1,5 +1,6 @@
 package com.developer.onlybuns.service.impl;
 
+import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
@@ -61,26 +62,34 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
 
 
     @Override
-    public List<RegistrovaniKorisnik> getAllFollowers(String username) {
-        List<RegistrovaniKorisnik> followers = new ArrayList<RegistrovaniKorisnik>();
+    public List<String> getAllFollowers(String username) {
+        List<Pratioci> followers = new ArrayList<Pratioci>();
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = findByUsername(username);
+        List<String> usernames = new ArrayList<String>();
         if (registrovaniKorisnik != null) {
             followers = registrovaniKorisnik.get().getFollowers();
-            return followers;
+            for (Pratioci pratilac : followers) {
+                usernames.add(pratilac.getFollowing().getKorisnickoIme());
+            }
+            return usernames;
         } else {
-            return followers;
+            return usernames;
         }
     }
 
     @Override
-    public List<RegistrovaniKorisnik> getAllFollowing(String username) {
-        List<RegistrovaniKorisnik> following = new ArrayList<RegistrovaniKorisnik>();
+    public List<String> getAllFollowing(String username) {
+        List<Pratioci> following = new ArrayList<Pratioci>();
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = findByUsername(username);
+        List<String> usernames = new ArrayList<String>();
         if (registrovaniKorisnik != null) {
-            following = registrovaniKorisnik.get().getFollowers();
-            return following;
+            following = registrovaniKorisnik.get().getFollowing();
+            for (Pratioci pratilac : following) {
+                usernames.add(pratilac.getFollowed().getKorisnickoIme());
+            }
+            return usernames;
         } else {
-            return following;
+            return usernames;
         }
     }
 

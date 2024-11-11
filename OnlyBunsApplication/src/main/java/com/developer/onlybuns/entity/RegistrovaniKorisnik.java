@@ -16,30 +16,24 @@ public class RegistrovaniKorisnik extends Korisnik {
     @OneToMany(mappedBy = "registrovaniKorisnik", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Komentar> komentari;
 
-    @ManyToMany
-    @JoinTable(
-            name = "korisnik_follows",
-            joinColumns = @JoinColumn(name = "following_id"),
-            inverseJoinColumns = @JoinColumn(name = "followed_id")
-    )
-    private List<RegistrovaniKorisnik> following;
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pratioci> following;
 
-    // Followers (users following this user)
-    @ManyToMany(mappedBy = "following")
-    private List<RegistrovaniKorisnik> followers;
+    @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pratioci> followers;
 
     public RegistrovaniKorisnik() {
 
     }
 
-    public RegistrovaniKorisnik(List<Objava> objave, List<Komentar> komentari, List<RegistrovaniKorisnik> following, List<RegistrovaniKorisnik> followers) {
+    public RegistrovaniKorisnik(List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
         this.objave = objave;
         this.komentari = komentari;
         this.following = following;
         this.followers = followers;
     }
 
-    public RegistrovaniKorisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<RegistrovaniKorisnik> following, List<RegistrovaniKorisnik> followers) {
+    public RegistrovaniKorisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
         super(id, korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
         this.objave = objave;
         this.komentari = komentari;
@@ -47,7 +41,7 @@ public class RegistrovaniKorisnik extends Korisnik {
         this.followers = followers;
     }
 
-    public RegistrovaniKorisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<RegistrovaniKorisnik> following, List<RegistrovaniKorisnik> followers) {
+    public RegistrovaniKorisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
         super(korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
         this.objave = objave;
         this.komentari = komentari;
@@ -71,19 +65,19 @@ public class RegistrovaniKorisnik extends Korisnik {
         this.komentari = komentari;
     }
 
-    public List<RegistrovaniKorisnik> getFollowing() {
+    public List<Pratioci> getFollowing() {
         return following;
     }
 
-    public void setFollowing(List<RegistrovaniKorisnik> following) {
+    public void setFollowing(List<Pratioci> following) {
         this.following = following;
     }
 
-    public List<RegistrovaniKorisnik> getFollowers() {
+    public List<Pratioci> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<RegistrovaniKorisnik> followers) {
+    public void setFollowers(List<Pratioci> followers) {
         this.followers = followers;
     }
 }
