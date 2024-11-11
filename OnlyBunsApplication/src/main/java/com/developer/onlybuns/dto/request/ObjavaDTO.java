@@ -26,10 +26,14 @@ public class ObjavaDTO {
 
     private List<LajkDTO> lajkovi;
 
+    private Integer broj_lajkova;
+
+    private Integer broj_komentara;
+
     public ObjavaDTO() {
     }
 
-    public ObjavaDTO(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi) {
+    public ObjavaDTO(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
         this.id = id;
         this.opis = opis;
         this.slika = slika;
@@ -39,9 +43,11 @@ public class ObjavaDTO {
         this.korisnicko_ime = korisnicko_ime;
         this.komentari = komentari;
         this.lajkovi = lajkovi;
+        this.broj_lajkova = broj_lajkova;
+        this.broj_komentara = broj_komentara;
     }
 
-    public ObjavaDTO(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi) {
+    public ObjavaDTO(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
         this.opis = opis;
         this.slika = slika;
         this.g_sirina = g_sirina;
@@ -50,6 +56,8 @@ public class ObjavaDTO {
         this.korisnicko_ime = korisnicko_ime;
         this.komentari = komentari;
         this.lajkovi = lajkovi;
+        this.broj_lajkova = broj_lajkova;
+        this.broj_komentara = broj_komentara;
     }
 
     public Integer getId() {
@@ -122,5 +130,21 @@ public class ObjavaDTO {
 
     public void setLajkovi(List<LajkDTO> lajkovi) {
         this.lajkovi = lajkovi;
+    }
+
+    public Integer getBroj_lajkova() {
+        return broj_lajkova;
+    }
+
+    public void setBroj_lajkova(Integer broj_lajkova) {
+        this.broj_lajkova = broj_lajkova;
+    }
+
+    public Integer getBroj_komentara() {
+        return broj_komentara;
+    }
+
+    public void setBroj_komentara(Integer broj_komentara) {
+        this.broj_komentara = broj_komentara;
     }
 }

@@ -15,13 +15,14 @@ const PrijavljeniKorisnikPregled = () => {
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
 
-  const rabbitPosts = [
+  /*const rabbitPosts = [
     { img: rabbit1, user: "bunny123", description: 'Enjoying a sunny day!🌞', likes: 124, comments: 27 },
     { img: rabbit2, user: "rabbit10", description: 'Hopping through the garden 🐇', likes: 98, comments: 15 },
     { img: rabbit3, user: "CarrotBunny", description: 'Relaxing with a carrot🥕', likes: 85,  comments: 9 },
     { img: rabbit4, user: "CuteRabbit", description: 'Taking a nap in the sun🌞', likes: 67,  comments: 17 }
-  ];
+  ];*/
 
   // Function to decode the JWT token by calling the backend endpoint
   useEffect(() => {
@@ -49,6 +50,22 @@ const PrijavljeniKorisnikPregled = () => {
     }
   }, [token]);
 
+  useEffect(() => {
+    fetch('http://localhost:8080/objava', {
+      headers: {
+        //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setRabbitPosts(data); // Store the fetched posts in state
+      })
+      .catch(error => {
+        console.error('Error fetching posts:', error);
+      });
+  }, [token]);
+
   return (
     <div>
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
@@ -62,7 +79,7 @@ const PrijavljeniKorisnikPregled = () => {
             </Box>
           </Link>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button component={Link} to="/home" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Feed
             </Button>
             <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
@@ -111,7 +128,7 @@ const PrijavljeniKorisnikPregled = () => {
                     <FavoriteIcon />
                   </IconButton>
                   <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.likes}
+                    {post.broj_lajkova}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -119,7 +136,7 @@ const PrijavljeniKorisnikPregled = () => {
                     <ChatBubbleOutlineIcon />
                   </IconButton>
                   <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.comments}
+                    {post.broj_komentara}
                   </Typography>
                 </Box>
               </Box>
@@ -127,10 +144,10 @@ const PrijavljeniKorisnikPregled = () => {
               {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography sx={{ fontWeight: 'bold' }}>
-                  {post.user}
+                  {post.korisnicko_ime}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                  {post.description}
+                  {post.opis}
                 </Typography>
               </Box>
 

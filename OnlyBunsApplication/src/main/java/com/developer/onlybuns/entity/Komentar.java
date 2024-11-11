@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="komentar")
+@Table(name="komentar", uniqueConstraints = @UniqueConstraint(columnNames = {"korisnik_id", "objava_id"}))
 public class Komentar {
 
     @Id

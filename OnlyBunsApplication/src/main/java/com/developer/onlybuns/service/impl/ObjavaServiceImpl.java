@@ -71,7 +71,9 @@ public class ObjavaServiceImpl implements ObjavaService {
             String korisnicko_ime = getObjavaUsername(objava.getId());
             List<LajkDTO> lajkoviDTO = getObjavaLajkoviDTO(objava.getId());
             List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.getId());
-            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO);
+            Integer broj_lajkova = lajkoviDTO.size();
+            Integer broj_komentara = komentariDTO.size();
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             objaveDTO.add(objavaDTO);
         }
         return objaveDTO;
