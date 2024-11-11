@@ -112,8 +112,8 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     @Override
-    public Objava saveObjava(Objava objava) {
-        return objavaRepository.save(objava);
+    public void saveObjava(Objava objava) {
+        objavaRepository.save(objava);
     }
 
     @Override

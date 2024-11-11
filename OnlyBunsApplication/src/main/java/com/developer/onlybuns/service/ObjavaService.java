@@ -15,7 +15,7 @@ public interface ObjavaService {
 
     Optional<Objava> findById(Integer id);
 
-    Objava saveObjava(Objava objava);
+    void saveObjava(Objava objava);
 
     Objava updateObjava(Objava objava);
 

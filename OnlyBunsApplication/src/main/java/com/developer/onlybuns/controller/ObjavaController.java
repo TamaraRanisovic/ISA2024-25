@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
@@ -18,8 +19,12 @@ public class ObjavaController {
 
     private final ObjavaService objavaService;
 
-    public ObjavaController(ObjavaService objavaService) {
+    private final RegistrovaniKorisnikService registrovaniKorisnikService;
+
+
+    public ObjavaController(ObjavaService objavaService, RegistrovaniKorisnikService registrovaniKorisnikService) {
         this.objavaService = objavaService;
+        this.registrovaniKorisnikService = registrovaniKorisnikService;
     }
 
     @GetMapping
@@ -33,8 +38,19 @@ public class ObjavaController {
     }
 
     @PostMapping("/add")
-    public Objava save(@RequestBody Objava objava) {
-        return objavaService.saveObjava(objava);
+    public ResponseEntity<String> save(@RequestBody NovaObjavaDTO objavaDTO) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(objavaDTO.getKorisnicko_ime());
+        if (registrovaniKorisnik != null) {
+            List<Komentar> komentari = new ArrayList<Komentar>();
+            List<Lajk> lajkovi = new ArrayList<Lajk>();
+            Objava objava = new Objava(objavaDTO.getOpis(), objavaDTO.getSlika(), objavaDTO.getG_sirina(), objavaDTO.getG_duzina(), objavaDTO.getDatum_objave(), registrovaniKorisnik.get(), komentari, lajkovi);
+            objavaService.saveObjava(objava);
+
+            return ResponseEntity.ok("{\"message\": \"Uspesno kreiran novi post.\"}");
+        } else {
+            return ResponseEntity.status(401).body("Neuspešno kreiranje novog posta. Proverite unete podatke.");
+        }
+
     }
 
     @PutMapping

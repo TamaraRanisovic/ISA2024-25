@@ -9,6 +9,7 @@ import AdminSistemLogin from "./pages/AdminSistemLogin";
 import AdminSistemPocetna from "./pages/AdminSistemPocetna";
 import AdminSistemView from "./pages/AdminSistemView";
 import RegistracijaAdminSistem from "./pages/RegistracijaAdminSistem";
+import NovaObjava from "./pages/NovaObjava";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/adminSistemPocetna" element={<AdminSistemPocetna/>} />
           <Route path="/adminSistemView" element={<AdminSistemView/>} />
           <Route path="/registracijaAdminSistem" element={<RegistracijaAdminSistem/>} />
+          <Route path="/novaObjava" element={<NovaObjava/>} />
 
         </Routes>
       </Router>

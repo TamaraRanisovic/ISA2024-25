@@ -13,7 +13,7 @@ public class Objava {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
     private Integer id;
 
-    @Column(name="opis", unique=true, nullable=false)
+    @Column(name="opis", nullable=false)
     private String opis;
 
     @Column(name="slika", nullable=false)
