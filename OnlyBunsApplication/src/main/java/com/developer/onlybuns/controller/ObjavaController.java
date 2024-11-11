@@ -58,4 +58,10 @@ public class ObjavaController {
         List<Komentar> komentari = objavaService.getAllKomentari(id);
         return ResponseEntity.ok(komentari);
     }
+
+    @GetMapping("/feed/{username}")
+    public List<ObjavaDTO> findAllUserFollows(@PathVariable("username") String username) {
+        return objavaService.findAllUserFollows(username);
+    }
+
 }

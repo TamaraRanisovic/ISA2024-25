@@ -12,7 +12,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 const PrijavljeniKorisnikPregled = () => {
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
   const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
@@ -40,7 +40,7 @@ const PrijavljeniKorisnikPregled = () => {
           // Assuming the response contains 'email' and 'role' from the decoded token
           if (data) {
             setEmail(data.Email); // Set email from the response
-            setName(data.Username); // Set email from the response
+            setUsername(data.Username); // Set email from the response
             setRole(data.Role);   // Set role from the response
           }
         })
@@ -50,21 +50,30 @@ const PrijavljeniKorisnikPregled = () => {
     }
   }, [token]);
 
-  useEffect(() => {
-    fetch('http://localhost:8080/objava', {
-      headers: {
-        //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
-        'Content-Type': 'application/json',
+
+    useEffect(() => {
+      if (username) { // Only fetch if username is available
+        fetch(`http://localhost:8080/objava/feed/${username}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${token}`, // Uncomment if you have a token
+          }
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Fetched data:', data); // Log data to check if it's correct
+            setRabbitPosts(Array.isArray(data) ? data : []); // Ensure data is an array
+          })
+          .catch(error => {
+            console.error('Error fetching posts:', error);
+          });
       }
-    })
-      .then(response => response.json())
-      .then(data => {
-        setRabbitPosts(data); // Store the fetched posts in state
-      })
-      .catch(error => {
-        console.error('Error fetching posts:', error);
-      });
-  }, [token]);
+    }, [username]);
 
   return (
     <div>
@@ -96,9 +105,9 @@ const PrijavljeniKorisnikPregled = () => {
             </Button>
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
-            {token && name ? ( 
+            {token && username ? ( 
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Welcome, {name}
+                Welcome, {username}
               </Typography>
             ) : (
               <>

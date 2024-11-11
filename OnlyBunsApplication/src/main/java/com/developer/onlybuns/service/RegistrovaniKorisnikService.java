@@ -9,7 +9,7 @@ public interface RegistrovaniKorisnikService {
     List<RegistrovaniKorisnik> findAllRegistrovaniKorisnik();
     Optional<RegistrovaniKorisnik> findById(Integer id);
 
-    Optional<RegistrovaniKorisnik> findByUsername(String id);
+    Optional<RegistrovaniKorisnik> findByUsername(String username);
 
     RegistrovaniKorisnik saveRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnik);
     RegistrovaniKorisnik updateRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnik);

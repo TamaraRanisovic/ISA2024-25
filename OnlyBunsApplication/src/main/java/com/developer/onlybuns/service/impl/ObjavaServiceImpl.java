@@ -6,10 +6,14 @@ import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
+import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.repository.ObjavaRepository;
+import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.ObjavaService;
+import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,8 +23,13 @@ public class ObjavaServiceImpl implements ObjavaService {
 
     private final ObjavaRepository objavaRepository;
 
-    public ObjavaServiceImpl(ObjavaRepository objavaRepository) {
+
+    private final RegistrovaniKorisnikService registrovaniKorisnikService;
+
+
+    public ObjavaServiceImpl(ObjavaRepository objavaRepository, RegistrovaniKorisnikService registrovaniKorisnikService) {
         this.objavaRepository = objavaRepository;
+        this.registrovaniKorisnikService = registrovaniKorisnikService;
     }
 
     public String getObjavaUsername(Integer id) {
@@ -80,6 +89,24 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     @Override
+    public List<ObjavaDTO> findAllObjavaDTOByUser(String username) {
+        List<Objava> objave = objavaRepository.findAll();
+        List<ObjavaDTO> objaveDTO = new ArrayList<ObjavaDTO>();
+        for (Objava objava : objave) {
+            String korisnicko_ime = getObjavaUsername(objava.getId());
+            if (korisnicko_ime.equals(username)) {
+                List<LajkDTO> lajkoviDTO = getObjavaLajkoviDTO(objava.getId());
+                List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.getId());
+                Integer broj_lajkova = lajkoviDTO.size();
+                Integer broj_komentara = komentariDTO.size();
+                ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+                objaveDTO.add(objavaDTO);
+            }
+        }
+        return objaveDTO;
+    }
+
+    @Override
     public Optional<Objava> findById(Integer id) {
         return objavaRepository.findById(id);
     }
@@ -120,6 +147,22 @@ public class ObjavaServiceImpl implements ObjavaService {
             return komentari;
         } else {
             return komentari;
+        }
+    }
+
+    @Override
+    public List<ObjavaDTO> findAllUserFollows(String username) {
+        List<ObjavaDTO> objave = new ArrayList<ObjavaDTO>();
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
+        if (registrovaniKorisnik != null) {
+            List<String> following = registrovaniKorisnikService.getAllFollowing(username);
+            for (String user : following) {
+                List<ObjavaDTO> korisnikObjave = findAllObjavaDTOByUser(user);
+                objave.addAll(korisnikObjave);
+            }
+            return objave;
+        } else {
+            return objave;
         }
     }
 
