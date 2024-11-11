@@ -25,15 +25,16 @@ public class RegistrovaniKorisnik extends Korisnik {
         this.komentari = komentari;
     }
 
-    public RegistrovaniKorisnik(Integer id, String email, String password, String ime, String prezime, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari) {
-        super(id, email, password, ime, prezime, grad, drzava, broj, uloga, verifikacija);
+    public RegistrovaniKorisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari) {
+        super(id, korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
         this.objave = objave;
         this.komentari = komentari;
     }
 
-    public RegistrovaniKorisnik(String email, String password, String ime, String prezime, String grad, String drzava, String broj, Uloga uloga, List<Objava> objave, List<Komentar> komentari) {
-        super(email, password, ime, prezime, grad, drzava, broj, uloga);
+    public RegistrovaniKorisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari) {
+        super(korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
         this.objave = objave;
         this.komentari = komentari;
     }
+
 }

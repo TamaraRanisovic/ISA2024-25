@@ -48,6 +48,11 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
     }
 
     @Override
+    public List<String> getAllUsernames() {
+        return registrovaniKorisnikRepository.findAllUsernames();
+    }
+
+    @Override
     public RegistrovaniKorisnik proveriKorisnika(String email, String password) {
         RegistrovaniKorisnik korisnik = registrovaniKorisnikRepository.findByEmailAndPassword(email, password);
         return korisnik;

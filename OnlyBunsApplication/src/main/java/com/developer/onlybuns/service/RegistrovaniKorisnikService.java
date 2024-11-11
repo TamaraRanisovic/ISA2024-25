@@ -11,6 +11,9 @@ public interface RegistrovaniKorisnikService {
     RegistrovaniKorisnik updateRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnik);
     void deleteRegistrovaniKorisnik(Integer id);
     List<String> getAllEmails();
+
+    List<String> getAllUsernames();
+
     RegistrovaniKorisnik proveriKorisnika(String email, String password);
 
 /*    Using Request for Save and Update RegistrovaniKorisnik

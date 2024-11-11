@@ -30,11 +30,11 @@ public class AuthController {
         if (validCredentials != null) {
             Korisnik korisnik = korisnikService.findByEmail(loginDTO.getEmail());
 
-            String ime = korisnik.getIme();
+            String username = korisnik.getKorisnicko_ime();
             String uloga = korisnik.getUloga().toString();
 
             JwtUtil jwtUtil = new JwtUtil();
-            String token = jwtUtil.generateToken(loginDTO.getEmail(),ime, uloga);
+            String token = jwtUtil.generateToken(loginDTO.getEmail(), username, uloga);
 
             Map<String, String> response = new HashMap<>();
             response.put("token", token);
@@ -54,13 +54,13 @@ public class AuthController {
             // Extract korisnik (email) from the JWT token
             String email = JwtUtil.getEmailFromToken(token);
 
-            String name = JwtUtil.getNameFromToken(token);
+            String username = JwtUtil.getUsernameFromToken(token);
 
             String role = JwtUtil.getRoleFromToken(token);
 
             Map<String, String> response = new HashMap<>();
             response.put("Email", email);
-            response.put("Name", name);
+            response.put("Username", username);
             response.put("Role", role);
 
             // Return the extracted data in the response

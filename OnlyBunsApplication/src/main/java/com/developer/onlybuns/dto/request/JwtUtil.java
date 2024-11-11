@@ -12,9 +12,9 @@ public class JwtUtil {
     private static final long EXPIRATION_TIME = 600000; // 10 minutes in milliseconds
 
     // Generate JWT token
-    public String generateToken(String email, String name, String role) {
+    public String generateToken(String email, String username, String role) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("name", name);
+        claims.put("username", username);
         claims.put("role", role);
 
         return Jwts.builder()
@@ -57,15 +57,15 @@ public class JwtUtil {
         }
     }
 
-    public static String getNameFromToken(String token) {
+    public static String getUsernameFromToken(String token) {
         try {
             Claims claims = Jwts.parser()
                     .setSigningKey(JwtUtil.SECRET_KEY)
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.get("name", String.class);
+            return claims.get("username", String.class);
         } catch (Exception e) {
-            return "Name not found";
+            return "Username not found";
         }
     }
 

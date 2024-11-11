@@ -58,6 +58,13 @@ public class RegistrovaniKorisnikController {
         return ResponseEntity.ok(emails);
     }
 
+
+    @GetMapping("/username")
+    public ResponseEntity<List<String>> getAllUsernames() {
+        List<String> usernames = registrovaniKorisnikService.getAllUsernames();
+        return ResponseEntity.ok(usernames);
+    }
+
 /*    Using Request and Response with save and update employee
 
     @PostMapping("/res")

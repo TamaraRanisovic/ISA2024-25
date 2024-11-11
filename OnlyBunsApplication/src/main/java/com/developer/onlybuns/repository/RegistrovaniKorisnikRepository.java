@@ -10,5 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface RegistrovaniKorisnikRepository extends JpaRepository<RegistrovaniKorisnik, Integer> {
     @Query("SELECT email FROM RegistrovaniKorisnik")
     List<String> findAllEmails();
+
+    @Query("SELECT korisnicko_ime FROM RegistrovaniKorisnik")
+    List<String> findAllUsernames();
+    
     RegistrovaniKorisnik findByEmailAndPassword(String email, String password);
 }

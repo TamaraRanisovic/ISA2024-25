@@ -18,6 +18,9 @@ public class Korisnik {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
     private Integer id;
 
+    @Column(name="korisnicko_ime", unique=true, nullable=false)
+    private String korisnicko_ime;
+
     @Column(name="email", unique=true, nullable=false)
     private String email;
 
@@ -29,6 +32,9 @@ public class Korisnik {
 
     @Column(name="prezime", nullable=false)
     private String prezime;
+
+    @Column(name="ulica_broj", nullable=false)
+    private String  ulica_broj;
 
     @Column(name="grad", nullable=false)
     private String  grad;
@@ -48,16 +54,17 @@ public class Korisnik {
 
 
 
-
     public Korisnik() {
     }
 
-    public Korisnik(Integer id, String email, String password, String ime, String prezime, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
+    public Korisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
         this.id = id;
+        this.korisnicko_ime = korisnicko_ime;
         this.email = email;
         this.password = password;
         this.ime = ime;
         this.prezime = prezime;
+        this.ulica_broj = ulica_broj;
         this.grad = grad;
         this.drzava = drzava;
         this.broj = broj;
@@ -65,15 +72,18 @@ public class Korisnik {
         this.verifikacija = verifikacija;
     }
 
-    public Korisnik(String email, String password, String ime, String prezime, String grad, String drzava, String broj, Uloga uloga) {
+    public Korisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
+        this.korisnicko_ime = korisnicko_ime;
         this.email = email;
         this.password = password;
         this.ime = ime;
         this.prezime = prezime;
+        this.ulica_broj = ulica_broj;
         this.grad = grad;
         this.drzava = drzava;
         this.broj = broj;
         this.uloga = uloga;
+        this.verifikacija = verifikacija;
     }
 
     public boolean isVerifikacija() {
@@ -155,5 +165,19 @@ public class Korisnik {
         this.broj = broj;
     }
 
+    public String getKorisnicko_ime() {
+        return korisnicko_ime;
+    }
 
+    public void setKorisnicko_ime(String korisnicko_ime) {
+        this.korisnicko_ime = korisnicko_ime;
+    }
+
+    public String getUlica_broj() {
+        return ulica_broj;
+    }
+
+    public void setUlica_broj(String ulica_broj) {
+        this.ulica_broj = ulica_broj;
+    }
 }
