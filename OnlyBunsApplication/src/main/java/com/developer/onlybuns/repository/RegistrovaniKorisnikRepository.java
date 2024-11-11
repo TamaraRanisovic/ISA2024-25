@@ -1,6 +1,8 @@
 package com.developer.onlybuns.repository;
 
 import java.util.List;
+import java.util.Optional;
+
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,8 +13,11 @@ public interface RegistrovaniKorisnikRepository extends JpaRepository<Registrova
     @Query("SELECT email FROM RegistrovaniKorisnik")
     List<String> findAllEmails();
 
-    @Query("SELECT korisnicko_ime FROM RegistrovaniKorisnik")
+    @Query("SELECT korisnickoIme FROM RegistrovaniKorisnik")
     List<String> findAllUsernames();
     
     RegistrovaniKorisnik findByEmailAndPassword(String email, String password);
+
+    Optional<RegistrovaniKorisnik> findByKorisnickoIme(String username);
+
 }

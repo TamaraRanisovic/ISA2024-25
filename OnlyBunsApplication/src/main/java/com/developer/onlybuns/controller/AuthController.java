@@ -30,7 +30,7 @@ public class AuthController {
         if (validCredentials != null) {
             Korisnik korisnik = korisnikService.findByEmail(loginDTO.getEmail());
 
-            String username = korisnik.getKorisnicko_ime();
+            String username = korisnik.getKorisnickoIme();
             String uloga = korisnik.getUloga().toString();
 
             JwtUtil jwtUtil = new JwtUtil();

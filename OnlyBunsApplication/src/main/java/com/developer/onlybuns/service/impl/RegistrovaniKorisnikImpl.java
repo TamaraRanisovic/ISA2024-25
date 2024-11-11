@@ -5,6 +5,7 @@ import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,12 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
     public Optional<RegistrovaniKorisnik> findById(Integer id) {
         return registrovaniKorisnikRepository.findById(id);
     }
+
+    @Override
+    public Optional<RegistrovaniKorisnik> findByUsername(String username) {
+        return registrovaniKorisnikRepository.findByKorisnickoIme(username);
+    }
+
 
     @Override
     public RegistrovaniKorisnik saveRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnikEntity) {
@@ -50,6 +57,31 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
     @Override
     public List<String> getAllUsernames() {
         return registrovaniKorisnikRepository.findAllUsernames();
+    }
+
+
+    @Override
+    public List<RegistrovaniKorisnik> getAllFollowers(String username) {
+        List<RegistrovaniKorisnik> followers = new ArrayList<RegistrovaniKorisnik>();
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = findByUsername(username);
+        if (registrovaniKorisnik != null) {
+            followers = registrovaniKorisnik.get().getFollowers();
+            return followers;
+        } else {
+            return followers;
+        }
+    }
+
+    @Override
+    public List<RegistrovaniKorisnik> getAllFollowing(String username) {
+        List<RegistrovaniKorisnik> following = new ArrayList<RegistrovaniKorisnik>();
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = findByUsername(username);
+        if (registrovaniKorisnik != null) {
+            following = registrovaniKorisnik.get().getFollowers();
+            return following;
+        } else {
+            return following;
+        }
     }
 
     @Override

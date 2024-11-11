@@ -24,7 +24,7 @@ export default function Registracija() {
   const [broj, setBroj] = useState('');
   const [brojError, setBrojError] = useState(false);
   const [email, setEmail] = useState('');
-  const [korisnicko_ime, setKorisnickoIme] = useState('');
+  const [korisnickoIme, setKorisnickoIme] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [korisnickoImeError, setKorisnickoImeError] = useState(false);
   const [UlicaBrojError, setUlicaBrojError] = useState(false);
@@ -143,7 +143,7 @@ export default function Registracija() {
       return;
     }
 
-    if (!korisnicko_ime || !ime || !prezime || !ulica_broj || !grad || !drzava || !broj || !email || !password || !repeatPassword) {
+    if (!korisnickoIme || !ime || !prezime || !ulica_broj || !grad || !drzava || !broj || !email || !password || !repeatPassword) {
       setErrorMessage('Enter valid data.');
       return;
     }
@@ -160,7 +160,7 @@ export default function Registracija() {
       return;
     }
 
-    const korisnik = { korisnicko_ime, ulica_broj, ime, prezime, grad, drzava, broj, email, password, uloga };
+    const korisnik = { korisnickoIme, ulica_broj, ime, prezime, grad, drzava, broj, email, password, uloga };
     console.log(korisnik);
 
     setErrorMessage('');
@@ -207,7 +207,7 @@ export default function Registracija() {
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField fullWidth required label="First name" value={ime} onChange={(e) => setIme(e.target.value)} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Last name" value={prezime} onChange={(e) => setPrezime(e.target.value)} sx={{ mb: 1.5 }} />
-            <TextField fullWidth required label="Username" value={korisnicko_ime} onChange={handleKorisnickoImeChange} error={korisnickoImeError} helperText={korisnickoImeError ? 'Enter valid username' : ''} sx={{ mb: 1.5 }} />
+            <TextField fullWidth required label="Username" value={korisnickoIme} onChange={handleKorisnickoImeChange} error={korisnickoImeError} helperText={korisnickoImeError ? 'Enter valid username' : ''} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Email" value={email} onChange={handleEmailChange} error={emailError} helperText={emailError ? 'Enter valid e-mail address' : ''} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Repeat password" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordMismatch(false); }} sx={{ mb: 1.5 }} />

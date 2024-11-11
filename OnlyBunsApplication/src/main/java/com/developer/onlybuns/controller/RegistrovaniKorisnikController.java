@@ -27,6 +27,16 @@ public class RegistrovaniKorisnikController {
         return registrovaniKorisnikService.findById(id);
     }
 
+    @GetMapping("/followers/{username}")
+    public List<RegistrovaniKorisnik> getAllFollowers(@PathVariable("username") String username) {
+        return registrovaniKorisnikService.getAllFollowers(username);
+    }
+
+    @GetMapping("/following/{username}")
+    public List<RegistrovaniKorisnik> getAllFollowing(@PathVariable("username") String username) {
+        return registrovaniKorisnikService.getAllFollowing(username);
+    }
+
     @PostMapping("/add")
     public RegistrovaniKorisnik saveRegistrovaniKorisnik(@RequestBody RegistrovaniKorisnik employeeEntity) {
         return registrovaniKorisnikService.saveRegistrovaniKorisnik(employeeEntity);

@@ -18,8 +18,8 @@ public class Korisnik {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "mySeqGenV1")
     private Integer id;
 
-    @Column(name="korisnicko_ime", unique=true, nullable=false)
-    private String korisnicko_ime;
+    @Column(name="korisnickoIme", unique=true, nullable=false)
+    private String korisnickoIme;
 
     @Column(name="email", unique=true, nullable=false)
     private String email;
@@ -59,7 +59,7 @@ public class Korisnik {
 
     public Korisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
         this.id = id;
-        this.korisnicko_ime = korisnicko_ime;
+        this.korisnickoIme = korisnicko_ime;
         this.email = email;
         this.password = password;
         this.ime = ime;
@@ -73,7 +73,7 @@ public class Korisnik {
     }
 
     public Korisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
-        this.korisnicko_ime = korisnicko_ime;
+        this.korisnickoIme = korisnicko_ime;
         this.email = email;
         this.password = password;
         this.ime = ime;
@@ -165,12 +165,12 @@ public class Korisnik {
         this.broj = broj;
     }
 
-    public String getKorisnicko_ime() {
-        return korisnicko_ime;
+    public String getKorisnickoIme() {
+        return korisnickoIme;
     }
 
-    public void setKorisnicko_ime(String korisnicko_ime) {
-        this.korisnicko_ime = korisnicko_ime;
+    public void setKorisnickoIme(String korisnickoIme) {
+        this.korisnickoIme = korisnickoIme;
     }
 
     public String getUlica_broj() {

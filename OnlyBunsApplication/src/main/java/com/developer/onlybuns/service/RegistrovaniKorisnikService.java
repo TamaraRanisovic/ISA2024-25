@@ -7,12 +7,20 @@ import java.util.Optional;
 public interface RegistrovaniKorisnikService {
     List<RegistrovaniKorisnik> findAllRegistrovaniKorisnik();
     Optional<RegistrovaniKorisnik> findById(Integer id);
+
+    Optional<RegistrovaniKorisnik> findByUsername(String id);
+
     RegistrovaniKorisnik saveRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnik);
     RegistrovaniKorisnik updateRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnik);
     void deleteRegistrovaniKorisnik(Integer id);
     List<String> getAllEmails();
 
     List<String> getAllUsernames();
+
+    List<RegistrovaniKorisnik> getAllFollowers(String username);
+
+    List<RegistrovaniKorisnik> getAllFollowing(String username);
+
 
     RegistrovaniKorisnik proveriKorisnika(String email, String password);
 
