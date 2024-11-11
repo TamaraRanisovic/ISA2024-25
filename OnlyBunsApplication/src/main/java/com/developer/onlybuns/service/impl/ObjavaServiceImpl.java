@@ -26,7 +26,7 @@ public class ObjavaServiceImpl implements ObjavaService {
     public String getObjavaUsername(Integer id) {
         Optional<Objava> objava = findById(id);
         if (objava != null) {
-            String username = objava.get().getRegistrovaniKorisnik().getEmail();
+            String username = objava.get().getRegistrovaniKorisnik().getKorisnicko_ime();
             return username;
         } else {
             return null;

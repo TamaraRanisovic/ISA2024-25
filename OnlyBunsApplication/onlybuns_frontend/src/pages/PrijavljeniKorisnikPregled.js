@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
 import rabbit1 from './photos/onlybuns_logo.png';
 import rabbit2 from './photos/rabbit_hop.jpeg';
-import rabbit3 from './photos/rabbit_carrot.jpg';
+import rabbit3 from 'C:\\Users\\Lenovo\\Documents\\GitHub\\ISA2024-25\\OnlyBunsApplication\\onlybuns_frontend\\src\\pages\\photos\\rabbit_carrot.jpg';
 import rabbit4 from './photos/rabbit_sun.jpeg';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid, Paper, IconButton } from '@mui/material';
@@ -40,7 +40,7 @@ const PrijavljeniKorisnikPregled = () => {
           // Assuming the response contains 'email' and 'role' from the decoded token
           if (data) {
             setEmail(data.Email); // Set email from the response
-            setName(data.Name); // Set email from the response
+            setName(data.Username); // Set email from the response
             setRole(data.Role);   // Set role from the response
           }
         })
@@ -118,7 +118,7 @@ const PrijavljeniKorisnikPregled = () => {
         {rabbitPosts.map((post, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
-              <img src={post.img} alt={post.title} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
+            <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
               
               {/* Likes and Comments Row */}
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
