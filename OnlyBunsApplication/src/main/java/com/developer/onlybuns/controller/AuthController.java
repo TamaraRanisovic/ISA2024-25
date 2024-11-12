@@ -32,17 +32,23 @@ public class AuthController {
         if (validCredentials != null) {
             Korisnik korisnik = korisnikService.findByEmail(loginDTO.getEmail());
 
-            String username = korisnik.getKorisnickoIme();
-            String uloga = korisnik.getUloga().toString();
+            if (korisnik.isVerifikacija()) {
+                String username = korisnik.getKorisnickoIme();
+                String uloga = korisnik.getUloga().toString();
 
-            JwtUtil jwtUtil = new JwtUtil();
-            String token = jwtUtil.generateToken(loginDTO.getEmail(), username, uloga);
+                JwtUtil jwtUtil = new JwtUtil();
+                String token = jwtUtil.generateToken(loginDTO.getEmail(), username, uloga);
 
-            Map<String, String> response = new HashMap<>();
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(401).body("{\"message\": \"Please activate your account.\"}");
+            }
+
         } else {
-            return ResponseEntity.status(401).body("Neuspešna prijava. Proverite email i lozinku.");
+
+            return ResponseEntity.status(401).body("{\"message\": \"Email or password is incorrect.\"}");
         }
     }
 
