@@ -47,10 +47,10 @@ public class RegistrovaniKorisnikController {
         String activationLink = "http://localhost:8080/registrovaniKorisnik/activate?token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ranisovic.in1.2020@uns.ac.rs");
         message.setTo(email);
         message.setSubject("Activate your account");
         message.setText("Click the following link to activate your account: " + activationLink);
-
         mailSender.send(message);
     }
 
