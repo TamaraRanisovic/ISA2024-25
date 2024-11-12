@@ -7,15 +7,27 @@ import rabbit2 from './photos/rabbit_hop.jpeg';
 import rabbit3 from './photos/rabbit_carrot.jpg';
 import rabbit4 from './photos/rabbit_sun.jpeg';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { useEffect, useState } from 'react';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 export default function HomePage() {
-  // Array of rabbit posts with descriptions and like counts
-  const rabbitPosts = [
-    { img: rabbit1, description: 'Enjoying a sunny day!🌞', likes: 124 },
-    { img: rabbit2, description: 'Hopping through the garden 🐇', likes: 98 },
-    { img: rabbit3, description: 'Relaxing with a carrot🥕', likes: 85 },
-    { img: rabbit4, description: 'Taking a nap in the sun🌞', likes: 67 }
-  ];
+  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
+
+  useEffect(() => {
+    fetch('http://localhost:8080/objava', {
+      headers: {
+        //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
+        'Content-Type': 'application/json',
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        setRabbitPosts(data); // Store the fetched posts in state
+      })
+      .catch(error => {
+        console.error('Error fetching posts:', error);
+      });
+  });
 
   return (
     <div>
@@ -55,30 +67,46 @@ export default function HomePage() {
 
         {/* Rabbit Post Cards */}
         <Grid container spacing={3} sx={{ mt: 4 }}>
-          {rabbitPosts.map((post, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
-                <img src={post.img} alt={post.title} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
-                
-                {/* Title, Caption, and Like Count all on one line */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {rabbitPosts.map((post, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
+            <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
+              
+              {/* Likes and Comments Row */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  
                   <IconButton sx={{ color: '#e91e63' }}>
-                      <FavoriteIcon />
+                    <FavoriteIcon />
                   </IconButton>
                   <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      {post.likes} 
-                    </Typography>
-                  <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', flex: 1, textAlign: 'center' }}>
-                    {post.description}
+                    {post.broj_lajkova}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-   
-                  </Box>
                 </Box>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <IconButton color="secondary">
+                    <ChatBubbleOutlineIcon />
+                  </IconButton>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {post.broj_komentara}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Description Row */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                  {post.korisnicko_ime}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                  {post.opis}
+                </Typography>
+              </Box>
+
+            </Paper>
+          </Grid>
+        ))}
+    </Grid>
       </Box>
     </div>
   );
