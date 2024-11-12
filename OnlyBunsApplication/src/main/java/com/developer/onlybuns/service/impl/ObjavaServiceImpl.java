@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,6 +86,8 @@ public class ObjavaServiceImpl implements ObjavaService {
             ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             objaveDTO.add(objavaDTO);
         }
+        objaveDTO.sort(Comparator.comparing(ObjavaDTO::getDatum_objave).reversed());
+
         return objaveDTO;
     }
 
@@ -160,6 +163,8 @@ public class ObjavaServiceImpl implements ObjavaService {
                 List<ObjavaDTO> korisnikObjave = findAllObjavaDTOByUser(user);
                 objave.addAll(korisnikObjave);
             }
+            objave.sort(Comparator.comparing(ObjavaDTO::getDatum_objave).reversed());
+
             return objave;
         } else {
             return objave;
