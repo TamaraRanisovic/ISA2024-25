@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 node_modules/
 onlybuns_frontend/node_modules
+onlybuns_frontend/src/pages/photos
 
 ### STS ###
 .apt_generated
@@ -33,6 +34,7 @@ build/
 
 ### VS Code ###
 .vscode/
-application.properties
+!**/src/main/resources/application.properties
+
 
 
