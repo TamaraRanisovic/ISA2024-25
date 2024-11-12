@@ -11,8 +11,12 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import { AppBar, Toolbar} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+
+
 const defaultTheme = createTheme();
 
 export default function NovaObjava() {
@@ -32,6 +36,9 @@ export default function NovaObjava() {
   const formData = new FormData();
   const [message, setMessage] = useState('');
   const [file, setFile] = useState(null);
+  const [selectedPosition, setSelectedPosition] = useState(null);
+  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState('');
 
 
 
@@ -92,6 +99,20 @@ export default function NovaObjava() {
     }
   };
 
+  const LocationMarker = () => {
+    useMapEvents({
+      click(event) {
+        const { lat, lng } = event.latlng;
+        setG_sirina(lat);
+        setG_duzina(lng);
+        setSelectedPosition([lat, lng]);
+      },
+    });
+    return selectedPosition ? (
+      <Marker position={selectedPosition} />
+    ) : null;
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -99,6 +120,7 @@ export default function NovaObjava() {
       setErrorMessage('Enter valid data.');
       return;
     }
+    setErrorMessage('');
 
     setDatumObjave(new Date().toISOString());
     const objava = { korisnicko_ime, g_sirina, opis, g_duzina, slika, datum_objave };
@@ -115,6 +137,13 @@ export default function NovaObjava() {
         
         // Now, upload the photo after the objava is created
         await handlePhotoUpload();
+
+        setSuccessMessage("New post created successfully. Redirecting to feed...");
+  
+        setTimeout(() => {
+          setSuccessMessage('');
+          navigate('/prijavljeniKorisnikPregled');
+          }, 15000);
       } else {
         console.error("Failed to create post");
       }
@@ -177,26 +206,74 @@ export default function NovaObjava() {
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box sx={{ marginTop: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <Typography component="h1" variant="h5" sx={{ marginBottom: 2}}>
-            Create new post
+      <CssBaseline />
+      <Box sx={{ marginTop: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
+          Create New Post
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            fullWidth
+            required
+            label="Description"
+            value={opis}
+            onChange={(e) => setOpis(e.target.value)}
+            sx={{ mb: 1.5 }}
+          />
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Select location on the map or enter coordinates manually.
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            <TextField fullWidth required label="Description" value={opis} onChange={(e) => setOpis(e.target.value)} sx={{ mb: 1.5 }} />
-            <TextField fullWidth required label="Longitude" value={g_sirina} onChange={(e) => setG_sirina(e.target.value)} sx={{ mb: 1.5 }} />
-            <TextField fullWidth required label="Latitude" value={g_duzina} onChange={(e) => setG_duzina(e.target.value)} sx={{ mb: 1.5 }} />
-            <div style={{ marginBottom: '15px' }}>
-                <label>Upload Photo:</label>
-                <input type="file" accept="image/*" onChange={handlePhotoChange} />
-            </div>
-            <Button type="submit" sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 7 }} fullWidth variant="contained"  color="secondary">
-              Publish
-            </Button>
-            {errorMessage && <Typography color="error" sx={{ mb: 3}} variant="body2" gutterBottom >{errorMessage}</Typography>}
-          </Box>
+          <MapContainer
+            center={[45.2671, 19.8335]} // Centered on Novi Sad by default
+            zoom={13}
+            style={{ height: '200px', width: '100%', marginBottom: '15px' }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <LocationMarker />
+          </MapContainer>
+          <TextField
+            fullWidth
+            label="Latitude"
+            value={g_sirina}
+            onChange={(e) => setG_sirina(e.target.value)}
+            sx={{ mb: 1.5 }}
+          />
+          <TextField
+            fullWidth
+            label="Longitude"
+            value={g_duzina}
+            onChange={(e) => setG_duzina(e.target.value)}
+            sx={{ mb: 1.5 }}
+          />
+          <div style={{ marginBottom: '15px' }}>
+            <label>Upload Photo:</label>
+            <input type="file" accept="image/*" onChange={handlePhotoChange} />
+          </div>
+          <Button
+            type="submit"
+            sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 7 }}
+            fullWidth
+            variant="contained"
+            color="secondary"
+          >
+            Publish
+          </Button>
+          {errorMessage && (
+            <Typography color="error" sx={{ mb: 3 }} variant="body2" gutterBottom>
+              {errorMessage}
+            </Typography>
+          )}
+          {successMessage && (
+        <div style={{ color: 'green', marginTop: '7px',  marginBottom: '3px' }}>
+          {successMessage}
+        </div>
+      )}
         </Box>
-      </Container>
+      </Box>
+    </Container>
     </ThemeProvider>
   );
 }
