@@ -2,6 +2,7 @@ package com.developer.onlybuns.service.impl;
 
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import com.developer.onlybuns.enums.Uloga;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,35 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         return registrovaniKorisnikRepository.findByKorisnickoIme(username);
     }
 
+    public void register(RegistrovaniKorisnik registrovaniKorisnik, String activationToken) {
+        // Map UserRegistrationDto to User entity, set the token and inactive status
+        RegistrovaniKorisnik noviKorisnik = new RegistrovaniKorisnik();
+        noviKorisnik.setKorisnickoIme(registrovaniKorisnik.getKorisnickoIme());
+        noviKorisnik.setEmail(registrovaniKorisnik.getEmail());
+        noviKorisnik.setPassword(registrovaniKorisnik.getPassword());
+        noviKorisnik.setIme(registrovaniKorisnik.getIme());
+        noviKorisnik.setPrezime(registrovaniKorisnik.getPrezime());
+        noviKorisnik.setUlica_broj(registrovaniKorisnik.getUlica_broj());
+        noviKorisnik.setGrad(registrovaniKorisnik.getGrad());
+        noviKorisnik.setDrzava(registrovaniKorisnik.getDrzava());
+        noviKorisnik.setBroj(registrovaniKorisnik.getBroj());
+        noviKorisnik.setUloga(Uloga.REGISTROVANI_KORISNIK);
+        noviKorisnik.setActivationToken(activationToken);
+        noviKorisnik.setVerifikacija(false);
+
+        registrovaniKorisnikRepository.save(noviKorisnik);
+    }
+
+    public boolean activateAccount(String token) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikRepository.findByActivationToken(token);
+        if (registrovaniKorisnik != null) {
+            registrovaniKorisnik.get().setVerifikacija(true); // Activate account
+            registrovaniKorisnik.get().setActivationToken(null); // Clear the token after activation
+            registrovaniKorisnikRepository.save(registrovaniKorisnik.get());
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public RegistrovaniKorisnik saveRegistrovaniKorisnik(RegistrovaniKorisnik registrovaniKorisnikEntity) {

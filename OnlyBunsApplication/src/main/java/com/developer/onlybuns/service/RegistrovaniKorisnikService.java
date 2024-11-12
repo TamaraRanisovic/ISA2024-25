@@ -22,6 +22,9 @@ public interface RegistrovaniKorisnikService {
 
     List<String> getAllFollowing(String username);
 
+    void register(RegistrovaniKorisnik registrovaniKorisnik, String activationToken);
+
+    boolean activateAccount(String token);
 
     RegistrovaniKorisnik proveriKorisnika(String email, String password);
 

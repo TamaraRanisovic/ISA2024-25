@@ -20,4 +20,6 @@ public interface RegistrovaniKorisnikRepository extends JpaRepository<Registrova
 
     Optional<RegistrovaniKorisnik> findByKorisnickoIme(String username);
 
+    Optional<RegistrovaniKorisnik> findByActivationToken(String activationToken);
+
 }

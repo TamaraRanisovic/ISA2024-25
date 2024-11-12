@@ -62,6 +62,8 @@ export default function NovaObjava() {
         });
     }
   }, [token]);
+
+  
   const handlePhotoChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {

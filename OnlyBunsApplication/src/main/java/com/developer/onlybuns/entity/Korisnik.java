@@ -49,6 +49,9 @@ public class Korisnik {
     @Column(name="uloga", nullable = false)
     private Uloga uloga;
 
+    @Column(name="activationToken")
+    private String activationToken;
+
     @Column(name="verifikacija", nullable = false)
     private boolean verifikacija;
 
@@ -86,12 +89,51 @@ public class Korisnik {
         this.verifikacija = verifikacija;
     }
 
+    public Korisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija) {
+        this.id = id;
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.ulica_broj = ulica_broj;
+        this.grad = grad;
+        this.drzava = drzava;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.activationToken = activationToken;
+        this.verifikacija = verifikacija;
+    }
+
+    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija) {
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.ulica_broj = ulica_broj;
+        this.grad = grad;
+        this.drzava = drzava;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.activationToken = activationToken;
+        this.verifikacija = verifikacija;
+    }
+
     public boolean isVerifikacija() {
         return verifikacija;
     }
 
     public void setVerifikacija(boolean verifikacija) {
         this.verifikacija = verifikacija;
+    }
+
+    public String getActivationToken() {
+        return activationToken;
+    }
+
+    public void setActivationToken(String activationToken) {
+        this.activationToken = activationToken;
     }
 
     public Uloga getUloga() {

@@ -2,15 +2,22 @@ package com.developer.onlybuns.controller;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/registrovaniKorisnik")
 public class RegistrovaniKorisnikController {
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
@@ -21,6 +28,40 @@ public class RegistrovaniKorisnikController {
     @GetMapping
     public List<RegistrovaniKorisnik> findAllRegistrovaniKorisnik() {
         return registrovaniKorisnikService.findAllRegistrovaniKorisnik();
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegistrovaniKorisnik registrovaniKorisnik) {
+        // Validate and save the user in an "inactive" state
+        String activationToken = UUID.randomUUID().toString();
+        registrovaniKorisnikService.register(registrovaniKorisnik, activationToken);
+
+        // Send activation email
+        sendActivationEmail(registrovaniKorisnik.getEmail(), activationToken);
+
+        return ResponseEntity.ok("Registration successful. Please check your email to activate your account.");
+    }
+
+
+    private void sendActivationEmail(String email, String token) {
+        String activationLink = "http://localhost:8080/registrovaniKorisnik/activate?token=" + token;
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Activate your account");
+        message.setText("Click the following link to activate your account: " + activationLink);
+
+        mailSender.send(message);
+    }
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateAccount(@RequestParam("token") String token) {
+        boolean isActivated = registrovaniKorisnikService.activateAccount(token);
+        if (isActivated) {
+            return ResponseEntity.ok("Account activated successfully. You can now log in.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid activation token.");
+        }
     }
 
     @GetMapping("/{id}")
@@ -39,8 +80,8 @@ public class RegistrovaniKorisnikController {
     }
 
     @PostMapping("/add")
-    public RegistrovaniKorisnik saveRegistrovaniKorisnik(@RequestBody RegistrovaniKorisnik employeeEntity) {
-        return registrovaniKorisnikService.saveRegistrovaniKorisnik(employeeEntity);
+    public RegistrovaniKorisnik saveRegistrovaniKorisnik(@RequestBody RegistrovaniKorisnik registrovaniKorisnik) {
+        return registrovaniKorisnikService.saveRegistrovaniKorisnik(registrovaniKorisnik);
     }
 
     @PostMapping("/login")
