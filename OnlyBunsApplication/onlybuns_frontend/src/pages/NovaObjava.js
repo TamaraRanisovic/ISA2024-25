@@ -62,51 +62,63 @@ export default function NovaObjava() {
         });
     }
   }, [token]);
-
   const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        console.log("Selected file:", file.name);
-        
-        formData.append('file', file);
-      setSlika(file.name);
-      fetch("http://localhost:8080/images/upload", {
-        method: "POST",
-        body: formData
-      }).then(() => {
-        console.log("Nova slika dodata");
-      });
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setSlika(selectedFile.name); // Set `slika` to the file name for reference
     }
   };
-  
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        
+
+  const handlePhotoUpload = async () => {
+    const formData = new FormData();
+    formData.append('file', file);
     
-        if (!korisnicko_ime || !opis || !g_sirina || !g_duzina || !slika) {
-            setErrorMessage('Enter valid data.');
-            return;
-          }
-        
-        setDatumObjave(new Date().toISOString());
+    try {
+      const response = await fetch("http://localhost:8080/images/upload", {
+        method: "POST",
+        body: formData
+      });
+      
+      if (response.ok) {
+        console.log("Photo uploaded successfully");
+      } else {
+        console.error("Photo upload failed");
+      }
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+    }
+  };
 
-      
-        const objava = { korisnicko_ime, g_sirina, opis, g_duzina, slika, datum_objave};
-        console.log(objava);
-      
-        setErrorMessage('');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     
-        fetch("http://localhost:8080/objava/add", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(objava)
-        }).then(() => {
-          console.log("Nova objava dodata");
-        });
+    if (!korisnicko_ime || !opis || !g_sirina || !g_duzina || !slika) {
+      setErrorMessage('Enter valid data.');
+      return;
+    }
 
-        
-        
+    setDatumObjave(new Date().toISOString());
+    const objava = { korisnicko_ime, g_sirina, opis, g_duzina, slika, datum_objave };
+    
+    try {
+      const response = await fetch("http://localhost:8080/objava/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(objava)
+      });
 
+      if (response.ok) {
+        console.log("New post created successfully");
+        
+        // Now, upload the photo after the objava is created
+        await handlePhotoUpload();
+      } else {
+        console.error("Failed to create post");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
+    }
   };
 
 
