@@ -5,6 +5,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +31,19 @@ public class ImageController {
             } else {
                 return ResponseEntity.notFound().build();
             }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+            String filename = file.getOriginalFilename();
+            Path filePath = Paths.get(basePath + filename);
+            Files.copy(file.getInputStream(), filePath);
+
+            return ResponseEntity.ok(filename);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

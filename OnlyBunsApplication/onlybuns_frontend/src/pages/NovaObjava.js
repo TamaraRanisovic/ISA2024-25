@@ -29,35 +29,55 @@ export default function NovaObjava() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
-
+  const formData = new FormData();
+  const [message, setMessage] = useState('');
+  const [file, setFile] = useState(null);
 
 
 
 
     
 
+  useEffect(() => {
+    if (token) {
+      // Send the token in the body of the POST request (not in the Authorization header)
+      fetch('http://localhost:8080/auth/decodeJwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Indicate that we're sending JSON data
+        },
+        body: token // Send the token in the request body
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Assuming the response contains 'email' and 'role' from the decoded token
+          if (data) {
+            setEmail(data.Email); // Set email from the response
+            setKorisnickoIme(data.Username); // Set email from the response
+            setRole(data.Role);   // Set role from the response
+          }
+        })
+        .catch(error => {
+          console.error('Error decoding JWT token:', error);
+        });
+    }
+  }, [token]);
 
-
-  fetch('http://localhost:8080/auth/decodeJwt', {
-    method: "POST",
-    headers: {
-        'Content-Type': 'application/json', // Indicate that we're sending JSON data
-      },
-    body: token
-  })
-    .then(response => response.json())
-    .then(data => {
-        // Assuming the response contains 'email' and 'role' from the decoded token
-        if (data) {
-        setEmail(data.Email); // Set email from the response
-        setKorisnickoIme(data.Username); // Set email from the response
-        setRole(data.Role);   // Set role from the response
-        }
-    })
-    .catch(error => {
-        console.error('Error decoding JWT token:', error);
-    });
-
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        console.log("Selected file:", file.name);
+        
+        formData.append('file', file);
+      setSlika(file.name);
+      fetch("http://localhost:8080/images/upload", {
+        method: "POST",
+        body: formData
+      }).then(() => {
+        console.log("Nova slika dodata");
+      });
+    }
+  };
   
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -83,7 +103,11 @@ export default function NovaObjava() {
         }).then(() => {
           console.log("Nova objava dodata");
         });
-      };
+
+        
+        
+
+  };
 
 
 
@@ -121,9 +145,9 @@ export default function NovaObjava() {
             </Button>
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
-            {token && username ? ( 
+            {token && korisnicko_ime ? ( 
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Welcome, {username}
+                Welcome, {korisnicko_ime}
               </Typography>
             ) : (
               <>
@@ -148,6 +172,10 @@ export default function NovaObjava() {
             <TextField fullWidth required label="Description" value={opis} onChange={(e) => setOpis(e.target.value)} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Longitude" value={g_sirina} onChange={(e) => setG_sirina(e.target.value)} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Latitude" value={g_duzina} onChange={(e) => setG_duzina(e.target.value)} sx={{ mb: 1.5 }} />
+            <div style={{ marginBottom: '15px' }}>
+                <label>Upload Photo:</label>
+                <input type="file" accept="image/*" onChange={handlePhotoChange} />
+            </div>
             <Button type="submit" sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 7 }} fullWidth variant="contained"  color="secondary">
               Publish
             </Button>
