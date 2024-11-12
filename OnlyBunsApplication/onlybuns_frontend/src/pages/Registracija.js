@@ -11,7 +11,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import { AppBar, Toolbar} from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
 const defaultTheme = createTheme();
 
@@ -35,6 +35,8 @@ export default function Registracija() {
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [uloga, setUloga] = useState('REGISTROVANI_KORISNIK');
+  const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState('');
 
   const validateBroj = (inputBroj) => {
     const brojRegex = /^\d{10}$/;
@@ -124,7 +126,7 @@ export default function Registracija() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      return data.includes(email);
+      return data.includes(korisnickoIme);
     } catch (error) {
       console.error("Error checking username:", error);
       return false;
@@ -169,8 +171,18 @@ export default function Registracija() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(korisnik)
-    }).then(() => {
-      console.log("Novi korisnik dodat");
+    }).then((response) => {
+      if (response.ok) {
+        console.log("Novi korisnik dodat");
+        setSuccessMessage("Registration successful! Activation link is sent to your email address. Redirecting to login...");
+  
+            setTimeout(() => {
+              setSuccessMessage('');
+              navigate('/prijava');
+            }, 15000);
+      } else {
+        console.log("Greska prilikom registracije.");
+      }
     });
   };
 
@@ -220,6 +232,11 @@ export default function Registracija() {
               Sign in
             </Button>
             {errorMessage && <Typography color="error" sx={{ mb: 3}} variant="body2" gutterBottom >{errorMessage}</Typography>}
+            {successMessage && (
+        <div style={{ color: 'green', marginTop: '7px',  mb: 3 }}>
+          {successMessage}
+        </div>
+      )}
           </Box>
         </Box>
       </Container>
