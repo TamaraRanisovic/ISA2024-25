@@ -5,11 +5,15 @@ import com.developer.onlybuns.dto.request.JwtUtil;
 import com.developer.onlybuns.dto.request.LoginDTO;
 import com.developer.onlybuns.entity.Korisnik;
 import com.developer.onlybuns.service.KorisnikService;
+import com.developer.onlybuns.service.RateLimiterService;
+import io.github.resilience4j.ratelimiter.RateLimiter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,27 +24,39 @@ import java.util.Map;
 public class AuthController {
 
 
+    @Autowired
+    private final RateLimiterService rateLimiterService;
 
+    @Autowired
     private final KorisnikService korisnikService;
 
-    public AuthController(KorisnikService korisnikService) {
+    public AuthController(RateLimiterService rateLimiterService, KorisnikService korisnikService) {
+        this.rateLimiterService = rateLimiterService;
         this.korisnikService = korisnikService;
     }
 
 
     @PostMapping("/login")
-    @RateLimiter(name = "standard", fallbackMethod = "rateLimitExceededFallback")
-    public ResponseEntity<?> loginKorisnik(@RequestBody LoginDTO loginDTO) {
-        Korisnik validCredentials = korisnikService.findByEmailAndPassword(loginDTO.getEmail(), loginDTO.getPassword());
+   // @RateLimiter(name = "standard", fallbackMethod = "rateLimitExceededFallback")
+    public ResponseEntity<?> login(@RequestParam  String email,@RequestParam String password,
+                                   @RequestParam String ipAddress) {
+        if (ipAddress == null) {
+            return ResponseEntity.status(401).body("{\"message\": \"No IP address found.\"}");
+        }
+        if (rateLimiterService.isRateLimited(ipAddress)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("{\"message\": \"Too many login attempts. Please try again later.\"}");
+        }
+
+        Korisnik validCredentials = korisnikService.findByEmailAndPassword(email, password);
         if (validCredentials != null) {
-            Korisnik korisnik = korisnikService.findByEmail(loginDTO.getEmail());
+            Korisnik korisnik = korisnikService.findByEmail(email);
 
             if (korisnik.isVerifikacija()) {
                 String username = korisnik.getKorisnickoIme();
                 String uloga = korisnik.getUloga().toString();
 
                 JwtUtil jwtUtil = new JwtUtil();
-                String token = jwtUtil.generateToken(loginDTO.getEmail(), username, uloga);
+                String token = jwtUtil.generateToken(email, username, uloga);
 
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token);
@@ -82,8 +98,24 @@ public class AuthController {
             return ResponseEntity.status(400).body("Error decoding JWT token");
         }
     }
-    public ResponseEntity<?> rateLimitExceededFallback(LoginDTO loginDTO, RequestNotPermitted exception) {
-        return ResponseEntity.status(429).body("{\"message\": \"Too many login attempts. Please try again later.\"}");
+    public ResponseEntity<?> rateLimitExceededFallback(
+            LoginDTO loginDTO,
+            String ipAddress,
+            Throwable throwable) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Too many login attempts");
+        errorResponse.put("message", "Too many login attempts. Please try again later.");
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
+    }
+
+    @GetMapping("/rate-limiters")
+    public ResponseEntity<Map<String, String>> listRateLimiters() {
+        Map<String, RateLimiter> limiters = rateLimiterService.listAllRateLimiters();
+        Map<String, String> result = new HashMap<>();
+        limiters.forEach((ip, limiter) -> {
+            result.put(ip, limiter.getMetrics().toString());
+        });
+        return ResponseEntity.ok(result);
     }
 }
 

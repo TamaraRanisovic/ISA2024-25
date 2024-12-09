@@ -1,5 +1,5 @@
 // Importuj potrebne biblioteke
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,37 +17,54 @@ const defaultTheme = createTheme();
 export default function Prijava() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [ipAddress, setIpAddress] = useState(null); // To store the IP address
   const navigate = useNavigate();
-  const [error, setError] = useState(''); // State to store error message
+
+  // Fetch the IP address from an external API
+  useEffect(() => {
+    fetch("https://api.ipify.org?format=json")
+      .then(response => response.json())
+      .then(data => {
+        console.log('Fetched IP:', data.ip); // Log fetched IP
+        setIpAddress(data.ip);
+      })
+      .catch(error => console.error('Error fetching IP:', error));
+  }, []);
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const korisnik = { email, password };
-    console.log(korisnik);
-
-    fetch("http://localhost:8080/auth/login", {
+  
+    // Use URLSearchParams to build the query string
+    const queryString = new URLSearchParams({
+      email: email,
+      password: password,
+      ipAddress: ipAddress, // Include the IP address as a query parameter
+    }).toString();
+  
+    fetch(`http://localhost:8080/auth/login?${queryString}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(korisnik),
+      headers: { "Content-Type": "application/json" }, // Content type doesn't change
     })
       .then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json();
           setError(errorData.message || `HTTP error! Status: ${response.status}`);
           throw new Error(`HTTP error! Status: ${response.status}`);
-        } 
+        }
         return response.json();
       })
       .then((data) => {
         console.log(data.message);
         localStorage.setItem("jwtToken", data.token);
-        navigate('/prijavljeniKorisnikPregled'); // Prosledi podatke kroz rutiranje
+        navigate('/prijavljeniKorisnikPregled'); // Redirect after successful login
       })
       .catch((error) => {
         console.error("Error logging in:", error);
       });
   };
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       {/* Navigation Bar */}
