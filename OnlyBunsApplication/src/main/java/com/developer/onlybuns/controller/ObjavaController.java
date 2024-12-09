@@ -33,8 +33,13 @@ public class ObjavaController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Objava> findById(@PathVariable("id") Integer id) {
-        return objavaService.findById(id);
+    public  ResponseEntity<ObjavaDTO> findById(@PathVariable("id") Integer id) {
+        ObjavaDTO objavaDTO = objavaService.findById(id);
+        if (objavaDTO != null) {
+            return ResponseEntity.ok(objavaDTO);
+        } else {
+            return (ResponseEntity<ObjavaDTO>) ResponseEntity.notFound();
+        }
     }
 
     @PostMapping("/add")

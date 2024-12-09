@@ -10,6 +10,8 @@ import AdminSistemPocetna from "./pages/AdminSistemPocetna";
 import AdminSistemView from "./pages/AdminSistemView";
 import RegistracijaAdminSistem from "./pages/RegistracijaAdminSistem";
 import NovaObjava from "./pages/NovaObjava";
+import ObjavaPrikaz from './pages/ObjavaPrikaz';
+import RabbitPostGrid from './pages/RabbitPostGrid';
 
 
 function App() {
@@ -27,7 +29,8 @@ function App() {
           <Route path="/adminSistemView" element={<AdminSistemView/>} />
           <Route path="/registracijaAdminSistem" element={<RegistracijaAdminSistem/>} />
           <Route path="/novaObjava" element={<NovaObjava/>} />
-
+          <Route path="/" element={<RabbitPostGrid />} />
+          <Route path="/objavaPrikaz/:postId" element={<ObjavaPrikaz />} />
         </Routes>
       </Router>
     </div>

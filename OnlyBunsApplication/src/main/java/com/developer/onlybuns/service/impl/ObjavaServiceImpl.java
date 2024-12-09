@@ -34,7 +34,7 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     public String getObjavaUsername(Integer id) {
-        Optional<Objava> objava = findById(id);
+        Optional<Objava> objava = getById(id);
         if (objava != null) {
             String username = objava.get().getRegistrovaniKorisnik().getKorisnickoIme();
             return username;
@@ -44,7 +44,7 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     public List<LajkDTO> getObjavaLajkoviDTO(Integer id){
-        Optional<Objava> objava = findById(id);
+        Optional<Objava> objava = getById(id);
         List<LajkDTO> lajkoviDTO = new ArrayList<LajkDTO>();
         if (objava != null) {
             List<Lajk> lajkovi = objava.get().getLajkovi();
@@ -59,7 +59,7 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     public List<KomentarDTO> getObjavaKomentariiDTO(Integer id){
-        Optional<Objava> objava = findById(id);
+        Optional<Objava> objava = getById(id);
         List<KomentarDTO> komentariDTO = new ArrayList<KomentarDTO>();
         if (objava != null) {
             List<Komentar> komentari = objava.get().getKomentari();
@@ -110,7 +110,27 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     @Override
-    public Optional<Objava> findById(Integer id) {
+    public ObjavaDTO findById(Integer id) {
+        Optional<Objava> objava = objavaRepository.findById(id);
+
+        if (objava != null) {
+            String korisnicko_ime = getObjavaUsername(id);
+            List<LajkDTO> lajkoviDTO = getObjavaLajkoviDTO(objava.get().getId());
+            List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.get().getId());
+            Integer broj_lajkova = lajkoviDTO.size();
+            Integer broj_komentara = komentariDTO.size();
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), objava.get().getG_sirina(), objava.get().getG_duzina(), objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            return objavaDTO;
+        } else {
+            return null;
+        }
+
+    }
+
+
+
+    @Override
+    public Optional<Objava> getById(Integer id) {
         return objavaRepository.findById(id);
     }
 
@@ -131,7 +151,7 @@ public class ObjavaServiceImpl implements ObjavaService {
 
     @Override
     public List<Lajk> getAllLajkovi(Integer id) {
-        Optional<Objava> objava = findById(id);
+        Optional<Objava> objava = getById(id);
         List<Lajk> lajkovi = new ArrayList<>();
         if (objava != null) {
             lajkovi = objava.get().getLajkovi();
@@ -143,7 +163,7 @@ public class ObjavaServiceImpl implements ObjavaService {
 
     @Override
     public List<Komentar> getAllKomentari(Integer id) {
-        Optional<Objava> objava = findById(id);
+        Optional<Objava> objava = getById(id);
         List<Komentar> komentari = new ArrayList<>();
         if (objava != null) {
             komentari = objava.get().getKomentari();

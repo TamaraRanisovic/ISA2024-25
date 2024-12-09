@@ -13,7 +13,9 @@ import java.util.Optional;
 public interface ObjavaService {
     List<ObjavaDTO> findAllObjavaDTO();
 
-    Optional<Objava> findById(Integer id);
+    ObjavaDTO findById(Integer id);
+
+    Optional<Objava> getById(Integer id);
 
     void saveObjava(Objava objava);
 

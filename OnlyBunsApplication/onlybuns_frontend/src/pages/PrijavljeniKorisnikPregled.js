@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
-import rabbit1 from './photos/onlybuns_logo.png';
-import rabbit2 from './photos/rabbit_hop.jpeg';
-import rabbit3 from 'C:\\Users\\Lenovo\\Documents\\GitHub\\ISA2024-25\\OnlyBunsApplication\\onlybuns_frontend\\src\\pages\\photos\\rabbit_carrot.jpg';
-import rabbit4 from './photos/rabbit_sun.jpeg';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid, Paper, IconButton } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -127,15 +123,20 @@ const PrijavljeniKorisnikPregled = () => {
       </AppBar>
       {/* Rabbit Post Cards */}
       <Grid container spacing={3} sx={{ mt: 4 }}>
-        {rabbitPosts.map((post, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+      {rabbitPosts.map((post, index) => (
+        <Grid item xs={12} sm={6} md={3} key={index}>
+          {/* Link to Detailed View */}
+          <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
-            <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
-              
+              <img
+                src={`http://localhost:8080/images/${post.slika}`}
+                alt={post.opis}
+                style={{ height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }}
+              />
+
               {/* Likes and Comments Row */}
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  
                   <IconButton sx={{ color: '#e91e63' }}>
                     <FavoriteIcon />
                   </IconButton>
@@ -162,11 +163,12 @@ const PrijavljeniKorisnikPregled = () => {
                   {post.opis}
                 </Typography>
               </Box>
-
             </Paper>
-          </Grid>
-        ))}
+          </Link>
+        </Grid>
+      ))}
     </Grid>
+        
 
     </div>
   );

@@ -16,6 +16,8 @@ public class RegistrovaniKorisnik extends Korisnik {
     @OneToMany(mappedBy = "registrovaniKorisnik", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Komentar> komentari;
 
+    //dodati List<Lajk> lajkovi
+
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pratioci> following;
 
