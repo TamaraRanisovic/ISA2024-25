@@ -2,6 +2,7 @@ package com.developer.onlybuns.controller;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import com.developer.onlybuns.service.UsernameValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -21,8 +22,11 @@ public class RegistrovaniKorisnikController {
 
     private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
-    public RegistrovaniKorisnikController(RegistrovaniKorisnikService registrovaniKorisnikService) {
+    private final UsernameValidationService usernameValidationService;
+
+    public RegistrovaniKorisnikController(RegistrovaniKorisnikService registrovaniKorisnikService, UsernameValidationService usernameValidationService) {
         this.registrovaniKorisnikService = registrovaniKorisnikService;
+        this.usernameValidationService = usernameValidationService;
     }
 
     @GetMapping
@@ -113,8 +117,23 @@ public class RegistrovaniKorisnikController {
 
     @GetMapping("/username")
     public ResponseEntity<List<String>> getAllUsernames() {
+
         List<String> usernames = registrovaniKorisnikService.getAllUsernames();
         return ResponseEntity.ok(usernames);
+    }
+
+
+    @GetMapping("/check-username")
+    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+        // First check in the Bloom Filter
+        usernameValidationService.loadUsernamesFromDatabase();
+
+        if (usernameValidationService.isUsernameValid(username)) {
+            // Double-check in the database for accuracy
+            return ResponseEntity.ok("{\"exists\": true, \"message\": \"Username is already taken.\"}");
+
+        }
+        return ResponseEntity.ok("{\"exists\": false, \"message\": \"Username is available.\"}");
     }
 
 /*    Using Request and Response with save and update employee

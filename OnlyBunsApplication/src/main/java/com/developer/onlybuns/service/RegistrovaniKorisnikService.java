@@ -28,9 +28,5 @@ public interface RegistrovaniKorisnikService {
 
     RegistrovaniKorisnik proveriKorisnika(String email, String password);
 
-/*    Using Request for Save and Update RegistrovaniKorisnik
-    RegistrovaniKorisnikResponse saveRegistrovaniKorisnik(RegistrovaniKorisnikRequest employeeRequest);
-    RegistrovaniKorisnikResponse updateRegistrovaniKorisnik(RegistrovaniKorisnikRequest employeeRequest, Integer id);
-
-*/
+    public boolean usernameExists(String username);
 }

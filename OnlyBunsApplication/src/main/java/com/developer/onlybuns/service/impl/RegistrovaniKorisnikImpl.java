@@ -90,6 +90,16 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         return registrovaniKorisnikRepository.findAllUsernames();
     }
 
+    @Override
+    public boolean usernameExists(String username) {
+        List<String> allUsernames = registrovaniKorisnikRepository.findAllUsernames();
+        if (allUsernames.contains(username)) {
+            return true;
+        }
+        return false;
+    }
+
+
 
     @Override
     public List<String> getAllFollowers(String username) {
@@ -128,26 +138,5 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         RegistrovaniKorisnik korisnik = registrovaniKorisnikRepository.findByEmailAndPassword(email, password);
         return korisnik;
     }
-/*   Using Request and Response with save and update registrovaniKorisnik
 
-    @Override
-    public RegistrovaniKorisnikResponse saveRegistrovaniKorisnik(RegistrovaniKorisnikRequest registrovaniKorisnikRequest) {
-        RegistrovaniKorisnik registrovaniKorisnikEntity = RegistrovaniKorisnikMapper.MAPPER.fromRequestToEntity(registrovaniKorisnikRequest);
-        registrovaniKorisnikRepository.save(registrovaniKorisnikEntity);
-        return RegistrovaniKorisnikMapper.MAPPER.fromEntityToResponse(registrovaniKorisnikEntity);
-    }
-
-    @Override
-    public RegistrovaniKorisnikResponse updateRegistrovaniKorisnik(RegistrovaniKorisnikRequest registrovaniKorisnikRequest, Integer id) {
-
-        Optional<RegistrovaniKorisnik> checkExistingRegistrovaniKorisnik = findById(id);
-        if (! checkExistingRegistrovaniKorisnik.isPresent())
-            throw new RuntimeException("RegistrovaniKorisnik Id "+ id + " Not Found!");
-
-        RegistrovaniKorisnik registrovaniKorisnikEntity = RegistrovaniKorisnikMapper.MAPPER.fromRequestToEntity(registrovaniKorisnikRequest);
-        registrovaniKorisnikEntity.setId(id);
-        registrovaniKorisnikRepository.save(registrovaniKorisnikEntity);
-        return RegistrovaniKorisnikMapper.MAPPER.fromEntityToResponse(registrovaniKorisnikEntity);
-    }
-*/
 }
