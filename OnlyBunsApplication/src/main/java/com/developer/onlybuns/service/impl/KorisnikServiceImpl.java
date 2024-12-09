@@ -4,10 +4,13 @@ package com.developer.onlybuns.service.impl;
 import com.developer.onlybuns.entity.Korisnik;
 import com.developer.onlybuns.service.KorisnikService;
 import com.developer.onlybuns.repository.KorisnikRepository;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class KorisnikServiceImpl implements KorisnikService {
@@ -36,4 +39,7 @@ public class KorisnikServiceImpl implements KorisnikService {
         String uloga = korisnik.getUloga().toString();
         return uloga;
     }
+
+
+
 }

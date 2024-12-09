@@ -5,6 +5,8 @@ import com.developer.onlybuns.dto.request.JwtUtil;
 import com.developer.onlybuns.dto.request.LoginDTO;
 import com.developer.onlybuns.entity.Korisnik;
 import com.developer.onlybuns.service.KorisnikService;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
+    @RateLimiter(name = "standard", fallbackMethod = "rateLimitExceededFallback")
     public ResponseEntity<?> loginKorisnik(@RequestBody LoginDTO loginDTO) {
         Korisnik validCredentials = korisnikService.findByEmailAndPassword(loginDTO.getEmail(), loginDTO.getPassword());
         if (validCredentials != null) {
@@ -78,6 +81,9 @@ public class AuthController {
             // Any other exception
             return ResponseEntity.status(400).body("Error decoding JWT token");
         }
+    }
+    public ResponseEntity<?> rateLimitExceededFallback(LoginDTO loginDTO, RequestNotPermitted exception) {
+        return ResponseEntity.status(429).body("{\"message\": \"Too many login attempts. Please try again later.\"}");
     }
 }
 
