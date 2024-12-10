@@ -157,11 +157,11 @@ public class RegistrovaniKorisnikController {
     }
 
     @GetMapping("/report")
-    public ResponseEntity<?> sevenDaysReport() {
+    public ResponseEntity<?> sevenDaysReport(@RequestParam String username, @RequestParam String lastLogin) {
         try {
-            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount("user1", LocalDateTime.parse("2024-12-07T16:00:00"));
-            int newCommentsCount = objavaService.countNewCommentsOnUserPosts("user1", LocalDateTime.parse("2024-12-07T10:00:00"));
-            int newLikesCount = objavaService.countNewLikesOnUserPosts("user1", LocalDateTime.parse("2024-12-07T16:19:00"));
+            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount(username, LocalDateTime.parse(lastLogin));
+            int newCommentsCount = objavaService.countNewCommentsOnUserPosts(username, LocalDateTime.parse(lastLogin));
+            int newLikesCount = objavaService.countNewLikesOnUserPosts(username, LocalDateTime.parse(lastLogin));
 
             SevenDaysReportDTO sevenDaysReportDTO = new SevenDaysReportDTO(newFollowersCount, newCommentsCount, newLikesCount);
             return ResponseEntity.ok(sevenDaysReportDTO);
