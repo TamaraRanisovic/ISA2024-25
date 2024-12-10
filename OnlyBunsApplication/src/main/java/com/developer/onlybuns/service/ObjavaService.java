@@ -7,6 +7,7 @@ import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,4 +32,7 @@ public interface ObjavaService {
 
     List<ObjavaDTO> findAllObjavaDTOByUser(String username);
 
+    public int countNewCommentsOnUserPosts(String username, LocalDateTime fromDate);
+
+    public int countNewLikesOnUserPosts(String username, LocalDateTime fromDate);
 }

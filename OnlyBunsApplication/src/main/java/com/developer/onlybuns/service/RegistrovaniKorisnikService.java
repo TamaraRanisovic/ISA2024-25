@@ -2,6 +2,7 @@ package com.developer.onlybuns.service;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,8 @@ public interface RegistrovaniKorisnikService {
     RegistrovaniKorisnik proveriKorisnika(String email, String password);
 
     public boolean usernameExists(String username);
+
+    public int getNewFollowersCount(Integer userId, LocalDateTime fromDate);
+
+    public int getNewLikesCount(Integer userId, LocalDateTime fromDate);
 }

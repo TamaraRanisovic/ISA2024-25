@@ -7,9 +7,11 @@ import com.developer.onlybuns.entity.Objava;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -83,6 +85,26 @@ public class ObjavaController {
     @GetMapping("/feed/{username}")
     public List<ObjavaDTO> findAllUserFollows(@PathVariable("username") String username) {
         return objavaService.findAllUserFollows(username);
+    }
+
+    @GetMapping("/count-newcomments")
+    public ResponseEntity<?> countNewFollowers() {
+        try {
+            int newFollowers = objavaService.countNewCommentsOnUserPosts("user1", LocalDateTime.parse("2024-12-07T10:00:00"));
+            return ResponseEntity.ok(newFollowers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/count-newlikes")
+    public ResponseEntity<?> countNewLikes() {
+        try {
+            int newLikes = objavaService.countNewLikesOnUserPosts("user1", LocalDateTime.parse("2024-12-07T16:19:00"));
+            return ResponseEntity.ok(newLikes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,5 +139,18 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         RegistrovaniKorisnik korisnik = registrovaniKorisnikRepository.findByEmailAndPassword(email, password);
         return korisnik;
     }
+
+    @Override
+    public int getNewFollowersCount(Integer userId, LocalDateTime fromDate) {
+        return registrovaniKorisnikRepository.countNewFollowers(userId, fromDate);
+    }
+
+    @Override
+    public int getNewLikesCount(Integer userId, LocalDateTime fromDate) {
+        return registrovaniKorisnikRepository.countNewLikes(userId, fromDate);
+    }
+
+
+
 
 }

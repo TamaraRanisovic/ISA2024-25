@@ -14,10 +14,12 @@ import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ObjavaServiceImpl implements ObjavaService {
@@ -49,7 +51,7 @@ public class ObjavaServiceImpl implements ObjavaService {
         if (objava != null) {
             List<Lajk> lajkovi = objava.get().getLajkovi();
             for (Lajk lajk : lajkovi) {
-                LajkDTO lajkDTO = new LajkDTO(lajk.getId(), lajk.getRegistrovaniKorisnik().getEmail(), lajk.getObjava().getId());
+                LajkDTO lajkDTO = new LajkDTO(lajk.getId(), lajk.getRegistrovaniKorisnik().getEmail(), lajk.getDatum_lajkovanja(), lajk.getObjava().getId());
                 lajkoviDTO.add(lajkDTO);
             }
             return lajkoviDTO;
@@ -107,6 +109,52 @@ public class ObjavaServiceImpl implements ObjavaService {
             }
         }
         return objaveDTO;
+    }
+
+    public int countNewCommentsOnUserPosts(String username, LocalDateTime fromDate) {
+        // Step 1: Get all posts of the user
+        List<ObjavaDTO> posts = findAllObjavaDTOByUser(username);
+
+        // Step 2: Get all comments on those posts
+        List<KomentarDTO> allComments = findCommentsOnPosts(posts);
+
+        // Step 3: Filter the comments to find ones that are created since 'fromDate' and by other users
+        List<KomentarDTO> newComments = allComments.stream()
+                .filter(c -> !c.getKorisnicko_ime().equals(username) &&
+                        c.getDatum_kreiranja().isAfter(fromDate))
+                .collect(Collectors.toList());
+
+        // Step 4: Return the count of those comments
+        return newComments.size();
+    }
+
+    public int countNewLikesOnUserPosts(String username, LocalDateTime fromDate) {
+        List<ObjavaDTO> posts = findAllObjavaDTOByUser(username);
+
+        List<LajkDTO> allLikes = findLikesOnPosts(posts);
+
+        List<LajkDTO> newLikes = allLikes.stream()
+                .filter(c -> !c.getKorisnicko_ime().equals(username) &&
+                        c.getDatum_lajkovanja().isAfter(fromDate))
+                .collect(Collectors.toList());
+
+        return newLikes.size();
+    }
+
+    public List<KomentarDTO> findCommentsOnPosts(List<ObjavaDTO> posts) {
+        List<KomentarDTO> komentarDTOS = new ArrayList<KomentarDTO>();
+        for (ObjavaDTO objavaDTO : posts) {
+            komentarDTOS.addAll(objavaDTO.getKomentari());
+        }
+        return  komentarDTOS;
+    }
+
+    public List<LajkDTO> findLikesOnPosts(List<ObjavaDTO> posts) {
+        List<LajkDTO> lajkDTOS = new ArrayList<LajkDTO>();
+        for (ObjavaDTO objavaDTO : posts) {
+            lajkDTOS.addAll(objavaDTO.getLajkovi());
+        }
+        return  lajkDTOS;
     }
 
     @Override

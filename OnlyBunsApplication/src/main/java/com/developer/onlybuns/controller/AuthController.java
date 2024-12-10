@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +38,6 @@ public class AuthController {
 
 
     @PostMapping("/login")
-   // @RateLimiter(name = "standard", fallbackMethod = "rateLimitExceededFallback")
     public ResponseEntity<?> login(@RequestParam  String email,@RequestParam String password,
                                    @RequestParam String ipAddress) {
         if (ipAddress == null) {
@@ -60,6 +60,8 @@ public class AuthController {
 
                 Map<String, String> response = new HashMap<>();
                 response.put("token", token);
+
+                korisnikService.updateLastLogin(email, LocalDateTime.now());
                 return ResponseEntity.ok(response);
             } else {
                 return ResponseEntity.status(401).body("{\"message\": \"Please activate your account.\"}");

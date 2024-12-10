@@ -20,20 +20,24 @@ public class Lajk {
     @JoinColumn(name = "objava_id", nullable = false)
     private Objava objava;
 
+    @Column(name="datum_lajkovanja", nullable=false)
+    private LocalDateTime datum_lajkovanja;
 
     public Lajk() {
 
     }
 
-    public Lajk(Integer id, RegistrovaniKorisnik registrovaniKorisnik, Objava objava) {
+    public Lajk(Integer id, RegistrovaniKorisnik registrovaniKorisnik, Objava objava, LocalDateTime datum_lajkovanja) {
         this.id = id;
         this.registrovaniKorisnik = registrovaniKorisnik;
         this.objava = objava;
+        this.datum_lajkovanja = datum_lajkovanja;
     }
 
-    public Lajk(RegistrovaniKorisnik registrovaniKorisnik, Objava objava) {
+    public Lajk(RegistrovaniKorisnik registrovaniKorisnik, Objava objava, LocalDateTime datum_lajkovanja) {
         this.registrovaniKorisnik = registrovaniKorisnik;
         this.objava = objava;
+        this.datum_lajkovanja = datum_lajkovanja;
     }
 
     public Integer getId() {
@@ -58,5 +62,13 @@ public class Lajk {
 
     public void setObjava(Objava objava) {
         this.objava = objava;
+    }
+
+    public LocalDateTime getDatum_lajkovanja() {
+        return datum_lajkovanja;
+    }
+
+    public void setDatum_lajkovanja(LocalDateTime datum_lajkovanja) {
+        this.datum_lajkovanja = datum_lajkovanja;
     }
 }

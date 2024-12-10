@@ -8,6 +8,7 @@ import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,13 @@ public class KorisnikServiceImpl implements KorisnikService {
         Korisnik korisnik = findByEmail(email);
         String uloga = korisnik.getUloga().toString();
         return uloga;
+    }
+
+    @Override
+    public void updateLastLogin(String email, LocalDateTime lastLogin) {
+        Korisnik korisnik = findByEmail(email);
+        korisnik.setLast_login(lastLogin);
+        korisnikRepository.save(korisnik);
     }
 
 

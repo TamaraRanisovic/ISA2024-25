@@ -1,14 +1,19 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import com.developer.onlybuns.service.UsernameValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 
@@ -22,11 +27,14 @@ public class RegistrovaniKorisnikController {
 
     private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
+    private final ObjavaService objavaService;
+
     private final UsernameValidationService usernameValidationService;
 
-    public RegistrovaniKorisnikController(RegistrovaniKorisnikService registrovaniKorisnikService, UsernameValidationService usernameValidationService) {
+    public RegistrovaniKorisnikController(RegistrovaniKorisnikService registrovaniKorisnikService, ObjavaService objavaService, UsernameValidationService usernameValidationService) {
         this.registrovaniKorisnikService = registrovaniKorisnikService;
         this.usernameValidationService = usernameValidationService;
+        this.objavaService = objavaService;
     }
 
     @GetMapping
@@ -138,17 +146,30 @@ public class RegistrovaniKorisnikController {
         return ResponseEntity.ok(exists);
     }
 
-
-/*    Using Request and Response with save and update employee
-
-    @PostMapping("/res")
-    public RegistrovaniKorisnikResponse saveEmpResponse(@RequestBody RegistrovaniKorisnikRequest employeeRequest) {
-        return registrovaniKorisnikService.saveRegistrovaniKorisnik(employeeRequest);
+    @GetMapping("/count-new")
+    public ResponseEntity<?> countNewFollowers() {
+        try {
+            int newFollowers = registrovaniKorisnikService.getNewFollowersCount(1, LocalDateTime.parse("2024-12-07T16:00:00"));
+            return ResponseEntity.ok(newFollowers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
     }
 
-    @PutMapping("/res/{id}")
-    public RegistrovaniKorisnikResponse updateEmpResponse(@RequestBody RegistrovaniKorisnikRequest employeeRequest, @PathVariable("id") Long id) {
-        return registrovaniKorisnikService.updateRegistrovaniKorisnik(employeeRequest, id);
+    @GetMapping("/report")
+    public ResponseEntity<?> sevenDaysReport() {
+        try {
+            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount(1, LocalDateTime.parse("2024-12-07T16:00:00"));
+            int newCommentsCount = objavaService.countNewCommentsOnUserPosts("user1", LocalDateTime.parse("2024-12-07T10:00:00"));
+            int newLikesCount = objavaService.countNewLikesOnUserPosts("user1", LocalDateTime.parse("2024-12-07T16:19:00"));
+
+            SevenDaysReportDTO sevenDaysReportDTO = new SevenDaysReportDTO(newFollowersCount, newCommentsCount, newLikesCount);
+            return ResponseEntity.ok(sevenDaysReportDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
     }
-*/
+
+
+
 }

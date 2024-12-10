@@ -6,6 +6,8 @@ import com.developer.onlybuns.enums.Uloga;
 
 import javax.persistence.*;
 
+import java.time.LocalDateTime;
+
 import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
 
 @Entity
@@ -55,6 +57,8 @@ public class Korisnik {
     @Column(name="verifikacija", nullable = false)
     private boolean verifikacija;
 
+    @Column(name="last_login", nullable=true)
+    private LocalDateTime last_login;
 
 
     public Korisnik() {
@@ -118,6 +122,22 @@ public class Korisnik {
         this.uloga = uloga;
         this.activationToken = activationToken;
         this.verifikacija = verifikacija;
+    }
+
+    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login) {
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.ulica_broj = ulica_broj;
+        this.grad = grad;
+        this.drzava = drzava;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.activationToken = activationToken;
+        this.verifikacija = verifikacija;
+        this.last_login = last_login;
     }
 
     public boolean isVerifikacija() {
@@ -221,5 +241,13 @@ public class Korisnik {
 
     public void setUlica_broj(String ulica_broj) {
         this.ulica_broj = ulica_broj;
+    }
+
+    public LocalDateTime getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(LocalDateTime last_login) {
+        this.last_login = last_login;
     }
 }
