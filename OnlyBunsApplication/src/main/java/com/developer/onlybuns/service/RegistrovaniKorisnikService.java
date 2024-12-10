@@ -31,7 +31,6 @@ public interface RegistrovaniKorisnikService {
 
     public boolean usernameExists(String username);
 
-    public int getNewFollowersCount(Integer userId, LocalDateTime fromDate);
+    public int getNewFollowersCount(String username, LocalDateTime fromDate);
 
-    public int getNewLikesCount(Integer userId, LocalDateTime fromDate);
 }

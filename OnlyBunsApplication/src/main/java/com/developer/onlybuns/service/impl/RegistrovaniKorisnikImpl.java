@@ -141,14 +141,10 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
     }
 
     @Override
-    public int getNewFollowersCount(Integer userId, LocalDateTime fromDate) {
-        return registrovaniKorisnikRepository.countNewFollowers(userId, fromDate);
+    public int getNewFollowersCount(String username, LocalDateTime fromDate) {
+        return registrovaniKorisnikRepository.countNewFollowers(username, fromDate);
     }
 
-    @Override
-    public int getNewLikesCount(Integer userId, LocalDateTime fromDate) {
-        return registrovaniKorisnikRepository.countNewLikes(userId, fromDate);
-    }
 
 
 

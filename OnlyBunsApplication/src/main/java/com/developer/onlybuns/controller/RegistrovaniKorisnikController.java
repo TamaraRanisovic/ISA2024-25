@@ -149,7 +149,7 @@ public class RegistrovaniKorisnikController {
     @GetMapping("/count-new")
     public ResponseEntity<?> countNewFollowers() {
         try {
-            int newFollowers = registrovaniKorisnikService.getNewFollowersCount(1, LocalDateTime.parse("2024-12-07T16:00:00"));
+            int newFollowers = registrovaniKorisnikService.getNewFollowersCount("user1", LocalDateTime.parse("2024-12-07T16:00:00"));
             return ResponseEntity.ok(newFollowers);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
@@ -159,7 +159,7 @@ public class RegistrovaniKorisnikController {
     @GetMapping("/report")
     public ResponseEntity<?> sevenDaysReport() {
         try {
-            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount(1, LocalDateTime.parse("2024-12-07T16:00:00"));
+            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount("user1", LocalDateTime.parse("2024-12-07T16:00:00"));
             int newCommentsCount = objavaService.countNewCommentsOnUserPosts("user1", LocalDateTime.parse("2024-12-07T10:00:00"));
             int newLikesCount = objavaService.countNewLikesOnUserPosts("user1", LocalDateTime.parse("2024-12-07T16:19:00"));
 

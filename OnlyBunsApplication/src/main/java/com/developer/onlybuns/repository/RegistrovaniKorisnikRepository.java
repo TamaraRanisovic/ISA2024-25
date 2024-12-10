@@ -24,12 +24,8 @@ public interface RegistrovaniKorisnikRepository extends JpaRepository<Registrova
 
     Optional<RegistrovaniKorisnik> findByActivationToken(String activationToken);
 
-    @Query("SELECT COUNT(*) FROM Pratioci f WHERE f.followed.id = :userId AND f.datum_pracenja > :fromDate")
-    int countNewFollowers(@Param("userId") Integer userId, @Param("fromDate") LocalDateTime fromDate);
-
-    @Query("SELECT COUNT(*) FROM Lajk l WHERE l.registrovaniKorisnik.id = :userId AND l.datum_lajkovanja >= :fromDate")
-    int countNewLikes(@Param("userId") Integer userId, @Param("fromDate") LocalDateTime fromDate);
-
+    @Query("SELECT COUNT(*) FROM Pratioci f WHERE f.followed.korisnickoIme = :username AND f.datum_pracenja > :fromDate")
+    int countNewFollowers(@Param("username") String username, @Param("fromDate") LocalDateTime fromDate);
 
 }
 
