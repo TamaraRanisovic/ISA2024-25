@@ -27,12 +27,9 @@ public class ObjavaServiceImpl implements ObjavaService {
     private final ObjavaRepository objavaRepository;
 
 
-    private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
-
-    public ObjavaServiceImpl(ObjavaRepository objavaRepository, RegistrovaniKorisnikService registrovaniKorisnikService) {
+    public ObjavaServiceImpl(ObjavaRepository objavaRepository) {
         this.objavaRepository = objavaRepository;
-        this.registrovaniKorisnikService = registrovaniKorisnikService;
     }
 
     public String getObjavaUsername(Integer id) {
@@ -221,22 +218,6 @@ public class ObjavaServiceImpl implements ObjavaService {
         }
     }
 
-    @Override
-    public List<ObjavaDTO> findAllUserFollows(String username) {
-        List<ObjavaDTO> objave = new ArrayList<ObjavaDTO>();
-        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
-        if (registrovaniKorisnik != null) {
-            List<String> following = registrovaniKorisnikService.getAllFollowing(username);
-            for (String user : following) {
-                List<ObjavaDTO> korisnikObjave = findAllObjavaDTOByUser(user);
-                objave.addAll(korisnikObjave);
-            }
-            objave.sort(Comparator.comparing(ObjavaDTO::getDatum_objave).reversed());
 
-            return objave;
-        } else {
-            return objave;
-        }
-    }
 
 }

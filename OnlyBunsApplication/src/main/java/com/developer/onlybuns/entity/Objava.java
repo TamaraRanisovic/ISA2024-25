@@ -1,5 +1,8 @@
 package com.developer.onlybuns.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +35,12 @@ public class Objava {
     @JoinColumn(name = "korisnik_id", nullable = false)
     private RegistrovaniKorisnik registrovaniKorisnik;
 
-    @OneToMany(mappedBy = "objava", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "objava", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Komentar> komentari;
 
-    @OneToMany(mappedBy = "objava", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "objava", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Lajk> lajkovi;
 
     public Objava() {

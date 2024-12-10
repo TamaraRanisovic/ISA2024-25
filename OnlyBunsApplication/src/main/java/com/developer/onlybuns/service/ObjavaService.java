@@ -28,7 +28,6 @@ public interface ObjavaService {
 
     List<Komentar> getAllKomentari(Integer id);
 
-    List<ObjavaDTO> findAllUserFollows(String username);
 
     List<ObjavaDTO> findAllObjavaDTOByUser(String username);
 

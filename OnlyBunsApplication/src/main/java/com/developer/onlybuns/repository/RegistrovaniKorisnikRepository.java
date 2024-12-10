@@ -27,6 +27,9 @@ public interface RegistrovaniKorisnikRepository extends JpaRepository<Registrova
     @Query("SELECT COUNT(*) FROM Pratioci f WHERE f.followed.korisnickoIme = :username AND f.datum_pracenja > :fromDate")
     int countNewFollowers(@Param("username") String username, @Param("fromDate") LocalDateTime fromDate);
 
+    @Query("SELECT korisnickoIme FROM RegistrovaniKorisnik r WHERE r.last_login < :fromDate")
+    List<String> findInactiveUsers(@Param("fromDate") LocalDateTime fromDate);
+
 }
 
 

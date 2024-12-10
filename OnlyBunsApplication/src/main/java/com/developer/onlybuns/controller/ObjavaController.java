@@ -84,7 +84,7 @@ public class ObjavaController {
 
     @GetMapping("/feed/{username}")
     public List<ObjavaDTO> findAllUserFollows(@PathVariable("username") String username) {
-        return objavaService.findAllUserFollows(username);
+        return registrovaniKorisnikService.findAllUserFollows(username);
     }
 
     @GetMapping("/count-newcomments")

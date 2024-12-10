@@ -1,4 +1,6 @@
 package com.developer.onlybuns.service;
+import com.developer.onlybuns.dto.request.ObjavaDTO;
+import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 
@@ -33,5 +35,13 @@ public interface RegistrovaniKorisnikService {
 
     public int getNewFollowersCount(String username, LocalDateTime fromDate);
 
+    public SevenDaysReportDTO generateSevenDaysReport(String username, LocalDateTime lastLogin);
 
+    public List<String> findInactiveUsers(LocalDateTime fromDate);
+
+    List<ObjavaDTO> findAllUserFollows(String username);
+
+    void sendNotificationsToInactiveUsers();
+
+    void sendSevenDaysReportEmail(String email, String username, SevenDaysReportDTO sevenDaysReportDTO);
 }
