@@ -33,4 +33,5 @@ public interface RegistrovaniKorisnikService {
 
     public int getNewFollowersCount(String username, LocalDateTime fromDate);
 
+
 }

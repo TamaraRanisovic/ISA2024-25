@@ -66,6 +66,41 @@ public class RegistrovaniKorisnikController {
         mailSender.send(message);
     }
 
+
+    @GetMapping("/send-report")
+    public ResponseEntity<?> sendReportEmail(@RequestParam String username) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
+        if (registrovaniKorisnik != null) {
+            SevenDaysReportDTO sevenDaysReportDTO = generateSevenDaysReport(username, registrovaniKorisnik.get().getLast_login().toString());
+            sendSevenDaysReportEmail(registrovaniKorisnik.get().getEmail(), registrovaniKorisnik.get().getKorisnickoIme(), sevenDaysReportDTO);
+            return ResponseEntity.ok("Report successfully sent.");
+        }
+        return ResponseEntity.badRequest().body("User doesn't exist.");
+
+
+    }
+
+    private void sendSevenDaysReportEmail(String email, String username, SevenDaysReportDTO sevenDaysReportDTO) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ranisovic.in1.2020@uns.ac.rs");
+        message.setTo(email);
+        message.setSubject("Your OnlyBunsApp Activity Report");
+        message.setText("Dear " + username + "," +
+                "\n" +
+                "We noticed you haven't been active on OnlyBunsApp for a while, and we wanted to share a quick summary of what you've missed since your last visit:\n" +
+                "\n" +
+                "New Followers:" + sevenDaysReportDTO.getNewFollowersCount() +
+                "\nNew Likes on Your Posts:" + sevenDaysReportDTO.getNewLikesCount() +
+                "\nNew Comments on Your Posts:" + sevenDaysReportDTO.getNewCommentsCount() +
+                "\n\nYour community is engaging with your content, and we’d love to see you back! Log in now to connect with your followers and check out the latest updates.\n" +
+                "\n" +
+                "We hope to see you soon!\n" +
+                "\n" +
+                "Warm regards,\n" +
+                "The OnlyBunsApp Team");
+        mailSender.send(message);
+    }
+
     @GetMapping("/activate")
     public ResponseEntity<String> activateAccount(@RequestParam("token") String token) {
         boolean isActivated = registrovaniKorisnikService.activateAccount(token);
@@ -167,6 +202,19 @@ public class RegistrovaniKorisnikController {
             return ResponseEntity.ok(sevenDaysReportDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
+        }
+    }
+
+    public SevenDaysReportDTO generateSevenDaysReport(String username, String lastLogin) {
+        try {
+            int newFollowersCount = registrovaniKorisnikService.getNewFollowersCount(username, LocalDateTime.parse(lastLogin));
+            int newCommentsCount = objavaService.countNewCommentsOnUserPosts(username, LocalDateTime.parse(lastLogin));
+            int newLikesCount = objavaService.countNewLikesOnUserPosts(username, LocalDateTime.parse(lastLogin));
+
+            SevenDaysReportDTO sevenDaysReportDTO = new SevenDaysReportDTO(newFollowersCount, newCommentsCount, newLikesCount);
+            return sevenDaysReportDTO;
+        } catch (Exception e) {
+            return null;
         }
     }
 

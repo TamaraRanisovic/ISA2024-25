@@ -1,5 +1,6 @@
 package com.developer.onlybuns.service.impl;
 
+import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.enums.Uloga;
