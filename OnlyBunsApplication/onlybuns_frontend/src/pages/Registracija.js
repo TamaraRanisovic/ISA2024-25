@@ -119,19 +119,27 @@ export default function Registracija() {
     }
   };
 
+
   const checkUsernameExists = async () => {
     try {
-      const response = await fetch("http://localhost:8080/registrovaniKorisnik/username");
+      const response = await fetch(`http://localhost:8080/registrovaniKorisnik/check-username?username=${korisnickoIme}`);
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        console.error("Network response was not ok");
+        return false; // Assume the username doesn't exist in case of network errors
       }
+  
       const data = await response.json();
-      return data.includes(korisnickoIme);
+  
+      // Check if the username exists based on the response
+
+      //const exist = ;
+      return data.includes("true"); // Username doesn't exist, return message
     } catch (error) {
       console.error("Error checking username:", error);
       return false;
     }
   };
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();

@@ -124,17 +124,20 @@ public class RegistrovaniKorisnikController {
 
 
     @GetMapping("/check-username")
-    public ResponseEntity<?> checkUsername(@RequestParam String username) {
+    public ResponseEntity<List<String>> checkUsername(@RequestParam String username) {
         // First check in the Bloom Filter
         usernameValidationService.loadUsernamesFromDatabase();
+        List<String> exists = new ArrayList<String>();
 
         if (usernameValidationService.isUsernameValid(username)) {
-            // Double-check in the database for accuracy
-            return ResponseEntity.ok("{\"exists\": true, \"message\": \"Username is already taken.\"}");
-
+            exists.add("true");
+            // Username exists, return true for existence
+            return ResponseEntity.ok(exists);
         }
-        return ResponseEntity.ok("{\"exists\": false, \"message\": \"Username is available.\"}");
+        exists.add("false");
+        return ResponseEntity.ok(exists);
     }
+
 
 /*    Using Request and Response with save and update employee
 
