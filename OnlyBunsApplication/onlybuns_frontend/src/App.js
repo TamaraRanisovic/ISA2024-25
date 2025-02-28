@@ -12,6 +12,7 @@ import RegistracijaAdminSistem from "./pages/RegistracijaAdminSistem";
 import NovaObjava from "./pages/NovaObjava";
 import ObjavaPrikaz from './pages/ObjavaPrikaz';
 import RabbitPostGrid from './pages/RabbitPostGrid';
+import ProfilKorisnika from './pages/ProfilKorisnika';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/novaObjava" element={<NovaObjava/>} />
           <Route path="/" element={<RabbitPostGrid />} />
           <Route path="/objavaPrikaz/:postId" element={<ObjavaPrikaz />} />
+          <Route path="/profilKorisnika/:username" element={<ProfilKorisnika />} />
         </Routes>
       </Router>
     </div>

@@ -1,6 +1,7 @@
 package com.developer.onlybuns.service.impl;
 
 import com.developer.onlybuns.dto.request.ObjavaDTO;
+import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
@@ -238,6 +239,18 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
                 sendSevenDaysReportEmail(registrovaniKorisnik.get().getEmail(), registrovaniKorisnik.get().getKorisnickoIme(), report);
             }
         }
+    }
+    @Override
+    public RegistrovaniKorisnikDTO getKorisnikDTOByUsername(String username) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = findByUsername(username);
+        if (registrovaniKorisnik != null) {
+            Integer num_followers = getAllFollowers(username).size();
+            Integer num_following = getAllFollowing(username).size();
+            Integer num_posts = objavaService.findAllObjavaDTOByUser(username).size();
+            RegistrovaniKorisnikDTO registrovaniKorisnikDTO = new RegistrovaniKorisnikDTO(username, num_followers, num_following, num_posts);
+            return registrovaniKorisnikDTO;
+        }
+        return null;
     }
 
 

@@ -65,6 +65,7 @@ export default function HomePage() {
         <Grid container spacing={3} sx={{ mt: 4 }}>
         {rabbitPosts.map((post, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
+            <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
             <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
               
@@ -91,15 +92,18 @@ export default function HomePage() {
 
               {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {post.korisnicko_ime}
-                </Typography>
+                <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: 'none' }}>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    {post.korisnicko_ime}
+                  </Typography>
+                </Link>
                 <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
                   {post.opis}
                 </Typography>
               </Box>
 
             </Paper>
+            </Link>
           </Grid>
         ))}
     </Grid>

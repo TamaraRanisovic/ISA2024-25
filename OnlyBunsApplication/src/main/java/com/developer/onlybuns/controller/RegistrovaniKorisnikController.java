@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
@@ -42,6 +43,7 @@ public class RegistrovaniKorisnikController {
     public List<RegistrovaniKorisnik> findAllRegistrovaniKorisnik() {
         return registrovaniKorisnikService.findAllRegistrovaniKorisnik();
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrovaniKorisnik registrovaniKorisnik) {
@@ -96,6 +98,11 @@ public class RegistrovaniKorisnikController {
     @GetMapping("/{id}")
     public Optional<RegistrovaniKorisnik> findRegistrovaniKorisnikById(@PathVariable("id") Integer id) {
         return registrovaniKorisnikService.findById(id);
+    }
+
+    @GetMapping("/username/{username}")
+    public RegistrovaniKorisnikDTO getKorisnikDTOByUsername(@PathVariable("username") String username) {
+        return registrovaniKorisnikService.getKorisnikDTOByUsername(username);
     }
 
     @GetMapping("/followers/{username}")

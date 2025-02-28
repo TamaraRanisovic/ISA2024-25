@@ -1,5 +1,6 @@
 package com.developer.onlybuns.service;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
+import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
@@ -11,6 +12,9 @@ import java.util.Optional;
 public interface RegistrovaniKorisnikService {
     List<RegistrovaniKorisnik> findAllRegistrovaniKorisnik();
     Optional<RegistrovaniKorisnik> findById(Integer id);
+
+    RegistrovaniKorisnikDTO getKorisnikDTOByUsername(String username);
+
 
     Optional<RegistrovaniKorisnik> findByUsername(String username);
 
