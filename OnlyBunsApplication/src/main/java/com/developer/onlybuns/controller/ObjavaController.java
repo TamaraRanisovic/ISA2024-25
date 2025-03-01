@@ -34,6 +34,11 @@ public class ObjavaController {
         return objavaService.findAllObjavaDTO();
     }
 
+    @GetMapping("/user/{username}")
+    public List<ObjavaDTO> findAllObjavaDTOByUser(@PathVariable("username") String username) {
+        return objavaService.findAllObjavaDTOByUser(username);
+    }
+
     @GetMapping("/{id}")
     public  ResponseEntity<ObjavaDTO> findById(@PathVariable("id") Integer id) {
         ObjavaDTO objavaDTO = objavaService.findById(id);

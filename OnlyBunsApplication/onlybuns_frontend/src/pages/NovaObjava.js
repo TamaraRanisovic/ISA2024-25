@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,7 +14,6 @@ import { AppBar, Toolbar} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import L from 'leaflet';
 
 
 const defaultTheme = createTheme();
@@ -39,7 +38,7 @@ export default function NovaObjava() {
   const [selectedPosition, setSelectedPosition] = useState(null);
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState('');
-
+  const isMounted = useRef(true);
 
 
 
@@ -113,6 +112,14 @@ export default function NovaObjava() {
     ) : null;
   };
 
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     
@@ -141,9 +148,11 @@ export default function NovaObjava() {
         setSuccessMessage("New post created successfully. Redirecting to feed...");
   
         setTimeout(() => {
-          setSuccessMessage('');
-          navigate('/prijavljeniKorisnikPregled');
-          }, 15000);
+          if (isMounted.current) {
+            setSuccessMessage("");
+            navigate("/prijavljeniKorisnikPregled");
+          }
+        }, 15000);
       } else {
         console.error("Failed to create post");
       }

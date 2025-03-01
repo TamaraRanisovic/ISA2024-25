@@ -2,7 +2,6 @@ import React from 'react';
 import { AppBar, Toolbar, Avatar, Typography, Button, Box, Grid, Paper, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
-import avatarlogo from './photos/avatar.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useEffect, useState } from 'react';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -12,7 +11,6 @@ export default function ProfilKorisnika() {
   const { username } = useParams();
   const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
   const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
 
 
 
@@ -25,7 +23,7 @@ export default function ProfilKorisnika() {
       .catch(error => console.error('Error fetching user:', error));
 
     // Fetch user posts
-    fetch('http://localhost:8080/objava', {
+    fetch(`http://localhost:8080/objava/user/${username}`, {
       headers: {
         //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
         'Content-Type': 'application/json',
@@ -84,7 +82,7 @@ export default function ProfilKorisnika() {
   }}
 >
   <Avatar
-  src={avatarlogo}
+  src={logo}
   alt={user.korisnickoIme || 'User'}
     sx={{ width: 80, height: 80, margin: 'auto', border: '3px solid #b4a7d6' }} // Reduced avatar size
   />
@@ -114,6 +112,7 @@ export default function ProfilKorisnika() {
   <Button
     variant="contained"
     color="secondary"
+    component={Link} to="/prijava"
     sx={{ mt: 2, padding: '6px 14px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 'bold' }} // Smaller button size
   >
     Follow
@@ -121,58 +120,54 @@ export default function ProfilKorisnika() {
 </Paper>
 
 
-        {/* Posts Section */}
-        <Box sx={{ width: '100%', maxWidth: 900, mt: 5 }}>
 
-          <Grid container spacing={3} justifyContent="center">
-            {rabbitPosts.map((post, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <Paper
-                  elevation={6}
-                  sx={{
-                    padding: 2,
-                    borderRadius: '12px',
-                    textAlign: 'center',
-                    boxShadow: '0 8px 16px rgba(0, 0, 0, 0.1)',
-                  }}
-                >
-                  <img
-                    src={`http://localhost:8080/images/${post.slika}`}
-                    alt={post.opis}
-                    style={{
-                      height: '200px',
-                      width: '100%',
-                      objectFit: 'cover',
-                      borderRadius: '8px',
-                      marginBottom: '10px',
-                    }}
-                  />
+          {/* Rabbit Post Cards */}
+        <Grid container spacing={3} sx={{ mt: 0 }}>
+        {rabbitPosts.map((post, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
+            <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
+            <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
+              
+              {/* Likes and Comments Row */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  
+                  <IconButton sx={{ color: '#e91e63' }}>
+                    <FavoriteIcon />
+                  </IconButton>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {post.broj_lajkova}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <IconButton color="secondary">
+                    <ChatBubbleOutlineIcon />
+                  </IconButton>
+                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                    {post.broj_komentara}
+                  </Typography>
+                </Box>
+              </Box>
 
-                  {/* Likes & Comments */}
-                  <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.5, alignItems: 'center', mb: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <IconButton sx={{ color: '#e91e63' }}>
-                        <FavoriteIcon />
-                      </IconButton>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{post.broj_lajkova}</Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <IconButton color="secondary">
-                        <ChatBubbleOutlineIcon />
-                      </IconButton>
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{post.broj_komentara}</Typography>
-                    </Box>
-                  </Box>
+              {/* Description Row */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: 'none' }}>
+                  <Typography sx={{ fontWeight: 'bold' }}>
+                    {post.korisnicko_ime}
+                  </Typography>
+                </Link>
+                <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+                  {post.opis}
+                </Typography>
+              </Box>
 
-                  {/* Description */}
-                  <Typography sx={{ fontWeight: 'bold', color: '#333' }}>{post.korisnicko_ime}</Typography>
-                  <Typography variant="body2" sx={{ color: 'gray', fontStyle: 'italic' }}>{post.opis}</Typography>
-                </Paper>
-              </Grid>
-            ))}
+            </Paper>
+            </Link>
+          </Grid>
+        ))}
           </Grid>
         </Box>
-      </Box>
 
     </div>
   );
