@@ -52,7 +52,13 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         return registrovaniKorisnikRepository.findByKorisnickoIme(username);
     }
 
+    @Transactional
     public void register(RegistrovaniKorisnik registrovaniKorisnik, String activationToken) {
+        try {
+            Thread.sleep(5000); // Simulate slow processing
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         // Map UserRegistrationDto to User entity, set the token and inactive status
         RegistrovaniKorisnik noviKorisnik = new RegistrovaniKorisnik();
         noviKorisnik.setKorisnickoIme(registrovaniKorisnik.getKorisnickoIme());
