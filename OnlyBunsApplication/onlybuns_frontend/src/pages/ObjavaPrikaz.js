@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Typography, Paper, Box } from '@mui/material';
-import { AppBar, Toolbar, Button, Grid, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Button, Grid, IconButton, List, ListItem, ListItemText  } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
@@ -51,56 +51,75 @@ const ObjavaPrikaz = () => {
       sx={{
         padding: 3,
         borderRadius: "15px",
-        textAlign: "center",
         boxShadow: "0 12px 24px rgba(0, 0, 0, 0.1)",
-        width: "380px",
+        display: "flex",
+        alignItems: "flex-start",
+        width: "700px",
         margin: "auto",
-        mt:3,
+        mt: 2,
       }}
     >
-      <img
-        src={`http://localhost:8080/images/${post.slika}`}
-        alt={post.opis}
-        style={{
-          height: "310px",
-          width: "100%",
-          borderRadius: "10px",
-          marginBottom: "15px",
-        }}
-      />
-
-      {/* Likes and Comments Row */}
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 1, alignItems: "center", mb: 1 }}>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton sx={{ color: "#e91e63" }}>
-            <FavoriteIcon />
-          </IconButton>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            {post.broj_lajkova}
-          </Typography>
+      {/* Post Section */}
+      <Box sx={{ width: "60%", textAlign: "center" }}>
+        <img
+          src={`http://localhost:8080/images/${post.slika}`}
+          alt={post.opis}
+          style={{ height: "310px", width: "100%", borderRadius: "10px", marginBottom: "15px" }}
+        />
+        
+        {/* Likes and Comments Row */}
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 1, alignItems: "center", mb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton sx={{ color: "#e91e63" }}>
+              <FavoriteIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              {post.broj_lajkova}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <IconButton color="secondary">
+              <ChatBubbleOutlineIcon />
+            </IconButton>
+            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+              {post.broj_komentara}
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton color="secondary">
-            <ChatBubbleOutlineIcon />
-          </IconButton>
-          <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-            {post.broj_komentara}
+
+        {/* Description Row */}
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
+            <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
+          </Link>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            sx={{ fontStyle: "italic", whiteSpace: "normal", wordWrap: "break-word" }}
+          >
+            {post.opis}
           </Typography>
         </Box>
       </Box>
 
-      {/* Description Row */}
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-        <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
-          <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
-        </Link>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          sx={{ fontStyle: "italic", whiteSpace: "normal", wordWrap: "break-word" }}
-        >
-          {post.opis}
+      {/* Comments Section */}
+      <Box sx={{ width: "40%", paddingLeft: 3, borderLeft: "1px solid #ddd" }}>
+        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
+          Comments
         </Typography>
+        <List>
+          {post.komentari.map((komentar, index) => (
+            <ListItem key={index} alignItems="flex-start">
+              <ListItemText
+                primary={          
+                <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
+                    <Typography sx={{ fontWeight: "bold" }}>{komentar.korisnicko_ime}</Typography>
+                </Link>}
+                secondary={komentar.opis}
+              />
+            </ListItem>
+          ))}
+        </List>
       </Box>
     </Paper>
     </div>

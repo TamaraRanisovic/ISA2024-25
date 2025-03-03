@@ -63,7 +63,7 @@ public class ObjavaServiceImpl implements ObjavaService {
         if (objava != null) {
             List<Komentar> komentari = objava.get().getKomentari();
             for (Komentar komentar : komentari) {
-                KomentarDTO komentarDTO = new KomentarDTO(komentar.getId(), komentar.getOpis(), komentar.getRegistrovaniKorisnik().getEmail(), komentar.getDatum_kreiranja(), komentar.getObjava().getId());
+                KomentarDTO komentarDTO = new KomentarDTO(komentar.getId(), komentar.getOpis(), komentar.getRegistrovaniKorisnik().getKorisnickoIme(), komentar.getDatum_kreiranja(), komentar.getObjava().getId());
                 komentariDTO.add(komentarDTO);
             }
             return komentariDTO;
