@@ -20,6 +20,13 @@ const PrijavljeniKorisnikPregled = () => {
     { img: rabbit4, user: "CuteRabbit", description: 'Taking a nap in the sun🌞', likes: 67,  comments: 17 }
   ];*/
 
+    const logout = () => {
+      localStorage.removeItem("jwtToken"); // Remove token
+  
+      // Redirect to login page
+      window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+    };
+
   // Function to decode the JWT token by calling the backend endpoint
   useEffect(() => {
     if (token) {
@@ -99,8 +106,8 @@ const PrijavljeniKorisnikPregled = () => {
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              My profile
+            <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Logout
             </Button>
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
