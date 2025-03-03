@@ -14,6 +14,7 @@ import { AppBar, Toolbar} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 
 const defaultTheme = createTheme();
@@ -39,36 +40,46 @@ export default function NovaObjava() {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState('');
   const isMounted = useRef(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const navigate2 = useNavigate(); // React Router's navigate function to redirect
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate2('/prijava');
+  };
 
 
     
-
   useEffect(() => {
-    if (token) {
-      // Send the token in the body of the POST request (not in the Authorization header)
-      fetch('http://localhost:8080/auth/decodeJwt', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Indicate that we're sending JSON data
-        },
-        body: token // Send the token in the request body
-      })
-        .then(response => response.json())
-        .then(data => {
-          // Assuming the response contains 'email' and 'role' from the decoded token
-          if (data) {
-            setEmail(data.Email); // Set email from the response
-            setKorisnickoIme(data.Username); // Set email from the response
-            setRole(data.Role);   // Set role from the response
-          }
-        })
-        .catch(error => {
-          console.error('Error decoding JWT token:', error);
-        });
+    if (!token) {
+      setDialogMessage('No user found. Please log in.');
+      setOpenDialog(true);
+      setTimeout(() => {
+        navigate2('/prijava'); // Redirect to login after 15 seconds
+      }, 15000); // Delay redirection to allow user to read the message
+      return;
     }
-  }, [token]);
 
+    fetch('http://localhost:8080/auth/decodeJwt', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: token,
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data) {
+          setEmail(data.Email);
+          setKorisnickoIme(data.Username);
+          setRole(data.Role);
+        }
+      })
+      .catch(error => {
+        console.error('Error decoding JWT token:', error);
+      });
+  }, [token, navigate2]);
   
   const handlePhotoChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -164,7 +175,17 @@ export default function NovaObjava() {
 
 
   return (
-      
+    <div>
+      {/* Dialog box for showing the message */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{dialogMessage}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     <ThemeProvider theme={defaultTheme}>
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -284,5 +305,6 @@ export default function NovaObjava() {
       </Box>
     </Container>
     </ThemeProvider>
+    </div>
   );
 }
