@@ -103,24 +103,40 @@ const ObjavaPrikaz = () => {
       </Box>
 
       {/* Comments Section */}
-      <Box sx={{ width: "40%", paddingLeft: 3, borderLeft: "1px solid #ddd" }}>
-        <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-          Comments
-        </Typography>
-        <List>
-          {post.komentari.map((komentar, index) => (
-            <ListItem key={index} alignItems="flex-start">
-              <ListItemText
-                primary={          
-                <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
-                    <Typography sx={{ fontWeight: "bold" }}>{komentar.korisnicko_ime}</Typography>
-                </Link>}
-                secondary={komentar.opis}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Box>
+<Box sx={{ width: "40%", paddingLeft: 2, borderLeft: "1px solid #ddd" }}>
+  <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
+    Comments
+  </Typography>
+  <List>
+    {post.komentari.map((komentar, index) => (
+      <ListItem
+        key={index}
+        alignItems="flex-start"
+        sx={{
+          transition: "background-color 0.3s ease",
+          "&:hover": { backgroundColor: "#f5f5f5" }, // Light grey hover effect
+          borderRadius: "10px",
+          padding: "8px 12px",
+        }}
+      >
+        <ListItemText
+          primary={
+            <Link
+              to={`/profilKorisnika/${komentar.korisnicko_ime}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <Typography sx={{ fontWeight: "bold", "&:hover": { color: "#1976d2" } }}>
+                {komentar.korisnicko_ime}
+              </Typography>
+            </Link>
+          }
+          secondary={komentar.opis}
+        />
+      </ListItem>
+    ))}
+  </List>
+</Box>
+
     </Paper>
     </div>
   );
