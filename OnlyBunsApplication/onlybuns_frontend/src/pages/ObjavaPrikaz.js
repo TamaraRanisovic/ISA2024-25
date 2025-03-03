@@ -102,8 +102,13 @@ const ObjavaPrikaz = () => {
         </Box>
       </Box>
 
-      {/* Comments Section */}
-<Box sx={{ width: "40%", paddingLeft: 2, borderLeft: "1px solid #ddd" }}>
+      <Box sx={{ 
+  width: "45%", 
+  paddingLeft: 2, 
+  borderLeft: "1px solid #ddd", 
+  maxHeight: "400px",  // Set a fixed height for the scrollable area
+  overflowY: "auto",   // Enable vertical scrolling
+}}>
   <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
     Comments
   </Typography>
@@ -130,7 +135,13 @@ const ObjavaPrikaz = () => {
               </Typography>
             </Link>
           }
-          secondary={komentar.opis}
+          secondary={
+            <>
+              <Typography variant="body2" color="textPrimary">
+                {komentar.opis}
+              </Typography>
+            </>
+          }
         />
       </ListItem>
     ))}
