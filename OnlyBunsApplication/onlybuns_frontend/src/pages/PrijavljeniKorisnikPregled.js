@@ -13,12 +13,7 @@ const PrijavljeniKorisnikPregled = () => {
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
   const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
 
-  /*const rabbitPosts = [
-    { img: rabbit1, user: "bunny123", description: 'Enjoying a sunny day!🌞', likes: 124, comments: 27 },
-    { img: rabbit2, user: "rabbit10", description: 'Hopping through the garden 🐇', likes: 98, comments: 15 },
-    { img: rabbit3, user: "CarrotBunny", description: 'Relaxing with a carrot🥕', likes: 85,  comments: 9 },
-    { img: rabbit4, user: "CuteRabbit", description: 'Taking a nap in the sun🌞', likes: 67,  comments: 17 }
-  ];*/
+
 
     const logout = () => {
       localStorage.removeItem("jwtToken"); // Remove token
