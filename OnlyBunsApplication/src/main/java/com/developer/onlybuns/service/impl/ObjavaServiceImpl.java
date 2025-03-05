@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 @Service
 public class ObjavaServiceImpl implements ObjavaService {
 
     private final ObjavaRepository objavaRepository;
+    private final Logger LOG = LoggerFactory.getLogger(ObjavaServiceImpl.class);
 
 
 
@@ -165,13 +168,17 @@ public class ObjavaServiceImpl implements ObjavaService {
             Integer broj_lajkova = lajkoviDTO.size();
             Integer broj_komentara = komentariDTO.size();
             ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), objava.get().getG_sirina(), objava.get().getG_duzina(), objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            LOG.info("Product with id: " + id + " successfully cached!");
             return objavaDTO;
         } else {
             return null;
         }
 
     }
+    public void removeFromCache() {
+        LOG.info("Products removed from cache!");
 
+    }
 
 
     @Override

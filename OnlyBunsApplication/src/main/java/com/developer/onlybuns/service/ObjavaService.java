@@ -6,6 +6,8 @@ import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
 import com.developer.onlybuns.entity.Objava;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +16,11 @@ import java.util.Optional;
 public interface ObjavaService {
     List<ObjavaDTO> findAllObjavaDTO();
 
+    @Cacheable("objavaCache")
     ObjavaDTO findById(Integer id);
+
+    @CacheEvict(cacheNames = {"objavaCache"}, allEntries = true)
+    void removeFromCache();
 
     Optional<Objava> getById(Integer id);
 

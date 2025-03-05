@@ -2,10 +2,15 @@ package com.developer.onlybuns.dto.request;
 
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.Cacheable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ObjavaDTO {
 
     private Integer id;
