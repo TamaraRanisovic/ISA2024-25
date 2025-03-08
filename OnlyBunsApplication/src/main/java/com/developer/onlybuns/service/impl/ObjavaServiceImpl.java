@@ -3,10 +3,7 @@ package com.developer.onlybuns.service.impl;
 import com.developer.onlybuns.dto.request.KomentarDTO;
 import com.developer.onlybuns.dto.request.LajkDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
-import com.developer.onlybuns.entity.Komentar;
-import com.developer.onlybuns.entity.Lajk;
-import com.developer.onlybuns.entity.Objava;
-import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import com.developer.onlybuns.entity.*;
 import com.developer.onlybuns.repository.ObjavaRepository;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
 import com.developer.onlybuns.service.ObjavaService;
@@ -85,7 +82,8 @@ public class ObjavaServiceImpl implements ObjavaService {
             List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.getId());
             Integer broj_lajkova = lajkoviDTO.size();
             Integer broj_komentara = komentariDTO.size();
-            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            Lokacija lokacija = objava.getLokacija();
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             objaveDTO.add(objavaDTO);
         }
         objaveDTO.sort(Comparator.comparing(ObjavaDTO::getDatum_objave).reversed());
@@ -104,7 +102,8 @@ public class ObjavaServiceImpl implements ObjavaService {
                 List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.getId());
                 Integer broj_lajkova = lajkoviDTO.size();
                 Integer broj_komentara = komentariDTO.size();
-                ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), objava.getG_sirina(), objava.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+                Lokacija lokacija = objava.getLokacija();
+                ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
                 objaveDTO.add(objavaDTO);
             }
         }
@@ -167,7 +166,8 @@ public class ObjavaServiceImpl implements ObjavaService {
             List<KomentarDTO> komentariDTO = getObjavaKomentariiDTO(objava.get().getId());
             Integer broj_lajkova = lajkoviDTO.size();
             Integer broj_komentara = komentariDTO.size();
-            ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), objava.get().getG_sirina(), objava.get().getG_duzina(), objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            Lokacija lokacija = objava.get().getLokacija();
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             LOG.info("Product with id: " + id + " successfully cached!");
             return objavaDTO;
         } else {

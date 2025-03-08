@@ -1,10 +1,7 @@
 package com.developer.onlybuns.controller;
 import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
-import com.developer.onlybuns.entity.Komentar;
-import com.developer.onlybuns.entity.Lajk;
-import com.developer.onlybuns.entity.Objava;
-import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import com.developer.onlybuns.entity.*;
 import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.http.HttpStatus;
@@ -55,7 +52,8 @@ public class ObjavaController {
         if (registrovaniKorisnik != null) {
             List<Komentar> komentari = new ArrayList<Komentar>();
             List<Lajk> lajkovi = new ArrayList<Lajk>();
-            Objava objava = new Objava(objavaDTO.getOpis(), objavaDTO.getSlika(), objavaDTO.getG_sirina(), objavaDTO.getG_duzina(), objavaDTO.getDatum_objave(), registrovaniKorisnik.get(), komentari, lajkovi);
+            Lokacija lokacija = new Lokacija(objavaDTO.getG_sirina(), objavaDTO.getG_duzina());
+            Objava objava = new Objava(objavaDTO.getOpis(), objavaDTO.getSlika(), objavaDTO.getDatum_objave(), registrovaniKorisnik.get(), lokacija, komentari, lajkovi);
             objavaService.saveObjava(objava);
 
             return ResponseEntity.ok("{\"message\": \"Uspesno kreiran novi post.\"}");

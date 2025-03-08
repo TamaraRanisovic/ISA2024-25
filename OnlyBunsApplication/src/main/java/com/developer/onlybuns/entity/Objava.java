@@ -7,6 +7,7 @@ import org.hibernate.annotations.Cache;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,18 +27,16 @@ public class Objava {
     @Column(name="slika", nullable=false)
     private String slika;
 
-    @Column(name = "g_sirina", nullable = false)
-    private Double g_sirina;  // To store latitude coordinate
-
-    @Column(name = "g_duzina", nullable = false)
-    private Double g_duzina;
-
     @Column(name="datum_objave", nullable=false)
     private LocalDateTime datum_objave;
 
     @ManyToOne
     @JoinColumn(name = "korisnik_id", nullable = false)
     private RegistrovaniKorisnik registrovaniKorisnik;
+
+    @ManyToOne
+    @JoinColumn(name = "lokacija_id", nullable = false)
+    private Lokacija lokacija;
 
     @OneToMany(mappedBy = "objava", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
@@ -51,36 +50,36 @@ public class Objava {
 
     }
 
-    public Objava(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik, List<Komentar> komentari, List<Lajk> lajkovi) {
+    public Objava(Integer id, String opis, String slika, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik, Lokacija lokacija, List<Komentar> komentari, List<Lajk> lajkovi) {
         this.id = id;
         this.opis = opis;
         this.slika = slika;
-        this.g_sirina = g_sirina;
-        this.g_duzina = g_duzina;
         this.datum_objave = datum_objave;
         this.registrovaniKorisnik = registrovaniKorisnik;
+        this.lokacija = lokacija;
         this.komentari = komentari;
         this.lajkovi = lajkovi;
     }
 
-    public Objava(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik, List<Komentar> komentari, List<Lajk> lajkovi) {
+    public Objava(String opis, String slika, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik, Lokacija lokacija, List<Komentar> komentari, List<Lajk> lajkovi) {
         this.opis = opis;
         this.slika = slika;
-        this.g_sirina = g_sirina;
-        this.g_duzina = g_duzina;
         this.datum_objave = datum_objave;
         this.registrovaniKorisnik = registrovaniKorisnik;
+        this.lokacija = lokacija;
         this.komentari = komentari;
         this.lajkovi = lajkovi;
     }
 
-    public Objava(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik) {
+
+    public Objava(String opis, String slika, LocalDateTime datum_objave, RegistrovaniKorisnik registrovaniKorisnik, Lokacija lokacija) {
         this.opis = opis;
         this.slika = slika;
-        this.g_sirina = g_sirina;
-        this.g_duzina = g_duzina;
         this.datum_objave = datum_objave;
         this.registrovaniKorisnik = registrovaniKorisnik;
+        this.lokacija = lokacija;
+        this.komentari = new ArrayList<Komentar>();
+        this.lajkovi = new ArrayList<Lajk>();
     }
 
     public Integer getId() {
@@ -105,22 +104,6 @@ public class Objava {
 
     public void setSlika(String slika) {
         this.slika = slika;
-    }
-
-    public Double getG_sirina() {
-        return g_sirina;
-    }
-
-    public void setG_sirina(Double g_sirina) {
-        this.g_sirina = g_sirina;
-    }
-
-    public Double getG_duzina() {
-        return g_duzina;
-    }
-
-    public void setG_duzina(Double g_duzina) {
-        this.g_duzina = g_duzina;
     }
 
     public LocalDateTime getDatum_objave() {
@@ -153,5 +136,13 @@ public class Objava {
 
     public void setLajkovi(List<Lajk> lajkovi) {
         this.lajkovi = lajkovi;
+    }
+
+    public Lokacija getLokacija() {
+        return lokacija;
+    }
+
+    public void setLokacija(Lokacija lokacija) {
+        this.lokacija = lokacija;
     }
 }

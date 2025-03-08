@@ -43,6 +43,7 @@ export default function NovaObjava() {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate2 = useNavigate(); // React Router's navigate function to redirect
+  const [adresa, setAdresa] = useState("");
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -251,8 +252,24 @@ export default function NovaObjava() {
             sx={{ mb: 1.5 }}
           />
           <Typography variant="body2" sx={{ mb: 1 }}>
-            Select location on the map or enter coordinates manually.
+            Select location on the map or enter an address manually.
           </Typography>
+          <TextField
+            fullWidth
+            label="Address"
+            value={adresa}
+            onChange={(e) => setAdresa(e.target.value)}
+            placeholder="Enter address"
+            sx={{ mb: 1.5 }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleGeocode}
+            sx={{ mb: 1.5 }}
+          >
+            Convert Address to Coordinates
+          </Button>
           <MapContainer
             center={[45.2671, 19.8335]} // Centered on Novi Sad by default
             zoom={13}
@@ -304,6 +321,7 @@ export default function NovaObjava() {
         </Box>
       </Box>
     </Container>
+
     </ThemeProvider>
     </div>
   );
