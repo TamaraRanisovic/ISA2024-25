@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class GeocodingServiceImpl implements GeocodingService {
     private static final String GEOCODING_RESOURCE = "https://geocode.search.hereapi.com/v1/geocode";
     private static final String REVERSE_GEOCODING_RESOURCE = "https://revgeocode.search.hereapi.com/v1/revgeocode";
 
-    private static final String API_KEY = "I7HxVDNz0HwefuvfyUwQU2CNMtKN6r5dBgxZa7FLuE0";
-
+    @Value("${here.api.key}")
+    private String API_KEY;
 
     @Override
     public double[] getCoordinates(String address) {
