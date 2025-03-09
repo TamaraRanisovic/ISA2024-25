@@ -13,8 +13,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { AppBar, Toolbar} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/onlybuns_logo.png';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import axios from "axios";
 
 
 const defaultTheme = createTheme();
@@ -43,13 +44,81 @@ export default function NovaObjava() {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate2 = useNavigate(); // React Router's navigate function to redirect
-  const [adresa, setAdresa] = useState("");
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
 
+  
   const handleCloseDialog = () => {
     setOpenDialog(false);
     navigate2('/prijava');
   };
 
+  const handleGeocode = async (street, city, state) => {
+    if (!street || !city || !state) return; // Ensure all fields are filled before making the request
+  
+    try {
+      const response = await axios.post("http://localhost:8080/geocode/get-coordinates", {
+        ulica: street,
+        grad: city,
+        drzava: state
+      });
+  
+      if (response.data.latitude && response.data.longitude) {
+        setG_sirina(response.data.latitude);
+        setG_duzina(response.data.longitude);
+      } else {
+        setErrorMessage("Could not fetch coordinates for this address.");
+      }
+    } catch (error) {
+      setErrorMessage("Error occurred while fetching coordinates.");
+    }
+  };
+
+  const UpdateMapCenter = ({ latitude, longitude }) => {
+    const map = useMapEvents({
+      click(e) {
+        handleReverseGeocode(e.latlng.lat, e.latlng.lng);
+      },
+    });
+  
+    useEffect(() => {
+      map.setView([latitude, longitude], map.getZoom());
+    }, [latitude, longitude, map]);
+  
+    return <Marker position={[latitude, longitude]} />;
+  };
+  
+  // Automatically call `handleGeocode` when user types in address fields
+  useEffect(() => {
+    handleGeocode(street, city, state);
+  }, [street, city, state]);
+
+  // 📌 Function to Reverse Geocode (Coordinates → Address)
+  const handleReverseGeocode = async (lat, lon) => {
+    try {
+      // Ensure lat/lon values are valid before making a request
+      if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        setErrorMessage("Invalid latitude or longitude.");
+        return;
+      }
+  
+      const response = await axios.get(`http://localhost:8080/geocode/get-address`, {
+        params: { latitude: lat, longitude: lon }
+      });
+  
+      if (response.data.ulica && response.data.grad && response.data.drzava) {
+        setStreet(response.data.ulica);
+        setCity(response.data.grad);
+        setState(response.data.drzava);
+      } else {
+        setErrorMessage("Address not found for the selected location.");
+      }
+    } catch (error) {
+      setErrorMessage("Error occurred while fetching address.");
+    }
+  };
+  
 
     
   useEffect(() => {
@@ -110,19 +179,18 @@ export default function NovaObjava() {
     }
   };
 
-  const LocationMarker = () => {
-    useMapEvents({
-      click(event) {
-        const { lat, lng } = event.latlng;
+  function LocationMarker() {
+    const map = useMapEvents({
+      click(e) {
+        const { lat, lng } = e.latlng;
         setG_sirina(lat);
         setG_duzina(lng);
-        setSelectedPosition([lat, lng]);
+        handleReverseGeocode(lat, lng);
       },
     });
-    return selectedPosition ? (
-      <Marker position={selectedPosition} />
-    ) : null;
-  };
+  
+    return g_sirina && g_duzina ? <Marker position={[g_sirina, g_duzina]} /> : null;
+  }
 
   useEffect(() => {
     isMounted.current = true;
@@ -142,7 +210,12 @@ export default function NovaObjava() {
     setErrorMessage('');
 
     setDatumObjave(new Date().toISOString());
-    const objava = { korisnicko_ime, g_sirina, opis, g_duzina, slika, datum_objave };
+    const objava = { korisnicko_ime, opis, slika, datum_objave, 
+      lokacijaDTO: {
+        ulica: street,
+        grad: city,
+        drzava: state
+    } };
     
     try {
       const response = await fetch("http://localhost:8080/objava/add", {
@@ -238,63 +311,32 @@ export default function NovaObjava() {
       </AppBar>
       <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <Box sx={{ marginTop: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Box sx={{ marginTop: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
         <Typography component="h1" variant="h5" sx={{ marginBottom: 2 }}>
           Create New Post
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            fullWidth
-            required
-            label="Description"
-            value={opis}
-            onChange={(e) => setOpis(e.target.value)}
-            sx={{ mb: 1.5 }}
-          />
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>          
+          <TextField fullWidth required label="Description" value={opis} onChange={(e) => setOpis(e.target.value)} sx={{ mb: 1.5 }} />
           <Typography variant="body2" sx={{ mb: 1 }}>
             Select location on the map or enter an address manually.
           </Typography>
-          <TextField
-            fullWidth
-            label="Address"
-            value={adresa}
-            onChange={(e) => setAdresa(e.target.value)}
-            placeholder="Enter address"
-            sx={{ mb: 1.5 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleGeocode}
-            sx={{ mb: 1.5 }}
-          >
-            Convert Address to Coordinates
-          </Button>
-          <MapContainer
-            center={[45.2671, 19.8335]} // Centered on Novi Sad by default
-            zoom={13}
-            style={{ height: '200px', width: '100%', marginBottom: '15px' }}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <LocationMarker />
+
+          {/* Address Fields */}
+          <TextField fullWidth label="Street Name" value={street} onChange={(e) => setStreet(e.target.value)} sx={{ mb: 1.5 }} />
+          <TextField fullWidth label="City" value={city} onChange={(e) => setCity(e.target.value)} sx={{ mb: 1.5 }} />
+          <TextField fullWidth label="State" value={state} onChange={(e) => setState(e.target.value)} sx={{ mb: 1.5 }} />
+
+          {/* Map */}
+          <MapContainer center={[g_sirina, g_duzina]} zoom={13} style={{ height: "200px", width: "100%", marginBottom: "15px" }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <UpdateMapCenter latitude={g_sirina} longitude={g_duzina} />
           </MapContainer>
-          <TextField
-            fullWidth
-            label="Latitude"
-            value={g_sirina}
-            onChange={(e) => setG_sirina(e.target.value)}
-            sx={{ mb: 1.5 }}
-          />
-          <TextField
-            fullWidth
-            label="Longitude"
-            value={g_duzina}
-            onChange={(e) => setG_duzina(e.target.value)}
-            sx={{ mb: 1.5 }}
-          />
+
+          {/* Coordinates */}
+          <TextField fullWidth label="Latitude" value={g_sirina} onChange={(e) => setG_sirina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
+          <TextField fullWidth label="Longitude" value={g_duzina} onChange={(e) => setG_duzina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
+
+          {/* File Upload */}
           <div style={{ marginBottom: '15px' }}>
             <label>Upload Photo:</label>
             <input type="file" accept="image/*" onChange={handlePhotoChange} />
@@ -317,10 +359,11 @@ export default function NovaObjava() {
         <div style={{ color: 'green', marginTop: '7px',  marginBottom: '3px' }}>
           {successMessage}
         </div>
-      )}
+        )}
         </Box>
       </Box>
     </Container>
+
 
     </ThemeProvider>
     </div>

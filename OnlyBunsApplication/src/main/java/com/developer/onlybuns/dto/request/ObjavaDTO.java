@@ -1,7 +1,6 @@
 package com.developer.onlybuns.dto.request;
 
-import com.developer.onlybuns.entity.Komentar;
-import com.developer.onlybuns.entity.Lajk;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -19,9 +18,7 @@ public class ObjavaDTO {
 
     private String slika;
 
-    private Double g_sirina;
-
-    private Double g_duzina;
+    private LokacijaDTO lokacijaDTO;
 
     private LocalDateTime datum_objave;
 
@@ -38,12 +35,11 @@ public class ObjavaDTO {
     public ObjavaDTO() {
     }
 
-    public ObjavaDTO(Integer id, String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
+    public ObjavaDTO(Integer id, String opis, String slika, LokacijaDTO lokacijaDTO, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
         this.id = id;
         this.opis = opis;
         this.slika = slika;
-        this.g_sirina = g_sirina;
-        this.g_duzina = g_duzina;
+        this.lokacijaDTO = lokacijaDTO;
         this.datum_objave = datum_objave;
         this.korisnicko_ime = korisnicko_ime;
         this.komentari = komentari;
@@ -52,11 +48,10 @@ public class ObjavaDTO {
         this.broj_komentara = broj_komentara;
     }
 
-    public ObjavaDTO(String opis, String slika, Double g_sirina, Double g_duzina, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
+    public ObjavaDTO(String opis, String slika, LokacijaDTO lokacijaDTO, LocalDateTime datum_objave, String korisnicko_ime, List<KomentarDTO> komentari, List<LajkDTO> lajkovi, Integer broj_lajkova, Integer broj_komentara) {
         this.opis = opis;
         this.slika = slika;
-        this.g_sirina = g_sirina;
-        this.g_duzina = g_duzina;
+        this.lokacijaDTO = lokacijaDTO;
         this.datum_objave = datum_objave;
         this.korisnicko_ime = korisnicko_ime;
         this.komentari = komentari;
@@ -89,20 +84,12 @@ public class ObjavaDTO {
         this.slika = slika;
     }
 
-    public Double getG_sirina() {
-        return g_sirina;
+    public LokacijaDTO getLokacijaDTO() {
+        return lokacijaDTO;
     }
 
-    public void setG_sirina(Double g_sirina) {
-        this.g_sirina = g_sirina;
-    }
-
-    public Double getG_duzina() {
-        return g_duzina;
-    }
-
-    public void setG_duzina(Double g_duzina) {
-        this.g_duzina = g_duzina;
+    public void setLokacijaDTO(LokacijaDTO lokacijaDTO) {
+        this.lokacijaDTO = lokacijaDTO;
     }
 
     public LocalDateTime getDatum_objave() {

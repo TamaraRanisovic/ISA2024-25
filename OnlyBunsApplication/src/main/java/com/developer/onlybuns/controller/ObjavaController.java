@@ -47,14 +47,10 @@ public class ObjavaController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> save(@RequestBody NovaObjavaDTO objavaDTO) {
-        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(objavaDTO.getKorisnicko_ime());
+    public ResponseEntity<String> save(@RequestBody NovaObjavaDTO novaObjavaDTO) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(novaObjavaDTO.getKorisnicko_ime());
         if (registrovaniKorisnik != null) {
-            List<Komentar> komentari = new ArrayList<Komentar>();
-            List<Lajk> lajkovi = new ArrayList<Lajk>();
-            Lokacija lokacija = new Lokacija(objavaDTO.getG_sirina(), objavaDTO.getG_duzina());
-            Objava objava = new Objava(objavaDTO.getOpis(), objavaDTO.getSlika(), objavaDTO.getDatum_objave(), registrovaniKorisnik.get(), lokacija, komentari, lajkovi);
-            objavaService.saveObjava(objava);
+            objavaService.saveObjava(novaObjavaDTO, registrovaniKorisnik.get());
 
             return ResponseEntity.ok("{\"message\": \"Uspesno kreiran novi post.\"}");
         } else {

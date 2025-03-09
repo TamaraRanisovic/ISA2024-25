@@ -1,11 +1,13 @@
 package com.developer.onlybuns.service.impl;
 
-import com.developer.onlybuns.dto.request.KomentarDTO;
-import com.developer.onlybuns.dto.request.LajkDTO;
-import com.developer.onlybuns.dto.request.ObjavaDTO;
+import com.developer.onlybuns.dto.request.*;
 import com.developer.onlybuns.entity.*;
+import com.developer.onlybuns.enums.Uloga;
+import com.developer.onlybuns.repository.LokacijaRepository;
 import com.developer.onlybuns.repository.ObjavaRepository;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
+import com.developer.onlybuns.service.GeocodingService;
+import com.developer.onlybuns.service.LokacijaService;
 import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,22 @@ import org.slf4j.LoggerFactory;
 public class ObjavaServiceImpl implements ObjavaService {
 
     private final ObjavaRepository objavaRepository;
+
+    private final LokacijaRepository lokacijaRepository;
+
+    private final LokacijaService lokacijaService;
+
+    private final GeocodingService geocodingService;
+
     private final Logger LOG = LoggerFactory.getLogger(ObjavaServiceImpl.class);
 
 
 
-    public ObjavaServiceImpl(ObjavaRepository objavaRepository) {
+    public ObjavaServiceImpl(ObjavaRepository objavaRepository, LokacijaRepository lokacijaRepository, LokacijaService lokacijaService, GeocodingService geocodingService) {
         this.objavaRepository = objavaRepository;
+        this.lokacijaRepository = lokacijaRepository;
+        this.lokacijaService = lokacijaService;
+        this.geocodingService = geocodingService;
     }
 
     public String getObjavaUsername(Integer id) {
@@ -83,7 +95,8 @@ public class ObjavaServiceImpl implements ObjavaService {
             Integer broj_lajkova = lajkoviDTO.size();
             Integer broj_komentara = komentariDTO.size();
             Lokacija lokacija = objava.getLokacija();
-            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            LokacijaDTO lokacijaDTO = new LokacijaDTO(lokacija.getUlica(), lokacija.getGrad(), lokacija.getDrzava());
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacijaDTO, objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             objaveDTO.add(objavaDTO);
         }
         objaveDTO.sort(Comparator.comparing(ObjavaDTO::getDatum_objave).reversed());
@@ -103,7 +116,8 @@ public class ObjavaServiceImpl implements ObjavaService {
                 Integer broj_lajkova = lajkoviDTO.size();
                 Integer broj_komentara = komentariDTO.size();
                 Lokacija lokacija = objava.getLokacija();
-                ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+                LokacijaDTO lokacijaDTO = new LokacijaDTO(lokacija.getUlica(), lokacija.getGrad(), lokacija.getDrzava());
+                ObjavaDTO objavaDTO = new ObjavaDTO(objava.getId(), objava.getOpis(), objava.getSlika(), lokacijaDTO, objava.getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
                 objaveDTO.add(objavaDTO);
             }
         }
@@ -167,7 +181,8 @@ public class ObjavaServiceImpl implements ObjavaService {
             Integer broj_lajkova = lajkoviDTO.size();
             Integer broj_komentara = komentariDTO.size();
             Lokacija lokacija = objava.get().getLokacija();
-            ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), lokacija.getG_sirina(), lokacija.getG_duzina(), objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
+            LokacijaDTO lokacijaDTO = new LokacijaDTO(lokacija.getUlica(), lokacija.getGrad(), lokacija.getDrzava());
+            ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), lokacijaDTO, objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
             LOG.info("Product with id: " + id + " successfully cached!");
             return objavaDTO;
         } else {
@@ -187,8 +202,64 @@ public class ObjavaServiceImpl implements ObjavaService {
     }
 
     @Override
-    public void saveObjava(Objava objava) {
-        objavaRepository.save(objava);
+    public void saveObjava(NovaObjavaDTO novaObjavaDTO, RegistrovaniKorisnik registrovaniKorisnik) {
+        Logger log = LoggerFactory.getLogger(getClass());
+
+        log.info("Starting creating post with description: {}", novaObjavaDTO.getOpis());
+
+        Objava novaObjava = new Objava();
+        novaObjava.setOpis(novaObjavaDTO.getOpis());
+        novaObjava.setSlika(novaObjavaDTO.getSlika());
+        novaObjava.setDatum_objave(novaObjavaDTO.getDatum_objave());
+        novaObjava.setRegistrovaniKorisnik(registrovaniKorisnik);
+
+        LokacijaDTO lokacijaDTO = novaObjavaDTO.getLokacijaDTO();
+        log.info("Checking if location exists: {}, {}, {}",
+                lokacijaDTO.getUlica(),
+                lokacijaDTO.getGrad(),
+                lokacijaDTO.getDrzava());
+
+        Lokacija lokacija = lokacijaService.findByAddress(
+                lokacijaDTO.getUlica(),
+                lokacijaDTO.getGrad(),
+                lokacijaDTO.getDrzava()
+        );
+
+        if (lokacija == null) {
+            log.info("Location not found, creating new location...");
+            Lokacija novaLokacija = new Lokacija();
+
+            novaLokacija.setUlica(lokacijaDTO.getUlica());
+            novaLokacija.setGrad(lokacijaDTO.getGrad());
+            novaLokacija.setDrzava(lokacijaDTO.getDrzava());
+
+            double[] coordinates = geocodingService.getCoordinates(
+                    lokacijaDTO.getUlica() + ", " + lokacijaDTO.getGrad() + ", " + lokacijaDTO.getDrzava()
+            );
+
+            novaLokacija.setG_sirina(coordinates[0]);
+            novaLokacija.setG_duzina(coordinates[1]);
+
+            // Save new location and flush
+            lokacijaRepository.save(novaLokacija);
+            lokacijaRepository.flush();
+            log.info("New location saved with coordinates: {}, {}", coordinates[0], coordinates[1]);
+
+            novaObjava.setLokacija(novaLokacija);
+
+            log.info("Assigning post {} to location {}", novaObjava.getOpis(), novaLokacija.getId());
+
+        } else {
+            novaObjava.setLokacija(lokacija);
+
+            log.info("Location found in database. Using existing location ID: {}", lokacija.getId());
+            log.info("Assigning post {} to location {}", novaObjava.getOpis(), lokacija.getId());
+
+        }
+
+        objavaRepository.save(novaObjava);
+        log.info("Post successfully saved: {}", novaObjava.getOpis());
+
     }
 
     @Override

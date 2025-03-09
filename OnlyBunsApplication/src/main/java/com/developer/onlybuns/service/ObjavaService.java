@@ -1,6 +1,7 @@
 package com.developer.onlybuns.service;
 
 
+import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
 import com.developer.onlybuns.entity.Lajk;
@@ -24,7 +25,7 @@ public interface ObjavaService {
 
     Optional<Objava> getById(Integer id);
 
-    void saveObjava(Objava objava);
+    void saveObjava(NovaObjavaDTO novaObjavaDTO, RegistrovaniKorisnik registrovaniKorisnik);
 
     Objava updateObjava(Objava objava);
 
