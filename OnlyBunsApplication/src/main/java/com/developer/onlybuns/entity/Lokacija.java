@@ -33,10 +33,25 @@ public class Lokacija {
     @OneToMany(mappedBy = "lokacija", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Objava> objave;
 
+
+    @OneToMany(mappedBy = "lokacija", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Korisnik> korisnici;
+
     public Lokacija() {
     }
 
-    public Lokacija(Integer id, String ulica, String grad, String drzava, Double g_sirina, Double g_duzina, List<Objava> objave) {
+    public Lokacija(Lokacija lokacija) {
+        this.id = lokacija.getId();
+        this.ulica = lokacija.getUlica();
+        this.grad = lokacija.getGrad();
+        this.drzava = lokacija.getDrzava();
+        this.g_sirina = lokacija.getG_sirina();
+        this.g_duzina = lokacija.getG_duzina();
+        this.objave = lokacija.getObjave();
+        this.korisnici = lokacija.getKorisnici();
+    }
+
+    public Lokacija(Integer id, String ulica, String grad, String drzava, Double g_sirina, Double g_duzina, List<Objava> objave, List<Korisnik> korisnici) {
         this.id = id;
         this.ulica = ulica;
         this.grad = grad;
@@ -44,15 +59,17 @@ public class Lokacija {
         this.g_sirina = g_sirina;
         this.g_duzina = g_duzina;
         this.objave = objave;
+        this.korisnici = korisnici;
     }
 
-    public Lokacija(String ulica, String grad, String drzava, Double g_sirina, Double g_duzina, List<Objava> objave) {
+    public Lokacija(String ulica, String grad, String drzava, Double g_sirina, Double g_duzina, List<Objava> objave, List<Korisnik> korisnici) {
         this.ulica = ulica;
         this.grad = grad;
         this.drzava = drzava;
         this.g_sirina = g_sirina;
         this.g_duzina = g_duzina;
         this.objave = objave;
+        this.korisnici = korisnici;
     }
 
     public Lokacija(String ulica, String grad, String drzava, Double g_sirina, Double g_duzina) {
@@ -62,6 +79,7 @@ public class Lokacija {
         this.g_sirina = g_sirina;
         this.g_duzina = g_duzina;
         this.objave = new ArrayList<Objava>();
+        this.korisnici = new ArrayList<Korisnik>();
     }
 
     public Lokacija(String ulica, String grad, String drzava) {
@@ -69,12 +87,14 @@ public class Lokacija {
         this.grad = grad;
         this.drzava = drzava;
         this.objave = new ArrayList<Objava>();
+        this.korisnici = new ArrayList<Korisnik>();
     }
 
     public Lokacija(Double g_sirina, Double g_duzina) {
         this.g_sirina = g_sirina;
         this.g_duzina = g_duzina;
         this.objave = new ArrayList<Objava>();
+        this.korisnici = new ArrayList<Korisnik>();
     }
 
     public Integer getId() {
@@ -131,5 +151,13 @@ public class Lokacija {
 
     public void setObjave(List<Objava> objave) {
         this.objave = objave;
+    }
+
+    public List<Korisnik> getKorisnici() {
+        return korisnici;
+    }
+
+    public void setKorisnici(List<Korisnik> korisnici) {
+        this.korisnici = korisnici;
     }
 }

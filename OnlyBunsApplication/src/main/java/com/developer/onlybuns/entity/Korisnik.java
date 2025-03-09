@@ -35,15 +35,6 @@ public class Korisnik {
     @Column(name="prezime", nullable=false)
     private String prezime;
 
-    @Column(name="ulica_broj", nullable=false)
-    private String  ulica_broj;
-
-    @Column(name="grad", nullable=false)
-    private String  grad;
-
-    @Column(name="drzava", nullable=false)
-    private String  drzava;
-
     @Column(name="broj", nullable=false)
     private String  broj;
 
@@ -60,84 +51,78 @@ public class Korisnik {
     @Column(name="last_login", nullable=true)
     private LocalDateTime last_login;
 
+    @ManyToOne
+    @JoinColumn(name = "lokacija_id", nullable = false)
+    private Lokacija lokacija;
 
     public Korisnik() {
     }
 
-    public Korisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
-        this.id = id;
-        this.korisnickoIme = korisnicko_ime;
-        this.email = email;
-        this.password = password;
-        this.ime = ime;
-        this.prezime = prezime;
-        this.ulica_broj = ulica_broj;
-        this.grad = grad;
-        this.drzava = drzava;
-        this.broj = broj;
-        this.uloga = uloga;
-        this.verifikacija = verifikacija;
-    }
-
-    public Korisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija) {
-        this.korisnickoIme = korisnicko_ime;
-        this.email = email;
-        this.password = password;
-        this.ime = ime;
-        this.prezime = prezime;
-        this.ulica_broj = ulica_broj;
-        this.grad = grad;
-        this.drzava = drzava;
-        this.broj = broj;
-        this.uloga = uloga;
-        this.verifikacija = verifikacija;
-    }
-
-    public Korisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija) {
+    public Korisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login, Lokacija lokacija) {
         this.id = id;
         this.korisnickoIme = korisnickoIme;
         this.email = email;
         this.password = password;
         this.ime = ime;
         this.prezime = prezime;
-        this.ulica_broj = ulica_broj;
-        this.grad = grad;
-        this.drzava = drzava;
-        this.broj = broj;
-        this.uloga = uloga;
-        this.activationToken = activationToken;
-        this.verifikacija = verifikacija;
-    }
-
-    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija) {
-        this.korisnickoIme = korisnickoIme;
-        this.email = email;
-        this.password = password;
-        this.ime = ime;
-        this.prezime = prezime;
-        this.ulica_broj = ulica_broj;
-        this.grad = grad;
-        this.drzava = drzava;
-        this.broj = broj;
-        this.uloga = uloga;
-        this.activationToken = activationToken;
-        this.verifikacija = verifikacija;
-    }
-
-    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login) {
-        this.korisnickoIme = korisnickoIme;
-        this.email = email;
-        this.password = password;
-        this.ime = ime;
-        this.prezime = prezime;
-        this.ulica_broj = ulica_broj;
-        this.grad = grad;
-        this.drzava = drzava;
         this.broj = broj;
         this.uloga = uloga;
         this.activationToken = activationToken;
         this.verifikacija = verifikacija;
         this.last_login = last_login;
+        this.lokacija = lokacija;
+    }
+
+    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login, Lokacija lokacija) {
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.activationToken = activationToken;
+        this.verifikacija = verifikacija;
+        this.last_login = last_login;
+        this.lokacija = lokacija;
+    }
+
+    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, Lokacija lokacija) {
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.activationToken = activationToken;
+        this.verifikacija = verifikacija;
+        this.lokacija = lokacija;
+    }
+
+    public Korisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, boolean verifikacija, Lokacija lokacija) {
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.verifikacija = verifikacija;
+        this.lokacija = lokacija;
+    }
+
+    public Korisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, boolean verifikacija, Lokacija lokacija) {
+        this.id = id;
+        this.korisnickoIme = korisnickoIme;
+        this.email = email;
+        this.password = password;
+        this.ime = ime;
+        this.prezime = prezime;
+        this.broj = broj;
+        this.uloga = uloga;
+        this.verifikacija = verifikacija;
+        this.lokacija = lokacija;
     }
 
     public boolean isVerifikacija() {
@@ -203,22 +188,6 @@ public class Korisnik {
         this.prezime = prezime;
     }
 
-    public String getGrad() {
-        return grad;
-    }
-
-    public void setGrad(String grad) {
-        this.grad = grad;
-    }
-
-    public String getDrzava() {
-        return drzava;
-    }
-
-    public void setDrzava(String drzava) {
-        this.drzava = drzava;
-    }
-
     public String getBroj() {
         return broj;
     }
@@ -235,19 +204,19 @@ public class Korisnik {
         this.korisnickoIme = korisnickoIme;
     }
 
-    public String getUlica_broj() {
-        return ulica_broj;
-    }
-
-    public void setUlica_broj(String ulica_broj) {
-        this.ulica_broj = ulica_broj;
-    }
-
     public LocalDateTime getLast_login() {
         return last_login;
     }
 
     public void setLast_login(LocalDateTime last_login) {
         this.last_login = last_login;
+    }
+
+    public Lokacija getLokacija() {
+        return lokacija;
+    }
+
+    public void setLokacija(Lokacija lokacija) {
+        this.lokacija = lokacija;
     }
 }

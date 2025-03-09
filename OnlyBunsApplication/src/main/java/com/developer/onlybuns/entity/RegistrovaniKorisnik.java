@@ -4,6 +4,7 @@ package com.developer.onlybuns.entity;
 import com.developer.onlybuns.enums.Uloga;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,13 +17,13 @@ public class RegistrovaniKorisnik extends Korisnik {
     @OneToMany(mappedBy = "registrovaniKorisnik", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Komentar> komentari;
 
-    //dodati List<Lajk> lajkovi
-
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pratioci> following;
 
     @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Pratioci> followers;
+
+
 
     public RegistrovaniKorisnik() {
 
@@ -35,21 +36,46 @@ public class RegistrovaniKorisnik extends Korisnik {
         this.followers = followers;
     }
 
-    public RegistrovaniKorisnik(Integer id, String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
-        super(id, korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
+    public RegistrovaniKorisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login, Lokacija lokacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
+        super(id, korisnickoIme, email, password, ime, prezime, broj, uloga, activationToken, verifikacija, last_login, lokacija);
         this.objave = objave;
         this.komentari = komentari;
         this.following = following;
         this.followers = followers;
     }
 
-    public RegistrovaniKorisnik(String korisnicko_ime, String email, String password, String ime, String prezime, String ulica_broj, String grad, String drzava, String broj, Uloga uloga, boolean verifikacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
-        super(korisnicko_ime, email, password, ime, prezime, ulica_broj, grad, drzava, broj, uloga, verifikacija);
+    public RegistrovaniKorisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, LocalDateTime last_login, Lokacija lokacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
+        super(korisnickoIme, email, password, ime, prezime, broj, uloga, activationToken, verifikacija, last_login, lokacija);
         this.objave = objave;
         this.komentari = komentari;
         this.following = following;
         this.followers = followers;
     }
+
+    public RegistrovaniKorisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, String activationToken, boolean verifikacija, Lokacija lokacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
+        super(korisnickoIme, email, password, ime, prezime, broj, uloga, activationToken, verifikacija, lokacija);
+        this.objave = objave;
+        this.komentari = komentari;
+        this.following = following;
+        this.followers = followers;
+    }
+
+    public RegistrovaniKorisnik(String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, boolean verifikacija, Lokacija lokacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
+        super(korisnickoIme, email, password, ime, prezime, broj, uloga, verifikacija, lokacija);
+        this.objave = objave;
+        this.komentari = komentari;
+        this.following = following;
+        this.followers = followers;
+    }
+
+    public RegistrovaniKorisnik(Integer id, String korisnickoIme, String email, String password, String ime, String prezime, String broj, Uloga uloga, boolean verifikacija, Lokacija lokacija, List<Objava> objave, List<Komentar> komentari, List<Pratioci> following, List<Pratioci> followers) {
+        super(id, korisnickoIme, email, password, ime, prezime, broj, uloga, verifikacija, lokacija);
+        this.objave = objave;
+        this.komentari = komentari;
+        this.following = following;
+        this.followers = followers;
+    }
+
 
     public List<Objava> getObjave() {
         return objave;
@@ -82,4 +108,5 @@ public class RegistrovaniKorisnik extends Korisnik {
     public void setFollowers(List<Pratioci> followers) {
         this.followers = followers;
     }
+
 }

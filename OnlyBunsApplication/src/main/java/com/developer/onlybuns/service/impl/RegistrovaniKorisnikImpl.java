@@ -3,12 +3,18 @@ package com.developer.onlybuns.service.impl;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
+import com.developer.onlybuns.entity.Lokacija;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.enums.Uloga;
+import com.developer.onlybuns.repository.LokacijaRepository;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
+import com.developer.onlybuns.service.GeocodingService;
+import com.developer.onlybuns.service.LokacijaService;
 import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,14 +33,24 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
 
     private final RegistrovaniKorisnikRepository registrovaniKorisnikRepository;
 
+    private final LokacijaRepository lokacijaRepository;
+
     private final ObjavaService objavaService;
+
+    private final LokacijaService lokacijaService;
+
+    private final GeocodingService geocodingService;
+
 
     @Autowired
     private JavaMailSender mailSender;
 
-    public RegistrovaniKorisnikImpl(RegistrovaniKorisnikRepository registrovaniKorisnikRepository, ObjavaService objavaService) {
+    public RegistrovaniKorisnikImpl(RegistrovaniKorisnikRepository registrovaniKorisnikRepository, ObjavaService objavaService, LokacijaRepository lokacijaRepository, LokacijaService lokacijaService, GeocodingService geocodingService) {
         this.registrovaniKorisnikRepository = registrovaniKorisnikRepository;
         this.objavaService = objavaService;
+        this.lokacijaRepository = lokacijaRepository;
+        this.lokacijaService = lokacijaService;
+        this.geocodingService = geocodingService;
     }
 
     @Override
@@ -54,28 +70,69 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
 
     @Transactional
     public void register(RegistrovaniKorisnik registrovaniKorisnik, String activationToken) {
-        try {
-            Thread.sleep(5000); // Simulate slow processing
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        // Map UserRegistrationDto to User entity, set the token and inactive status
+        Logger log = LoggerFactory.getLogger(getClass());
+
+        log.info("Starting user registration for email: {}", registrovaniKorisnik.getEmail());
+
         RegistrovaniKorisnik noviKorisnik = new RegistrovaniKorisnik();
         noviKorisnik.setKorisnickoIme(registrovaniKorisnik.getKorisnickoIme());
         noviKorisnik.setEmail(registrovaniKorisnik.getEmail());
         noviKorisnik.setPassword(registrovaniKorisnik.getPassword());
         noviKorisnik.setIme(registrovaniKorisnik.getIme());
         noviKorisnik.setPrezime(registrovaniKorisnik.getPrezime());
-        noviKorisnik.setUlica_broj(registrovaniKorisnik.getUlica_broj());
-        noviKorisnik.setGrad(registrovaniKorisnik.getGrad());
-        noviKorisnik.setDrzava(registrovaniKorisnik.getDrzava());
         noviKorisnik.setBroj(registrovaniKorisnik.getBroj());
         noviKorisnik.setUloga(Uloga.REGISTROVANI_KORISNIK);
         noviKorisnik.setActivationToken(activationToken);
         noviKorisnik.setVerifikacija(false);
 
+        Lokacija lokacijaRegistracija = registrovaniKorisnik.getLokacija();
+        log.info("Checking if location exists: {}, {}, {}",
+                lokacijaRegistracija.getUlica(),
+                lokacijaRegistracija.getGrad(),
+                lokacijaRegistracija.getDrzava());
+
+        Lokacija lokacija = lokacijaService.findByAddress(
+                lokacijaRegistracija.getUlica(),
+                lokacijaRegistracija.getGrad(),
+                lokacijaRegistracija.getDrzava()
+        );
+
+        if (lokacija == null) {
+            log.info("Location not found, creating new location...");
+            Lokacija novaLokacija = new Lokacija(lokacijaRegistracija);
+
+            double[] coordinates = geocodingService.getCoordinates(
+                    novaLokacija.getUlica() + ", " + novaLokacija.getGrad() + ", " + novaLokacija.getDrzava()
+            );
+
+            novaLokacija.setG_sirina(coordinates[0]);
+            novaLokacija.setG_duzina(coordinates[1]);
+
+            // Save new location and flush
+            lokacijaRepository.save(novaLokacija);
+            lokacijaRepository.flush();
+            log.info("New location saved with coordinates: {}, {}", coordinates[0], coordinates[1]);
+
+            noviKorisnik.setLokacija(novaLokacija);
+
+            log.info("Assigning user {} to location {}", noviKorisnik.getEmail(), novaLokacija.getId());
+
+        } else {
+            noviKorisnik.setLokacija(lokacija);
+
+            log.info("Location found in database. Using existing location ID: {}", lokacija.getId());
+            log.info("Assigning user {} to location {}", noviKorisnik.getEmail(), lokacija.getId());
+
+        }
+
+        // Link user to location
+
+        // Save user
         registrovaniKorisnikRepository.save(noviKorisnik);
+        log.info("User successfully registered: {}", noviKorisnik.getEmail());
     }
+
+
 
     public boolean activateAccount(String token) {
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikRepository.findByActivationToken(token);

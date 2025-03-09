@@ -17,16 +17,18 @@ const defaultTheme = createTheme();
 export default function Registracija() {
   const [ime, setIme] = useState('');
   const [prezime, setPrezime] = useState('');
-  const [ulica_broj, setUlicaBroj] = useState('');
+  const [ulica, setUlica] = useState('');
   const [grad, setGrad] = useState('');
   const [drzava, setDrzava] = useState('');
   const [broj, setBroj] = useState('');
   const [brojError, setBrojError] = useState(false);
   const [email, setEmail] = useState('');
   const [korisnickoIme, setKorisnickoIme] = useState('');
+  const [g_duzina, setG_duzina] = useState('');
+  const [g_sirina, setG_sirina] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [korisnickoImeError, setKorisnickoImeError] = useState(false);
-  const [UlicaBrojError, setUlicaBrojError] = useState(false);
+  const [UlicaError, setUlicaError] = useState(false);
   const [GradError, setGradError] = useState(false);
   const [DrzavaError, setDrzavaError] = useState(false);
   const [password, setPassword] = useState('');
@@ -88,8 +90,8 @@ export default function Registracija() {
 
   const handleStreetAddressChange = (e) => {
     const newStreetAddress = e.target.value;
-    setUlicaBroj(newStreetAddress);
-    setUlicaBrojError(!validateUlicaBroj(newStreetAddress));
+    setUlica(newStreetAddress);
+    setUlicaError(!validateUlicaBroj(newStreetAddress));
   };
 
   const handleCityChange = (e) => {
@@ -160,7 +162,7 @@ export default function Registracija() {
       return;
     }
 
-    if (!korisnickoIme || !ime || !prezime || !ulica_broj || !grad || !drzava || !broj || !email || !password || !repeatPassword) {
+    if (!korisnickoIme || !ime || !prezime || !ulica || !grad || !drzava || !broj || !email || !password || !repeatPassword) {
       setErrorMessage('Enter valid data.');
       return;
     }
@@ -177,7 +179,22 @@ export default function Registracija() {
       return;
     }
 
-    const korisnik = { korisnickoIme, ulica_broj, ime, prezime, grad, drzava, broj, email, password, uloga };
+    const korisnik = {
+      korisnickoIme,
+      ime,
+      prezime,
+      broj,
+      email,
+      password,
+      uloga,
+      lokacija: {
+        ulica,
+        grad,
+        drzava,
+        g_sirina,
+        g_duzina
+      }
+    };
     console.log(korisnik);
 
     setErrorMessage('');
@@ -241,7 +258,7 @@ export default function Registracija() {
             <TextField fullWidth required label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Repeat password" type="password" value={repeatPassword} onChange={(e) => { setRepeatPassword(e.target.value); setPasswordMismatch(false); }} sx={{ mb: 1.5 }} />
             {passwordMismatch && <Typography color="error" variant="body2" gutterBottom>Passwords do not match.</Typography>}
-            <TextField fullWidth required label="Street address" onChange={handleStreetAddressChange} error={UlicaBrojError} helperText={UlicaBrojError ? 'Enter valid street address' : ''} sx={{ mb: 1.5 }}/>
+            <TextField fullWidth required label="Street address" onChange={handleStreetAddressChange} error={UlicaError} helperText={UlicaError ? 'Enter valid street address' : ''} sx={{ mb: 1.5 }}/>
             <TextField fullWidth required label="City" onChange={handleCityChange} error={GradError} helperText={GradError ? 'Enter valid city name' : ''} sx={{ mb: 1.5 }}/>
             <TextField fullWidth required label="Country" onChange={handleCountryChange} error={DrzavaError} helperText={DrzavaError ? 'Enter valid country name' : ''} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Phone number" value={broj} onChange={handleBrojChange} error={brojError} helperText={brojError ? 'Enter 10-digit phone number' : ''} sx={{ mb: 1.5 }} />
