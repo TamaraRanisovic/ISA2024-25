@@ -94,6 +94,7 @@ export default function NovaObjava() {
     handleGeocode(street, city, state);
   }, [street, city, state]);
 
+
   // 📌 Function to Reverse Geocode (Coordinates → Address)
   const handleReverseGeocode = async (lat, lon) => {
     try {
@@ -333,8 +334,8 @@ export default function NovaObjava() {
           </MapContainer>
 
           {/* Coordinates */}
-          <TextField fullWidth label="Latitude" value={g_sirina} onChange={(e) => setG_sirina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
-          <TextField fullWidth label="Longitude" value={g_duzina} onChange={(e) => setG_duzina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
+          <TextField fullWidth InputProps={{ readOnly: true }} label="Latitude" value={g_sirina} onChange={(e) => setG_sirina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
+          <TextField fullWidth InputProps={{ readOnly: true }} label="Longitude" value={g_duzina} onChange={(e) => setG_duzina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
 
           {/* File Upload */}
           <div style={{ marginBottom: '15px' }}>
