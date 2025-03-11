@@ -183,17 +183,13 @@ public class ObjavaServiceImpl implements ObjavaService {
             Lokacija lokacija = objava.get().getLokacija();
             LokacijaDTO lokacijaDTO = new LokacijaDTO(lokacija.getUlica(), lokacija.getGrad(), lokacija.getDrzava());
             ObjavaDTO objavaDTO = new ObjavaDTO(objava.get().getId(), objava.get().getOpis(), objava.get().getSlika(), lokacijaDTO, objava.get().getDatum_objave(), korisnicko_ime, komentariDTO, lajkoviDTO, broj_lajkova, broj_komentara);
-            LOG.info("Product with id: " + id + " successfully cached!");
             return objavaDTO;
         } else {
             return null;
         }
 
     }
-    public void removeFromCache() {
-        LOG.info("Products removed from cache!");
 
-    }
 
 
     @Override
@@ -296,6 +292,47 @@ public class ObjavaServiceImpl implements ObjavaService {
         }
     }
 
+    public List<ObjavaDTO> getLokacijaObjaveDTO(Lokacija lokacija) {
+        List<ObjavaDTO> objaveDTO = new ArrayList<ObjavaDTO>();
+        List<Objava> objave = lokacija.getObjave();
+        for (Objava objava : objave) {
+            ObjavaDTO objavaDTO = findById(objava.getId());
+            objaveDTO.add(objavaDTO);
+        }
+        return objaveDTO;
+    }
 
+    @Override
+    public List<LokacijaInfoDTO> findAllLokacijaInfoDTO() {
+        List<Lokacija> lokacije = lokacijaService.findAll();
+        List<LokacijaInfoDTO> lokacijaInfoDTOs = new ArrayList<LokacijaInfoDTO>();
+        for (Lokacija lokacija : lokacije) {
+            List<String> usernames = lokacijaService.getLokacijaUsernames(lokacija);
+            List<ObjavaDTO> objaveDTO = getLokacijaObjaveDTO(lokacija);
+
+            LokacijaInfoDTO lokacijaInfoDTO = new LokacijaInfoDTO(lokacija.getId(), lokacija.getUlica(), lokacija.getGrad(), lokacija.getDrzava(), lokacija.getG_sirina(), lokacija.getG_duzina(), usernames, objaveDTO);
+            lokacijaInfoDTOs.add(lokacijaInfoDTO);
+        }
+
+        return lokacijaInfoDTOs;
+
+    }
+
+
+    @Override
+    public LokacijaInfoDTO findLokacijaInfoDTOById(Integer id) {
+        Optional<Lokacija> lokacija = lokacijaService.findById(id);
+        if (lokacija != null) {
+            Lokacija pronadjenaLokacija = lokacija.get();
+            List<String> usernames = lokacijaService.getLokacijaUsernames(pronadjenaLokacija);
+            List<ObjavaDTO> objaveDTO = getLokacijaObjaveDTO(pronadjenaLokacija);
+
+            LokacijaInfoDTO lokacijaInfoDTO = new LokacijaInfoDTO(pronadjenaLokacija.getId(), pronadjenaLokacija.getUlica(), pronadjenaLokacija.getGrad(), pronadjenaLokacija.getDrzava(), pronadjenaLokacija.getG_sirina(), pronadjenaLokacija.getG_duzina(), usernames, objaveDTO);
+            return lokacijaInfoDTO;
+        } else {
+            return null;
+        }
+
+    }
 
 }

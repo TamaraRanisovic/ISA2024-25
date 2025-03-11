@@ -8,8 +8,6 @@ import javax.persistence.Cacheable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ObjavaDTO {
 
     private Integer id;

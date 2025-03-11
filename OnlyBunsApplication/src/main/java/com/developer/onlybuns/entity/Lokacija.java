@@ -1,6 +1,10 @@
 package com.developer.onlybuns.entity;
 
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +12,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "lokacija")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Lokacija {
 
     @Id
@@ -31,10 +37,12 @@ public class Lokacija {
     private Double g_duzina;
 
     @OneToMany(mappedBy = "lokacija", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Objava> objave;
 
 
     @OneToMany(mappedBy = "lokacija", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Korisnik> korisnici;
 
     public Lokacija() {

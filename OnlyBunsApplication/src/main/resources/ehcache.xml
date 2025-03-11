@@ -37,9 +37,9 @@
         </resources>
     </cache-template>
 
-    <cache alias="objavaCache" uses-template="default">
-        <key-type>java.lang.Integer</key-type>
-        <value-type>com.developer.onlybuns.dto.request.ObjavaDTO</value-type>
+    <cache alias="lokacijaCache" uses-template="default">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.Object</value-type>
         <resources>
             <heap>2</heap>
         </resources>

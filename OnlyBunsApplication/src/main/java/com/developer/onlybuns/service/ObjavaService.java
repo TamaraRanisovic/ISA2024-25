@@ -1,6 +1,7 @@
 package com.developer.onlybuns.service;
 
 
+import com.developer.onlybuns.dto.request.LokacijaInfoDTO;
 import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.Komentar;
@@ -17,11 +18,10 @@ import java.util.Optional;
 public interface ObjavaService {
     List<ObjavaDTO> findAllObjavaDTO();
 
-    @Cacheable("objavaCache")
+
     ObjavaDTO findById(Integer id);
 
-    @CacheEvict(cacheNames = {"objavaCache"}, allEntries = true)
-    void removeFromCache();
+
 
     Optional<Objava> getById(Integer id);
 
@@ -41,4 +41,9 @@ public interface ObjavaService {
     public int countNewCommentsOnUserPosts(String username, LocalDateTime fromDate);
 
     public int countNewLikesOnUserPosts(String username, LocalDateTime fromDate);
+
+    List<LokacijaInfoDTO> findAllLokacijaInfoDTO();
+
+
+    LokacijaInfoDTO findLokacijaInfoDTOById(Integer id);
 }

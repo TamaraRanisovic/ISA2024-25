@@ -12,8 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name="objava")
-@Cacheable
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Objava {
 
     @Id

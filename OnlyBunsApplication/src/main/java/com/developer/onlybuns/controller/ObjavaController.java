@@ -106,10 +106,6 @@ public class ObjavaController {
         }
     }
 
-    @GetMapping(value = "/removeCache")
-    public ResponseEntity<String> removeFromCache() {
-        objavaService.removeFromCache();
-        return ResponseEntity.ok("Posts successfully removed from cache!");
-    }
+
 
 }
