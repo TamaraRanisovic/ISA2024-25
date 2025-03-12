@@ -13,7 +13,7 @@ import NovaObjava from "./pages/NovaObjava";
 import ObjavaPrikaz from './pages/ObjavaPrikaz';
 import RabbitPostGrid from './pages/RabbitPostGrid';
 import ProfilKorisnika from './pages/ProfilKorisnika';
-
+import ObliznjeObjave from './pages/ObliznjeObjave';
 
 function App() {
   return (
@@ -33,6 +33,7 @@ function App() {
           <Route path="/" element={<RabbitPostGrid />} />
           <Route path="/objavaPrikaz/:postId" element={<ObjavaPrikaz />} />
           <Route path="/profilKorisnika/:username" element={<ProfilKorisnika />} />
+          <Route path="/ObliznjeObjave/:username" element={<ObliznjeObjave />} />
         </Routes>
       </Router>
     </div>

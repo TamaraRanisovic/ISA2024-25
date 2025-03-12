@@ -1,6 +1,7 @@
 package com.developer.onlybuns.controller;
 import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
+import com.developer.onlybuns.entity.Lokacija;
 import com.developer.onlybuns.entity.Pratioci;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.ObjavaService;
@@ -193,6 +194,20 @@ public class RegistrovaniKorisnikController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
     }
+
+    @GetMapping("/lokacija/{username}")
+    public ResponseEntity<double[]> getLokacija(@PathVariable("username") String username) {
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
+
+        if (registrovaniKorisnik.isPresent()) {
+            Lokacija lokacija = registrovaniKorisnik.get().getLokacija();
+            double[] coordinates = { lokacija.getG_sirina(), lokacija.getG_duzina() };
+            return ResponseEntity.ok(coordinates);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 
 
 

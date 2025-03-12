@@ -335,4 +335,39 @@ public class ObjavaServiceImpl implements ObjavaService {
 
     }
 
+    @Override
+    public List<ObjavaDTO> getUsersNearbyPosts(String username, double g_sirina, double g_duzina) {
+        List<ObjavaDTO> allObjavaDTO = findAllObjavaDTO();
+        List<ObjavaDTO> nearbyPosts = new ArrayList<ObjavaDTO>();
+        for (ObjavaDTO objavaDTO : allObjavaDTO) {
+            LokacijaDTO lokacijaDTO = objavaDTO.getLokacijaDTO();
+            Lokacija lokacija = lokacijaService.findByAddress(lokacijaDTO.getUlica(), lokacijaDTO.getGrad(), lokacijaDTO.getDrzava());
+            double distance = geocodingService.calculateDistance(g_sirina, g_duzina, lokacija.getG_sirina(), lokacija.getG_duzina());
+            if (distance <= 10 && !objavaDTO.getKorisnicko_ime().equals(username)) {
+                nearbyPosts.add(objavaDTO);
+            }
+        }
+        return nearbyPosts;
+
+    }
+
+/*
+    @Override
+    public List<LokacijaInfoDTO> getUsersNearbyPosts(String username, double g_sirina, double g_duzina) {
+    List<Lokacija> lokacije = lokacijaService.findAll();
+    List<LokacijaInfoDTO> lokacijaInfoDTOs = new ArrayList<LokacijaInfoDTO>();
+        for (Lokacija lokacija : lokacije) {
+        double distance = geocodingService.calculateDistance(g_sirina, g_duzina, lokacija.getG_sirina(), lokacija.getG_duzina());
+        if (distance <= 10) {
+            LokacijaInfoDTO lokacijaInfoDTO = findLokacijaInfoDTOById(lokacija.getId());
+            for (ObjavaDTO objavaDTO : lokacijaInfoDTO.getObjavaDTOs()) {
+                if (!objavaDTO.getKorisnicko_ime().equals(username)) {
+                    lokacijaInfoDTOs.add(lokacijaInfoDTO);
+                }
+            }
+        }
+    }
+        return lokacijaInfoDTOs;
+
+}*/
 }

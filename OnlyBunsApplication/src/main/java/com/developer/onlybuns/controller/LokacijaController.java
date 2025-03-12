@@ -8,6 +8,8 @@ import com.developer.onlybuns.entity.Objava;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.LokacijaService;
 import com.developer.onlybuns.service.ObjavaService;
+import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,12 @@ public class LokacijaController {
 
     private final ObjavaService objavaService;
 
-    public LokacijaController(LokacijaService lokacijaService, ObjavaService objavaService) {
+    private final RegistrovaniKorisnikService registrovaniKorisnikService;
+
+    public LokacijaController(LokacijaService lokacijaService, ObjavaService objavaService, RegistrovaniKorisnikService registrovaniKorisnikService) {
         this.lokacijaService = lokacijaService;
         this.objavaService = objavaService;
+        this.registrovaniKorisnikService = registrovaniKorisnikService;
     }
 
     @GetMapping
@@ -60,6 +65,25 @@ public class LokacijaController {
     public ResponseEntity<String> removeFromCache() {
         lokacijaService.removeFromCache();
         return ResponseEntity.ok("Posts successfully removed from cache!");
+    }
+
+
+    @GetMapping("/nearby-posts/{username}")
+    public ResponseEntity<List<ObjavaDTO>> getNearbyPosts(@PathVariable("username") String username) {
+
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
+
+        if (!registrovaniKorisnik.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Lokacija lokacija = registrovaniKorisnik.get().getLokacija();
+        List<ObjavaDTO> nearbyPosts = objavaService.getUsersNearbyPosts(username, lokacija.getG_sirina(), lokacija.getG_duzina());
+
+        if (nearbyPosts.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(nearbyPosts);
+        }
+
+        return ResponseEntity.ok(nearbyPosts);
     }
 }
 

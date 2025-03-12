@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.LokacijaInfoDTO;
 import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.*;
@@ -105,6 +106,8 @@ public class ObjavaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
     }
+
+
 
 
 

@@ -7,13 +7,15 @@ import {Grid, Paper, IconButton } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import axios from "axios";
 
-const PrijavljeniKorisnikPregled = () => {
+const ObliznjeObjave = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
-  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate = useNavigate(); // React Router's navigate function to redirect
@@ -61,29 +63,25 @@ const PrijavljeniKorisnikPregled = () => {
       });
   }, [token, navigate]);
 
-    useEffect(() => {
-      if (username) { // Only fetch if username is available
-        fetch(`http://localhost:8080/objava/feed/${username}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}`, // Uncomment if you have a token
-          }
-        })
+
+  const [userLocation, setUserLocation] = useState(null);
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+      // Prvo dohvati korisnikovu lokaciju
+      axios.get(`http://localhost:8080/registrovaniKorisnik/lokacija/${username}`)
           .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
+              const { latitude, longitude } = response.data;
+              setUserLocation({ lat: latitude, lon: longitude });
+
+              // Nakon što dobijemo lokaciju, dohvatamo objave u blizini
+              return axios.get("http://localhost:8080/api/posts/nearby", {
+                  params: { lat: latitude, lon: longitude }
+              });
           })
-          .then(data => {
-            console.log('Fetched data:', data); // Log data to check if it's correct
-            setRabbitPosts(Array.isArray(data) ? data : []); // Ensure data is an array
-          })
-          .catch(error => {
-            console.error('Error fetching posts:', error);
-          });
-      }
-    }, [username]);
+          .then(response => setPosts(response.data))
+          .catch(error => console.error("Error:", error));
+  }, []);
 
   return (
     <div>
@@ -117,7 +115,7 @@ const PrijavljeniKorisnikPregled = () => {
             <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Trends
             </Button>
-            <Button component={Link} to="/obliznjeObjave" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to="/about" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Nearby Posts
             </Button>
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
@@ -145,57 +143,33 @@ const PrijavljeniKorisnikPregled = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {/* Rabbit Post Cards */}
-      <Grid container spacing={3} sx={{ mt: 4 }}>
-      {rabbitPosts.map((post, index) => (
-        <Grid item xs={12} sm={6} md={3} key={index}>
-          {/* Link to Detailed View */}
-          <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
-            <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
-              <img
-                src={`http://localhost:8080/images/${post.slika}`}
-                alt={post.opis}
-                style={{ height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }}
-              />
-
-              {/* Likes and Comments Row */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton sx={{ color: '#e91e63' }}>
-                    <FavoriteIcon />
-                  </IconButton>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.broj_lajkova}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton color="secondary">
-                    <ChatBubbleOutlineIcon />
-                  </IconButton>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.broj_komentara}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Description Row */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {post.korisnicko_ime}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                  {post.opis}
-                </Typography>
-              </Box>
-            </Paper>
-          </Link>
-        </Grid>
-      ))}
-    </Grid>
+      <div>
+            <h2>Nearby posts on map</h2>
+            {userLocation ? (
+                <MapContainer center={[userLocation.lat, userLocation.lon]} zoom={13} style={{ height: "500px", width: "100%" }}>
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    {/* Marker za korisnikovu lokaciju */}
+                    <Marker position={[userLocation.lat, userLocation.lon]}>
+                        <Popup>Vaša lokacija</Popup>
+                    </Marker>
+                    {/* Markeri za obližnje objave */}
+                    {posts.map((post, index) => (
+                        <Marker key={index} position={[post.latitude, post.longitude]}>
+                            <Popup>
+                                <b>{post.title}</b> <br />
+                                {post.description}
+                            </Popup>
+                        </Marker>
+                    ))}
+                </MapContainer>
+            ) : (
+                <p>Loading map...</p>
+            )}
+        </div>
         
 
     </div>
   );
 };
 
-export default PrijavljeniKorisnikPregled;
+export default ObliznjeObjave;

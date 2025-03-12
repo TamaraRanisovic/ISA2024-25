@@ -61,5 +61,13 @@ public class GeocodingController {
         }
     }
 
+    @GetMapping("/distance")
+    public double getDistance(
+            @RequestParam double lat1,
+            @RequestParam double lon1,
+            @RequestParam double lat2,
+            @RequestParam double lon2) {
+        return geocodingService.calculateDistance(lat1, lon1, lat2, lon2);
+    }
 
 }

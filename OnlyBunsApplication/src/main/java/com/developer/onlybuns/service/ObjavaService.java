@@ -46,4 +46,6 @@ public interface ObjavaService {
 
 
     LokacijaInfoDTO findLokacijaInfoDTOById(Integer id);
+
+    List<ObjavaDTO> getUsersNearbyPosts(String username, double g_sirina, double g_duzina);
 }
