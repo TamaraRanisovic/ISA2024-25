@@ -18,21 +18,19 @@ const ObliznjeObjave = () => {
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
-  const navigate = useNavigate(); // React Router's navigate function to redirect
+  const navigate = useNavigate(); // React Router's navigate function
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
     navigate('/prijava');
   };
 
-    const logout = () => {
-      localStorage.removeItem("jwtToken"); // Remove token
-  
-      // Redirect to login page
-      window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
-    };
+  const logout = () => {
+    localStorage.removeItem('jwtToken');
+    window.location.href = '/prijava'; // Redirect to login
+  };
 
-  // Function to decode the JWT token by calling the backend endpoint
+  // Decode JWT token by calling the backend
   useEffect(() => {
     if (!token) {
       setDialogMessage('No user found. Please log in.');
@@ -63,25 +61,60 @@ const ObliznjeObjave = () => {
       });
   }, [token, navigate]);
 
-
   const [userLocation, setUserLocation] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const [nearbyPosts, setNearbyPosts] = useState([]);
 
-  useEffect(() => {
-      // Prvo dohvati korisnikovu lokaciju
-      axios.get(`http://localhost:8080/registrovaniKorisnik/lokacija/${username}`)
-          .then(response => {
-              const { latitude, longitude } = response.data;
-              setUserLocation({ lat: latitude, lon: longitude });
 
-              // Nakon što dobijemo lokaciju, dohvatamo objave u blizini
-              return axios.get("http://localhost:8080/api/posts/nearby", {
-                  params: { lat: latitude, lon: longitude }
-              });
-          })
-          .then(response => setPosts(response.data))
-          .catch(error => console.error("Error:", error));
-  }, []);
+useEffect(() => {
+    if (!username) return;
+
+    console.log("Fetching user location for:", username);
+
+    axios.get(`http://localhost:8080/registrovaniKorisnik/lokacija/${username}`)
+        .then(response => {
+            if (response.status === 200 && response.data.length === 2) {
+                const [latitude, longitude] = response.data;
+                console.log("User location received:", latitude, longitude);
+                setUserLocation({ lat: latitude, lon: longitude });
+
+                console.log("Fetching nearby posts...");
+                return axios.get(`http://localhost:8080/lokacija/nearby-posts/${username}`);
+            } else {
+                throw new Error("Invalid location response format");
+            }
+        })
+        .then(response => {
+            if (response.status === 204) {
+                console.log("No nearby posts found.");
+                setNearbyPosts([]);
+            } else {
+                console.log("Nearby posts received:", response.data);
+
+                // Debug: Check if the response contains valid coordinates
+                if (Array.isArray(response.data) && response.data.length > 0) {
+                    console.log("Mapped coordinates:", response.data);
+                    setNearbyPosts(response.data);
+                } else {
+                    console.warn("Invalid coordinates received:", response.data);
+                    setNearbyPosts([]);
+                }
+            }
+        })
+        .catch(error => {
+            if (error.response) {
+                if (error.response.status === 404) {
+                    console.error("User not found.");
+                } else if (error.response.status === 204) {
+                    console.log("No nearby posts available.");
+                } else {
+                    console.error("Error fetching data:", error);
+                }
+            } else {
+                console.error("Network error:", error);
+            }
+        });
+}, [username]);
+
 
   return (
     <div>
@@ -143,24 +176,33 @@ const ObliznjeObjave = () => {
           </Box>
         </Toolbar>
       </AppBar>
+      
       <div>
             <h2>Nearby posts on map</h2>
             {userLocation ? (
                 <MapContainer center={[userLocation.lat, userLocation.lon]} zoom={13} style={{ height: "500px", width: "100%" }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    {/* Marker za korisnikovu lokaciju */}
+
+                    {/* Marker for user location */}
                     <Marker position={[userLocation.lat, userLocation.lon]}>
                         <Popup>Vaša lokacija</Popup>
                     </Marker>
-                    {/* Markeri za obližnje objave */}
-                    {posts.map((post, index) => (
-                        <Marker key={index} position={[post.latitude, post.longitude]}>
-                            <Popup>
-                                <b>{post.title}</b> <br />
-                                {post.description}
-                            </Popup>
-                        </Marker>
-                    ))}
+
+                    {/* Nearby posts markers */}
+                    {nearbyPosts.length > 0 ? (
+                        nearbyPosts.map((coords, index) =>
+                            coords.length === 2 ? (
+                                <Marker key={index} position={[coords[0], coords[1]]}>
+                                    <Popup>
+                                        <b>Post #{index + 1}</b> <br />
+                                        No additional details available.
+                                    </Popup>
+                                </Marker>
+                            ) : null
+                        )
+                    ) : (
+                        <p>No nearby posts found.</p>
+                    )}
                 </MapContainer>
             ) : (
                 <p>Loading map...</p>

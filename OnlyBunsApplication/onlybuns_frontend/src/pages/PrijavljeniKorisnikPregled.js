@@ -117,7 +117,7 @@ const PrijavljeniKorisnikPregled = () => {
             <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Trends
             </Button>
-            <Button component={Link} to="/obliznjeObjave" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to={`/obliznjeObjave/${username}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Nearby Posts
             </Button>
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
