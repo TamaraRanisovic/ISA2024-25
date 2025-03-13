@@ -10,6 +10,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
+import L from "leaflet";
 
 const ObliznjeObjave = () => {
   const [email, setEmail] = useState('');
@@ -29,6 +30,11 @@ const ObliznjeObjave = () => {
     localStorage.removeItem('jwtToken');
     window.location.href = '/prijava'; // Redirect to login
   };
+
+  const customIcon = new L.Icon({
+    iconUrl: 'http://localhost:8080/images/zemun.jpeg', // Path to your logo
+    iconSize: [35, 35], // Adjust the size of the logo
+  });
 
   // Decode JWT token by calling the backend
   useEffect(() => {
@@ -64,8 +70,7 @@ const ObliznjeObjave = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyPosts, setNearbyPosts] = useState([]);
 
-
-useEffect(() => {
+  useEffect(() => {
     if (!username) return;
 
     console.log("Fetching user location for:", username);
@@ -90,12 +95,11 @@ useEffect(() => {
             } else {
                 console.log("Nearby posts received:", response.data);
 
-                // Debug: Check if the response contains valid coordinates
+                // Validate if response contains valid data
                 if (Array.isArray(response.data) && response.data.length > 0) {
-                    console.log("Mapped coordinates:", response.data);
                     setNearbyPosts(response.data);
                 } else {
-                    console.warn("Invalid coordinates received:", response.data);
+                    console.warn("Invalid nearby posts data:", response.data);
                     setNearbyPosts([]);
                 }
             }
@@ -114,6 +118,7 @@ useEffect(() => {
             }
         });
 }, [username]);
+
 
 
   return (
@@ -184,22 +189,25 @@ useEffect(() => {
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
                     {/* Marker for user location */}
-                    <Marker position={[userLocation.lat, userLocation.lon]}>
-                        <Popup>Vaša lokacija</Popup>
+                    <Marker position={[userLocation.lat, userLocation.lon]} >
+                        <Popup>Your Location</Popup>
                     </Marker>
 
                     {/* Nearby posts markers */}
                     {nearbyPosts.length > 0 ? (
-                        nearbyPosts.map((coords, index) =>
-                            coords.length === 2 ? (
-                                <Marker key={index} position={[coords[0], coords[1]]}>
+                        nearbyPosts.map((post, index) => {
+                            const [lat, lon, postId, description, user, imageUrl] = post;
+                            return lat && lon ? (
+                                <Marker key={postId || index} position={[lat, lon]} icon={customIcon}>
                                     <Popup>
-                                        <b>Post #{index + 1}</b> <br />
-                                        No additional details available.
+                                        <b>{user}</b> <br />
+                                        {description || "No description available"}
+                                        {imageUrl && <div><img src={`http://localhost:8080/images/${imageUrl}`}
+                                          alt={description} style={{ width: "100px", marginTop: "5px" }} /></div>}
                                     </Popup>
                                 </Marker>
-                            ) : null
-                        )
+                            ) : null;
+                        })
                     ) : (
                         <p>No nearby posts found.</p>
                     )}

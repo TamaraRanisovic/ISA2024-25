@@ -76,7 +76,7 @@ public class LokacijaController {
 
 
     @GetMapping("/nearby-posts/{username}")
-    public ResponseEntity<List<double[]>> getNearbyPosts(@PathVariable("username") String username) {
+    public ResponseEntity<List<Object[]>> getNearbyPosts(@PathVariable("username") String username) {
 
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
 
@@ -90,18 +90,27 @@ public class LokacijaController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
 
-        List<double[]> coordinatesList = new ArrayList<>();
+        List<Object[]> nearbyPostsInfo = new ArrayList<>();
 
         for (ObjavaDTO objavaDTO : nearbyPosts) {
             LokacijaDTO lokacijaDTO = objavaDTO.getLokacijaDTO();
             String address = lokacijaDTO.getUlica() + ", " + lokacijaDTO.getGrad() + ", " + lokacijaDTO.getDrzava();
             double[] coordinates = geocodingService.getCoordinates(address);
+
             if (coordinates != null) { // Ensure valid coordinates before adding
-                coordinatesList.add(coordinates);
+                Object[] data = {
+                        coordinates[0],  // Latitude
+                        coordinates[1],  // Longitude
+                        objavaDTO.getId(),  // Post ID
+                        objavaDTO.getOpis(),  // Post Description
+                        objavaDTO.getKorisnicko_ime(),   // Post Image URL/Path
+                        objavaDTO.getSlika()   // Post Image URL/Path
+                };
+                nearbyPostsInfo.add(data);
             }
         }
 
-        return ResponseEntity.ok(coordinatesList);
+        return ResponseEntity.ok(nearbyPostsInfo);
     }
 }
 
