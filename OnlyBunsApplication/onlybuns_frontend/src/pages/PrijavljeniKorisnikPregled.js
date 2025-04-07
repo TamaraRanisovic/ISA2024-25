@@ -97,7 +97,7 @@ const PrijavljeniKorisnikPregled = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
+<AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
@@ -123,9 +123,11 @@ const PrijavljeniKorisnikPregled = () => {
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
-            <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Logout
-            </Button>
+            {token && username ? ( 
+              <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
+                Logout
+              </Button>
+            ) : (<></>)}
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
             {token && username ? ( 

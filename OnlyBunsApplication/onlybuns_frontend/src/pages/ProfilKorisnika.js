@@ -20,7 +20,9 @@ export default function ProfilKorisnika() {
   const [redirectToLogin, setRedirectToLogin] = useState(false);  // Flag to trigger redirection
   const isMounted = useRef(true);
   const timeoutIdRef = useRef(null); // To store the timeout ID
-
+  const [email, setEmail] = useState('');
+  const [korisnickoIme, setKorisnickoIme] = useState('');
+  const [role, setRole] = useState('');
 
   const logout = () => {
     localStorage.removeItem("jwtToken"); // Remove token
@@ -28,6 +30,28 @@ export default function ProfilKorisnika() {
     // Redirect to login page
     window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
   };
+
+    useEffect(() => {
+
+      fetch('http://localhost:8080/auth/decodeJwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: token,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data) {
+            setEmail(data.Email);
+            setKorisnickoIme(data.Username);
+            setRole(data.Role);
+          }
+        })
+        .catch(error => {
+          console.error('Error decoding JWT token:', error);
+        });
+    }, [token]);
 
    useEffect(() => {
         isMounted.current = true;
@@ -150,9 +174,9 @@ const handleButtonClick = async () => {
             ) : (<></>)}
           </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
-            {token && username ? ( 
+            {token && korisnickoIme ? ( 
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                Welcome, {username}
+                Welcome, {korisnickoIme}
               </Typography>
             ) : (
               <>
