@@ -1,23 +1,37 @@
 import React from 'react';
-import { AppBar, Toolbar, Avatar, Typography, Button, Box, Grid, Paper, IconButton } from '@mui/material';
+import { AppBar, Toolbar, Avatar, Typography, Button, Box, Grid, Paper, IconButton, Snackbar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 export default function ProfilKorisnika() {
   const { username } = useParams();
   const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
   const [user, setUser] = useState(null);
+  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const navigate = useNavigate();  // For redirection if the user is not logged in
+  const [openDialog, setOpenDialog] = useState(false);  // To control Dialog visibility
+  const [dialogMessage, setDialogMessage] = useState('');  // To store dialog message
+  const [redirectToLogin, setRedirectToLogin] = useState(false);  // Flag to trigger redirection
+  const isMounted = useRef(true);
+  const timeoutIdRef = useRef(null); // To store the timeout ID
 
-
-
+   useEffect(() => {
+        isMounted.current = true;
+        return () => {
+          isMounted.current = false;
+        };
+      }, []);
+ 
 
   useEffect(() => {
     // Fetch user details
-    fetch(`http://localhost:8080/registrovaniKorisnik/username/${username}`) // Replace '1' with dynamic user ID if needed
+    fetch(`http://localhost:8080/registrovaniKorisnik/username/${username}`) 
       .then(response => response.json())
       .then(data => setUser(data))
       .catch(error => console.error('Error fetching user:', error));
@@ -37,6 +51,56 @@ export default function ProfilKorisnika() {
         console.error('Error fetching posts:', error);
       });
   }, []);
+
+  const handleDialogClose = () => {
+    setOpenDialog(false);  // Close the dialog
+    setRedirectToLogin(false);
+    isMounted.current = false;
+  };
+
+const handleButtonClick = async () => {
+    const token = localStorage.getItem('jwtToken');  // Check for JWT token in localStorage
+
+    if (token) {
+      try {
+        // Send the token to the backend for decoding
+        const response = await fetch('http://localhost:8080/auth/decodeJwt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: token,
+        });
+
+        if (!response.ok) {
+          setDialogMessage('Session expired. Please log in again.');
+          setOpenDialog(true);  // Show the Dialog
+        }
+
+        // If token is decoded successfully, show the dialog box for the upcoming feature
+        setDialogMessage('Feature Coming Soon: Follow functionality');
+        setOpenDialog(true);  // Show the Dialog
+
+      } catch (error) {
+        console.error('Error decoding JWT:', error);
+        setDialogMessage('Failed to decode the token. Please log in again.');
+        setOpenDialog(true);  // Show the Dialog
+      }
+    } else {
+      // If no token, show dialog box and set flag to redirect
+      setDialogMessage('No user found. Please log in.');
+      setOpenDialog(true);  // Show the Dialog
+      setRedirectToLogin(true);  // Set the flag to trigger redirection
+      setTimeout(() => {
+        if (isMounted.current) {
+          navigate("/prijava");
+        }
+      }, 15000);
+      return;
+    }
+  };
+
+
 
 
   if (!user) return <Typography>Loading profile...</Typography>;
@@ -109,14 +173,37 @@ export default function ProfilKorisnika() {
   </Box>
 
   {/* Follow Button */}
-  <Button
-    variant="contained"
-    color="secondary"
-    component={Link} to="/prijava"
-    sx={{ mt: 2, padding: '6px 14px', borderRadius: '16px', fontSize: '0.8rem', fontWeight: 'bold' }} // Smaller button size
-  >
-    Follow
-  </Button>
+   <>
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={handleButtonClick}  // Trigger the handleButtonClick function on button click
+        sx={{
+          mt: 2,
+          padding: '6px 14px',
+          borderRadius: '16px',
+          fontSize: '0.8rem',
+          fontWeight: 'bold',
+        }}
+      >
+        Follow
+      </Button>
+
+      {/* Dialog for showing the message */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>
+          {dialogMessage}  {/* Show the appropriate message based on the user's state */}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
+    </>
 </Paper>
 
 
