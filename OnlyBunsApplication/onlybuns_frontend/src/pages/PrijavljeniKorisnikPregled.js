@@ -180,9 +180,9 @@ const PrijavljeniKorisnikPregled = () => {
 
               {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Typography sx={{ fontWeight: 'bold' }}>
-                  {post.korisnicko_ime}
-                </Typography>
+                 <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
+                            <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
+                </Link>
                 <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
                   {post.opis}
                 </Typography>
