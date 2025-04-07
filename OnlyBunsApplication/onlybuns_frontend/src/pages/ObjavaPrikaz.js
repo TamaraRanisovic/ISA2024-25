@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Typography, Paper, Box } from '@mui/material';
 import { AppBar, Toolbar, Button, IconButton, List, ListItem, ListItemText  } from '@mui/material';
 import { Link } from 'react-router-dom';
-import logo from './photos/onlybuns_logo.png';
+import logo from './photos/posticon.png';
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import logo from './photos/onlybuns_logo.png';
+import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid, Paper, IconButton } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';

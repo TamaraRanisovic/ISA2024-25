@@ -12,7 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import { AppBar, Toolbar} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from './photos/onlybuns_logo.png';
+import logo from './photos/posticon.png';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import axios from "axios";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import logo from './photos/onlybuns_logo.png';
+import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {Grid, Paper, IconButton } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -31,9 +31,9 @@ const ObliznjeObjave = () => {
     window.location.href = '/prijava'; // Redirect to login
   };
 
-  const customIcon = new L.Icon({
-    iconUrl: 'http://localhost:8080/images/zemun.jpeg', // Path to your logo
-    iconSize: [35, 35], // Adjust the size of the logo
+  const postIcon = L.icon({
+    iconUrl:'http://localhost:8080/images/posticon.png',
+    iconSize: [35, 35],
   });
 
 
@@ -211,7 +211,7 @@ const ObliznjeObjave = () => {
                         nearbyPosts.map((post, index) => {
                             const [lat, lon, postId, description, user, imageUrl] = post;
                             return lat && lon ? (
-                                <Marker key={postId || index} position={[lat, lon]} icon={customIcon}>
+                                <Marker key={postId || index} position={[lat, lon]} icon={postIcon}>
                                     <Popup>
                                         <b>{user}</b> <br />
                                         {description || "No description available"}

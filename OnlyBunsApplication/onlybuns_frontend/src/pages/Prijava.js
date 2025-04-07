@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { AppBar, Toolbar} from '@mui/material';
-import logo from './photos/onlybuns_logo.png';
+import logo from './photos/posticon.png';
 const defaultTheme = createTheme();
 
 export default function Prijava() {
