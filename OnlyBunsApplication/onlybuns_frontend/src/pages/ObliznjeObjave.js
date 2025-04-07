@@ -36,6 +36,19 @@ const ObliznjeObjave = () => {
     iconSize: [35, 35], // Adjust the size of the logo
   });
 
+
+  const locationIcon = L.divIcon({
+    className: "",
+    html: `
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 10c0 6-9 13-9 13S3 16 3 10a9 9 0 1 1 18 0z"/>
+        <circle cx="12" cy="10" r="3" fill="#ff0000"/>
+      </svg>
+    `,
+    iconSize: [40, 40],
+    iconAnchor: [20, 40], // the tip of the pin touches the location
+  });
+
   // Decode JWT token by calling the backend
   useEffect(() => {
     if (!token) {
@@ -189,7 +202,7 @@ const ObliznjeObjave = () => {
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
                     {/* Marker for user location */}
-                    <Marker position={[userLocation.lat, userLocation.lon]} >
+                    <Marker position={[userLocation.lat, userLocation.lon]} icon={locationIcon}>
                         <Popup>Your Location</Popup>
                     </Marker>
 
