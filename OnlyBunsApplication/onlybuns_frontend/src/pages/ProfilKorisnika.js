@@ -167,7 +167,7 @@ const handleButtonClick = async () => {
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
-            {token && username ? ( 
+            {token && korisnickoIme ? ( 
               <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
                 Logout
               </Button>

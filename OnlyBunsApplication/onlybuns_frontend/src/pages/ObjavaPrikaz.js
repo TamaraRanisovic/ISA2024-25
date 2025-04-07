@@ -10,7 +10,40 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 const ObjavaPrikaz = () => {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
+  const [email, setEmail] = useState('');
+  const [korisnickoIme, setKorisnickoIme] = useState('');
+  const [role, setRole] = useState('');
+  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
 
+  const logout = () => {
+    localStorage.removeItem("jwtToken"); // Remove token
+
+    // Redirect to login page
+    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+  };
+  
+  useEffect(() => {
+  
+        fetch('http://localhost:8080/auth/decodeJwt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: token,
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data) {
+              setEmail(data.Email);
+              setKorisnickoIme(data.Username);
+              setRole(data.Role);
+            }
+          })
+          .catch(error => {
+            console.error('Error decoding JWT token:', error);
+          });
+      }, [token]);
+  
   useEffect(() => {
     // Fetch post details using postId
     fetch(`http://localhost:8080/objava/${postId}`)
@@ -26,26 +59,56 @@ const ObjavaPrikaz = () => {
   return (
     <div>
     {/* Navigation Bar */}
-    <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
-    <Toolbar sx={{ justifyContent: 'space-between' }}>
-      <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-        <img src={logo} alt="OnlyBuns Logo" style={{ height: '40px', marginRight: '10px' }} />
-        <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-          OnlyBuns
-        </Typography>
-      </Box>
-      </Link>
-      <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
-        <Button component={Link} to="/registracija" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-          Sign In
-        </Button>
-        <Button component={Link} to="/prijava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-          Log In
-        </Button>
-      </Box>
-    </Toolbar>
-  </AppBar>
+<AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+              <img src={logo} alt="OnlyBuns Logo" style={{ height: '40px', marginRight: '10px' }} />
+              <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                OnlyBuns
+              </Typography>
+            </Box>
+          </Link>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Feed
+            </Button>
+            <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              New post
+            </Button>
+            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Trends
+            </Button>
+            <Button component={Link} to={`/obliznjeObjave/${korisnickoIme}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Nearby Posts
+            </Button>
+            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Chat
+            </Button>
+            {token && korisnickoIme ? ( 
+              <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
+                Logout
+              </Button>
+            ) : (<></>)}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
+            {token && korisnickoIme ? ( 
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Welcome, {korisnickoIme}
+              </Typography>
+            ) : (
+              <>
+                <Button component={Link} to="/registracija" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Sign In
+                </Button>
+                <Button component={Link} to="/prijava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Log In
+                </Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </AppBar>
   <Paper
       elevation={6}
       sx={{
