@@ -21,6 +21,14 @@ export default function ProfilKorisnika() {
   const isMounted = useRef(true);
   const timeoutIdRef = useRef(null); // To store the timeout ID
 
+
+  const logout = () => {
+    localStorage.removeItem("jwtToken"); // Remove token
+
+    // Redirect to login page
+    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+  };
+
    useEffect(() => {
         isMounted.current = true;
         return () => {
@@ -109,23 +117,53 @@ const handleButtonClick = async () => {
   return (
     <div>
       {/* Navigation Bar */}
-      <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
+<AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
-            <img src={logo} alt="OnlyBuns Logo" style={{ height: '40px', marginRight: '10px' }} />
-            <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
-              OnlyBuns
-            </Typography>
-          </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+              <img src={logo} alt="OnlyBuns Logo" style={{ height: '40px', marginRight: '10px' }} />
+              <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                OnlyBuns
+              </Typography>
+            </Box>
           </Link>
-          <Box sx={{ display: 'flex', gap: 2, mr: 2 }}>
-            <Button component={Link} to="/registracija" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Sign In
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Feed
             </Button>
-            <Button component={Link} to="/prijava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Log In
+            <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              New post
             </Button>
+            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Trends
+            </Button>
+            <Button component={Link} to={`/obliznjeObjave/${username}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Nearby Posts
+            </Button>
+            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Chat
+            </Button>
+            {token && username ? ( 
+              <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
+                Logout
+              </Button>
+            ) : (<></>)}
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
+            {token && username ? ( 
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                Welcome, {username}
+              </Typography>
+            ) : (
+              <>
+                <Button component={Link} to="/registracija" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Sign In
+                </Button>
+                <Button component={Link} to="/prijava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Log In
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
