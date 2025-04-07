@@ -213,10 +213,22 @@ const ObliznjeObjave = () => {
                             return lat && lon ? (
                                 <Marker key={postId || index} position={[lat, lon]} icon={postIcon}>
                                     <Popup>
-                                        <b>{user}</b> <br />
-                                        {description || "No description available"}
-                                        {imageUrl && <div><img src={`http://localhost:8080/images/${imageUrl}`}
-                                          alt={description} style={{ width: "100px", marginTop: "5px" }} /></div>}
+                                        <Link to={`/profilKorisnika/${user}`} style={{ color: 'black', textDecoration: 'none' }}>
+                                          <b>{user}</b>
+                                        </Link>
+                                        {" "}
+                                        <i>{description || "No description available"}</i> <br />
+                                        
+                                        {/* Make image clickable to navigate to the post view page */}
+                                        {imageUrl && (
+                                            <Link to={`/objavaPrikaz/${postId}`}>
+                                                <img
+                                                    src={`http://localhost:8080/images/${imageUrl}`}
+                                                    alt={description}
+                                                    style={{ width: "100px", marginTop: "5px", cursor: "pointer" }}
+                                                />
+                                            </Link>
+                                        )}
                                     </Popup>
                                 </Marker>
                             ) : null;
