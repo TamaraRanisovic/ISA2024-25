@@ -15,8 +15,8 @@ public class Consumer {
 	 * prosledjivati poruke metodi. Listener ce konvertovati poruku u odgovorajuci tip koristeci
 	 * odgovarajuci konvertor poruka (implementacija org.springframework.amqp.support.converter.MessageConverter interfejsa).
 	 */
-	@RabbitListener(queues="${myqueue}")
-	public void handler(String message){
-		log.info("Consumer> " + message);
+	@RabbitListener(queues = "#{anonymousQueue.name}")
+	public void receiveMessage(String message) {
+		log.info("Primljena reklama: " + message);
 	}
 }

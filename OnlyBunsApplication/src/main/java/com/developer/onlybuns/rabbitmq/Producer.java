@@ -28,15 +28,11 @@ public class Producer {
         log.info("Sending> ... Message=[ " + message + " ] RoutingKey=[" + routingkey + "]");
         this.rabbitTemplate.convertAndSend(routingkey, message);
     }
-
-
-    /*
-     * U ovom slucaju routingKey ce biti ime queue.
-     * Poruka se salje u exchange ciji je naziv prosledjen kao prvi parametar i
-     * exchange ce rutirati poruke u pravi queue.
-     */
-    public void sendToExchange(String exchange, String routingkey, String message){
-        log.info("Sending> ... Message=[ " + message + " ] Exchange=[" + exchange + "] RoutingKey=[" + routingkey + "]");
-        this.rabbitTemplate.convertAndSend(exchange, routingkey, message);
+    public void sendFanout(String exchange, String message) {
+        log.info("Sending Fanout> Message=[ " + message + " ] to Exchange=[" + exchange + "]");
+        this.rabbitTemplate.convertAndSend(exchange, "", message); // routing key prazan
     }
+
+
+
 }
