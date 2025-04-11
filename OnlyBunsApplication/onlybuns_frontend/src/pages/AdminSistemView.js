@@ -36,7 +36,10 @@ const AdminSistemView = () => {
   const handleSendToAdvertisers = async () => {
     try {
       await axios.post("http://localhost:8080/adminsistem/advertise", selectedPostIds, {
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+         },
       });
       setDialogMessage('Successfully sent to advertisers!');
       setOpenDialog(true);
