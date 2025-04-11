@@ -7,6 +7,7 @@ import {Grid, Paper, IconButton } from '@mui/material';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import axios from "axios";
 
 const AdminSistemView = () => {
   const [email, setEmail] = useState('');
@@ -18,18 +19,34 @@ const AdminSistemView = () => {
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate = useNavigate(); // React Router's navigate function to redirect
   const [advertisingReady, setAdvertisingReady] = useState({}); // Track post IDs
+  const [selectedPostIds, setSelectedPostIds] = useState([]);
 
   const handleToggle = (postId) => {
-    setAdvertisingReady((prev) => ({
-      ...prev,
-      [postId]: !prev[postId],
-    }));
+    setSelectedPostIds((prevSelected) =>
+      prevSelected.includes(postId)
+        ? prevSelected.filter((id) => id !== postId)
+        : [...prevSelected, postId]
+    );
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    navigate('/prijava');
   };
+  
+  const handleSendToAdvertisers = async () => {
+    try {
+      await axios.post("http://localhost:8080/adminsistem/advertise", selectedPostIds, {
+        headers: { "Content-Type": "application/json" },
+      });
+      setDialogMessage('Successfully sent to advertisers!');
+      setOpenDialog(true);
+      setSelectedPostIds([]); // Optionally clear selection
+    } catch (error) {
+      console.error("Error sending posts:", error);
+      alert("Failed to send posts.");
+    }
+  };
+
 
     const logout = () => {
       localStorage.removeItem("jwtToken"); // Remove token
@@ -169,7 +186,7 @@ const AdminSistemView = () => {
         <Typography variant="h5" sx={{ mt: 2, mb: 4 }}>
           Select Posts for External Ads
         </Typography>
-        <Button variant="contained" component={Link} to="/prijava" color="secondary" sx={{ padding: '7px 15px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+        <Button variant="contained" onClick={handleSendToAdvertisers} color="secondary" sx={{ padding: '7px 15px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>
           Send to Advertisers
         </Button>
       </Box>
@@ -191,23 +208,23 @@ const AdminSistemView = () => {
           >
             {/* Checkbox in top-right corner */}
             <Checkbox
-                checked={!!advertisingReady[post.id]}
-                onChange={() => handleToggle(post.id)}
-                sx={{
-                  position: 'absolute',
-                  top: 12,
-                  right: 12,
+              checked={selectedPostIds.includes(post.id)}
+              onChange={() => handleToggle(post.id)}
+              sx={{
+                position: 'absolute',
+                top: 12,
+                right: 12,
+                bgcolor: 'white',
+                borderRadius: '50%',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                '&.Mui-checked': {
+                  color: '#b4a7d6',
+                },
+                '&:hover': {
                   bgcolor: 'white',
-                  borderRadius: '50%',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                  '&.Mui-checked': {
-                    color: '#b4a7d6',
-                  },
-                  '&:hover': {
-                    bgcolor: 'white', // Keep white on hover
-                  },
-                }}
-              />
+                },
+              }}
+            />
 
             {/* Post image */}
             <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
