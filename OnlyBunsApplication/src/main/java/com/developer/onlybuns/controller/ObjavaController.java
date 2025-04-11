@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.JwtUtil;
 import com.developer.onlybuns.dto.request.LokacijaInfoDTO;
 import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
@@ -48,8 +49,32 @@ public class ObjavaController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> save(@RequestBody NovaObjavaDTO novaObjavaDTO) {
+    public ResponseEntity<String> save(@RequestBody NovaObjavaDTO novaObjavaDTO, @RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7); // Remove "Bearer " prefix
+
+        if (!JwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body("Invalid token");
+        }
+
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(novaObjavaDTO.getKorisnicko_ime());
+
+
+        String username = JwtUtil.getUsernameFromToken(token);
+        String role = JwtUtil.getRoleFromToken(token);
+
+        if (!novaObjavaDTO.getKorisnicko_ime().equals(username)) {
+            return ResponseEntity.status(403).body("Access denied. Only registered users can post.");
+        }
+
+        if (!"REGISTROVANI_KORISNIK".equals(role)) {
+            return ResponseEntity.status(403).body("Access denied. Only registered users can post.");
+        }
+
         if (registrovaniKorisnik != null) {
             objavaService.saveObjava(novaObjavaDTO, registrovaniKorisnik.get());
 

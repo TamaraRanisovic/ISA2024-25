@@ -54,6 +54,13 @@ export default function NovaObjava() {
     navigate2('/prijava');
   };
 
+  const logout = () => {
+    localStorage.removeItem("jwtToken"); // Remove token
+
+    // Redirect to login page
+    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+  };
+
   const handleGeocode = async (street, city, state) => {
     if (!street || !city || !state) return; // Ensure all fields are filled before making the request
   
@@ -123,34 +130,52 @@ export default function NovaObjava() {
 
     
   useEffect(() => {
-    if (!token) {
-      setDialogMessage('No user found. Please log in.');
-      setOpenDialog(true);
-      setTimeout(() => {
-        navigate2('/prijava'); // Redirect to login after 15 seconds
-      }, 15000); // Delay redirection to allow user to read the message
-      return;
-    }
-
-    fetch('http://localhost:8080/auth/decodeJwt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: token,
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
-          setEmail(data.Email);
-          setKorisnickoIme(data.Username);
-          setRole(data.Role);
+      if (!token) {
+        setDialogMessage('No user found. Please log in.');
+        setOpenDialog(true);
+        setTimeout(() => {
+          navigate('/prijava'); // Redirect to login after 15 seconds
+        }, 15000); // Delay redirection to allow user to read the message
+        return;
+      }
+  
+      fetch('http://localhost:8080/auth/decodeJwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: token,
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to decode token');
         }
+        return response.json();
+      })
+      .then(data => {
+        if (!data || data.Role !== "REGISTROVANI_KORISNIK") {
+          setDialogMessage('Unauthorized access. Redirecting to login...');
+          setOpenDialog(true);
+          setTimeout(() => {
+            navigate('/prijava');
+          }, 15000);
+          return;
+        }
+  
+        // Set user data only if role is valid
+        setEmail(data.Email);
+        setKorisnickoIme(data.Username);
+        setRole(data.Role);
       })
       .catch(error => {
         console.error('Error decoding JWT token:', error);
+        setDialogMessage('Session expired or invalid token. Please log in again.');
+        setOpenDialog(true);
+        setTimeout(() => {
+          navigate('/prijava');
+        }, 15000);
       });
-  }, [token, navigate2]);
+  }, [token, navigate]);
   
   const handlePhotoChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -217,11 +242,15 @@ export default function NovaObjava() {
         grad: city,
         drzava: state
     } };
-    
+    const token = localStorage.getItem("jwtToken");
+
     try {
       const response = await fetch("http://localhost:8080/objava/add", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+         },
         body: JSON.stringify(objava)
       });
 
@@ -272,26 +301,28 @@ export default function NovaObjava() {
               </Typography>
             </Box>
           </Link>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Feed
-            </Button>
-            <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              New post
-            </Button>
-            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Trends
-            </Button>
-            <Button component={Link} to="/about" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Nearby Posts
-            </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Chat
-            </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              My profile
-            </Button>
-          </Box>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                Feed
+              </Button>
+              <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                New post
+              </Button>
+              <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                Trends
+              </Button>
+              <Button component={Link} to={`/obliznjeObjave/${username}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                Nearby Posts
+              </Button>
+              <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                Chat
+              </Button>
+              {token && korisnicko_ime ? ( 
+                <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
+                  Logout
+                </Button>
+              ) : (<></>)}
+            </Box>
           <Box sx={{ display: 'flex', gap: 2, mr: 2, alignItems: 'center' }}>
             {token && korisnicko_ime ? ( 
               <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
