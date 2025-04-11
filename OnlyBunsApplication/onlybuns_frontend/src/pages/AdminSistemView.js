@@ -164,8 +164,18 @@ const AdminSistemView = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      <Box sx={{ padding: 3, textAlign: 'center' }}>
+        <Typography variant="h5" sx={{ mt: 2, mb: 4 }}>
+          Select Posts for External Ads
+        </Typography>
+        <Button variant="contained" component={Link} to="/prijava" color="secondary" sx={{ padding: '7px 15px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 'bold' }}>
+          Send to Advertisers
+        </Button>
+      </Box>
+
       {/* Rabbit Post Cards */}
-      <Grid container spacing={3} sx={{ mt: 4 }}>
+      <Grid container spacing={3} sx={{ mt: 1}}>
       {rabbitPosts.map((post, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
           <Paper

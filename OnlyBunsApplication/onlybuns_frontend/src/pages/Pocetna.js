@@ -12,7 +12,6 @@ export default function HomePage() {
   useEffect(() => {
     fetch('http://localhost:8080/objava', {
       headers: {
-        //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
         'Content-Type': 'application/json',
       }
     })
