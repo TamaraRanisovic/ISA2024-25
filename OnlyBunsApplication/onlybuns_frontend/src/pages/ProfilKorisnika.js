@@ -152,21 +152,37 @@ const handleButtonClick = async () => {
             </Box>
           </Link>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Feed
-            </Button>
-            <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              New post
-            </Button>
-            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Trends
-            </Button>
-            <Button component={Link} to={`/obliznjeObjave/${username}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Nearby Posts
-            </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              Chat
-            </Button>
+          {role === "REGISTROVANI_KORISNIK" ? ( 
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Feed
+                </Button>
+                <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  New post
+                </Button>
+                <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Trends
+                </Button>
+                <Button component={Link} to={`/obliznjeObjave/${korisnickoIme}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Nearby Posts
+                </Button>
+                <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Chat
+                </Button>
+              </Box>
+            ) : role === "ADMIN_SISTEMA" ? (
+              <>
+                <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  ADVERTISING
+                </Button>
+                <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  CONTACT
+                </Button>
+              </>
+            ) : (
+              <>
+              </>
+            )}
             {token && korisnickoIme ? ( 
               <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
                 Logout

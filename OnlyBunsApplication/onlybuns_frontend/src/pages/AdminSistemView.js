@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, FormControlLabel, Checkbox } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -17,6 +17,14 @@ const AdminSistemView = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate = useNavigate(); // React Router's navigate function to redirect
+  const [advertisingReady, setAdvertisingReady] = useState({}); // Track post IDs
+
+  const handleToggle = (postId) => {
+    setAdvertisingReady((prev) => ({
+      ...prev,
+      [postId]: !prev[postId],
+    }));
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -82,10 +90,9 @@ const AdminSistemView = () => {
 
     useEffect(() => {
       if (username) { // Only fetch if username is available
-        fetch(`http://localhost:8080/objava/feed/${username}`, {
+        fetch(`http://localhost:8080/objava`, {
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}`, // Uncomment if you have a token
           }
         })
           .then(response => {
@@ -161,50 +168,94 @@ const AdminSistemView = () => {
       <Grid container spacing={3} sx={{ mt: 4 }}>
       {rabbitPosts.map((post, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
-          {/* Link to Detailed View */}
-          <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
-            <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
+          <Paper
+            elevation={6}
+            sx={{
+              position: 'relative',
+              padding: 3,
+              borderRadius: '20px',
+              textAlign: 'center',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.12)',
+              overflow: 'hidden'
+            }}
+          >
+            {/* Checkbox in top-right corner */}
+            <Checkbox
+                checked={!!advertisingReady[post.id]}
+                onChange={() => handleToggle(post.id)}
+                sx={{
+                  position: 'absolute',
+                  top: 12,
+                  right: 12,
+                  bgcolor: 'white',
+                  borderRadius: '50%',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                  '&.Mui-checked': {
+                    color: '#b4a7d6',
+                  },
+                  '&:hover': {
+                    bgcolor: 'white', // Keep white on hover
+                  },
+                }}
+              />
+
+            {/* Post image */}
+            <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <img
                 src={`http://localhost:8080/images/${post.slika}`}
                 alt={post.opis}
-                style={{ height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }}
+                style={{
+                  height: '240px',
+                  width: '100%',
+                  borderRadius: '12px',
+                  marginBottom: '20px',
+                  objectFit: 'cover',
+                }}
               />
+            </Link>
 
-              {/* Likes and Comments Row */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton sx={{ color: '#e91e63' }}>
-                    <FavoriteIcon />
-                  </IconButton>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.broj_lajkova}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconButton color="secondary">
-                    <ChatBubbleOutlineIcon />
-                  </IconButton>
-                  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                    {post.broj_komentara}
-                  </Typography>
-                </Box>
-              </Box>
-
-              {/* Description Row */}
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                 <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
-                            <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
-                </Link>
-                <Typography variant="body2" color="textSecondary" sx={{ fontStyle: 'italic', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                  {post.opis}
+            {/* Likes and Comments */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, alignItems: 'center', mb: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton sx={{ color: '#e91e63' }}>
+                  <FavoriteIcon />
+                </IconButton>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {post.broj_lajkova}
                 </Typography>
               </Box>
-            </Paper>
-          </Link>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton color="secondary">
+                  <ChatBubbleOutlineIcon />
+                </IconButton>
+                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                  {post.broj_komentara}
+                </Typography>
+              </Box>
+            </Box>
+
+            {/* Username and Description */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
+                <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
+              </Link>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                sx={{
+                  fontStyle: 'italic',
+                  whiteSpace: 'normal',
+                  wordWrap: 'break-word',
+                }}
+              >
+                {post.opis}
+              </Typography>
+            </Box>
+          </Paper>
         </Grid>
       ))}
     </Grid>
-        
+
 
     </div>
   );
