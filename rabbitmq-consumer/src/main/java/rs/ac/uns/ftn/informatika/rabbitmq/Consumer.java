@@ -17,6 +17,6 @@ public class Consumer {
 	 */
 	@RabbitListener(queues = "#{anonymousQueue.name}")
 	public void receiveMessage(String message) {
-		log.info("Primljena reklama: " + message);
+		log.info("Primljena reklama:\n " + message);
 	}
 }

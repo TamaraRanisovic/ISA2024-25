@@ -3,7 +3,10 @@ package com.developer.onlybuns.controller;
 import com.developer.onlybuns.dto.request.AdminSistemDTO;
 import com.developer.onlybuns.dto.request.LoginDTO;
 import com.developer.onlybuns.entity.AdminSistem;
+import com.developer.onlybuns.entity.Objava;
+import com.developer.onlybuns.rabbitmq.Producer;
 import com.developer.onlybuns.service.AdminSistemService;
+import com.developer.onlybuns.service.ObjavaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +20,15 @@ public class AdminSistemController {
 
     private final AdminSistemService adminSistemService;
 
-    public AdminSistemController(AdminSistemService adminSistemService) {
+    private final ObjavaService objavaService;
+
+    private final Producer producer;
+
+
+    public AdminSistemController(AdminSistemService adminSistemService, ObjavaService objavaService, Producer producer) {
         this.adminSistemService = adminSistemService;
+        this.objavaService = objavaService;
+        this.producer = producer;
     }
 
     @GetMapping
@@ -75,5 +85,26 @@ public class AdminSistemController {
         List<String> emails = adminSistemService.getAllEmails();
         return ResponseEntity.ok(emails);
     }
+
+
+    @PostMapping("/advertise")
+    public ResponseEntity<String> sendPostsToAdvertisers(@RequestBody List<Integer> postIds) {
+        for (Integer postId : postIds) {
+            Optional<Objava> postOpt = objavaService.getById(postId); // or postService.getPostById()
+
+            if (postOpt.isPresent()) {
+                Objava post = postOpt.get();
+                String message = String.format("Opis: %s\nVreme objave: %s\nKorisnik: %s",
+                        post.getOpis(),
+                        post.getDatum_objave().toString(),
+                        post.getRegistrovaniKorisnik().getKorisnickoIme()
+                );
+                producer.sendFanout("advertisingExchange", message);
+            }
+        }
+
+        return ResponseEntity.ok("Successfully sent selected posts to advertising apps.");
+    }
+
 
 }
