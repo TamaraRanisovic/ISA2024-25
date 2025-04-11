@@ -33,37 +33,58 @@ export default function Prijava() {
   }, []);
   
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
   
-    // Use URLSearchParams to build the query string
     const queryString = new URLSearchParams({
       email: email,
       password: password,
-      ipAddress: ipAddress, // Include the IP address as a query parameter
+      ipAddress: ipAddress,
     }).toString();
   
-    fetch(`http://localhost:8080/auth/login?${queryString}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }, // Content type doesn't change
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const errorData = await response.json();
-          setError(errorData.message || `HTTP error! Status: ${response.status}`);
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data.message);
-        localStorage.setItem("jwtToken", data.token);
-        navigate('/prijavljeniKorisnikPregled'); // Redirect after successful login
-      })
-      .catch((error) => {
-        console.error("Error logging in:", error);
+    try {
+      const loginResponse = await fetch(`http://localhost:8080/auth/login?${queryString}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
+  
+      if (!loginResponse.ok) {
+        const errorData = await loginResponse.json();
+        setError(errorData.message || `HTTP error! Status: ${loginResponse.status}`);
+        return;
+      }
+  
+      const loginData = await loginResponse.json();
+      console.log(loginData.message);
+      localStorage.setItem("jwtToken", loginData.token);
+  
+      const decodeResponse = await fetch('http://localhost:8080/auth/decodeJwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: loginData.token,
+      });
+  
+      if (!decodeResponse.ok) {
+        console.error('Failed to decode JWT');
+        return;
+      }
+  
+      const decodedData = await decodeResponse.json();
+      const userRole = decodedData.Role;
+  
+      if (userRole === "REGISTROVANI_KORISNIK") {
+        navigate('/prijavljeniKorisnikPregled');
+      } else if (userRole === "ADMIN_SISTEMA") {
+        navigate('/adminSistemView');
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setError("Login failed. Please try again.");
+    }
   };
+  
   
   return (
     <ThemeProvider theme={defaultTheme}>

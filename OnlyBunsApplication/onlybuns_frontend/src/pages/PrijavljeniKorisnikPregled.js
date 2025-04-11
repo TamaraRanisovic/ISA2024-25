@@ -48,18 +48,38 @@ const PrijavljeniKorisnikPregled = () => {
       },
       body: token,
     })
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
-          setEmail(data.Email);
-          setUsername(data.Username);
-          setRole(data.Role);
-        }
-      })
-      .catch(error => {
-        console.error('Error decoding JWT token:', error);
-      });
-  }, [token, navigate]);
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to decode token');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (!data || data.Role !== "REGISTROVANI_KORISNIK") {
+        setDialogMessage('Unauthorized access. Redirecting to login...');
+        setOpenDialog(true);
+        setTimeout(() => {
+          navigate('/prijava');
+        }, 15000);
+        return;
+      }
+
+      // Set user data only if role is valid
+      setEmail(data.Email);
+      setUsername(data.Username);
+      setRole(data.Role);
+    })
+    .catch(error => {
+      console.error('Error decoding JWT token:', error);
+      setDialogMessage('Session expired or invalid token. Please log in again.');
+      setOpenDialog(true);
+      setTimeout(() => {
+        navigate('/prijava');
+      }, 15000);
+    });
+}, [token, navigate]);
+
+
 
     useEffect(() => {
       if (username) { // Only fetch if username is available
