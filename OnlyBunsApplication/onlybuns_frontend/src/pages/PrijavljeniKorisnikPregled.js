@@ -83,10 +83,10 @@ const PrijavljeniKorisnikPregled = () => {
 
     useEffect(() => {
       if (username) { // Only fetch if username is available
-        fetch(`http://localhost:8080/objava/feed/${username}`, {
+        fetch("http://localhost:8080/objava/feed", {
           headers: {
             'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${token}`, // Uncomment if you have a token
+            'Authorization': `Bearer ${token}`, // Uncomment if you have a token
           }
         })
           .then(response => {
