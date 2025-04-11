@@ -1,4 +1,5 @@
 package com.developer.onlybuns.controller;
+import com.developer.onlybuns.dto.request.JwtUtil;
 import com.developer.onlybuns.dto.request.RegistrovaniKorisnikDTO;
 import com.developer.onlybuns.dto.request.SevenDaysReportDTO;
 import com.developer.onlybuns.entity.Lokacija;
@@ -195,17 +196,34 @@ public class RegistrovaniKorisnikController {
         }
     }
 
-    @GetMapping("/lokacija/{username}")
-    public ResponseEntity<double[]> getLokacija(@PathVariable("username") String username) {
-        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
 
-        if (registrovaniKorisnik.isPresent()) {
-            Lokacija lokacija = registrovaniKorisnik.get().getLokacija();
-            double[] coordinates = { lokacija.getG_sirina(), lokacija.getG_duzina() };
-            return ResponseEntity.ok(coordinates);
-        } else {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/lokacija")
+    public ResponseEntity<double[]> getUserLocation(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
+
+        String token = authHeader.substring(7); // Remove "Bearer " prefix
+
+        if (!JwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String username = JwtUtil.getUsernameFromToken(token);
+        String role = JwtUtil.getRoleFromToken(token);
+
+        if (!"REGISTROVANI_KORISNIK".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
+        if (!registrovaniKorisnik.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Lokacija lokacija = registrovaniKorisnik.get().getLokacija();
+        double[] coordinates = { lokacija.getG_sirina(), lokacija.getG_duzina() };
+        return ResponseEntity.ok(coordinates);
     }
 
 

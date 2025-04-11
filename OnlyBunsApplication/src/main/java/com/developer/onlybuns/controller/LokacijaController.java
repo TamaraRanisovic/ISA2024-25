@@ -1,9 +1,6 @@
 package com.developer.onlybuns.controller;
 
-import com.developer.onlybuns.dto.request.LokacijaDTO;
-import com.developer.onlybuns.dto.request.LokacijaInfoDTO;
-import com.developer.onlybuns.dto.request.NovaObjavaDTO;
-import com.developer.onlybuns.dto.request.ObjavaDTO;
+import com.developer.onlybuns.dto.request.*;
 import com.developer.onlybuns.entity.Lokacija;
 import com.developer.onlybuns.entity.Objava;
 import com.developer.onlybuns.entity.RegistrovaniKorisnik;
@@ -75,14 +72,32 @@ public class LokacijaController {
     }
 
 
-    @GetMapping("/nearby-posts/{username}")
-    public ResponseEntity<List<Object[]>> getNearbyPosts(@PathVariable("username") String username) {
+    @GetMapping("/nearby-posts")
+    public ResponseEntity<List<Object[]>> getNearbyPosts(@RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String token = authHeader.substring(7);
+
+        if (!JwtUtil.validateToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        String username = JwtUtil.getUsernameFromToken(token);
+        String role = JwtUtil.getRoleFromToken(token);
+
+        if (!"REGISTROVANI_KORISNIK".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
 
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
 
         if (!registrovaniKorisnik.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+
         Lokacija lokacija = registrovaniKorisnik.get().getLokacija();
         List<ObjavaDTO> nearbyPosts = objavaService.getUsersNearbyPosts(username, lokacija.getG_sirina(), lokacija.getG_duzina());
 
@@ -97,14 +112,14 @@ public class LokacijaController {
             String address = lokacijaDTO.getUlica() + ", " + lokacijaDTO.getGrad() + ", " + lokacijaDTO.getDrzava();
             double[] coordinates = geocodingService.getCoordinates(address);
 
-            if (coordinates != null) { // Ensure valid coordinates before adding
+            if (coordinates != null) {
                 Object[] data = {
                         coordinates[0],  // Latitude
                         coordinates[1],  // Longitude
                         objavaDTO.getId(),  // Post ID
                         objavaDTO.getOpis(),  // Post Description
-                        objavaDTO.getKorisnicko_ime(),   // Post Image URL/Path
-                        objavaDTO.getSlika()   // Post Image URL/Path
+                        objavaDTO.getKorisnicko_ime(),   // Username
+                        objavaDTO.getSlika()   // Image path
                 };
                 nearbyPostsInfo.add(data);
             }

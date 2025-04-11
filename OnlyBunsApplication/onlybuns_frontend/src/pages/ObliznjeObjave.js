@@ -51,34 +51,53 @@ const ObliznjeObjave = () => {
 
   // Decode JWT token by calling the backend
   useEffect(() => {
-    if (!token) {
-      setDialogMessage('No user found. Please log in.');
-      setOpenDialog(true);
-      setTimeout(() => {
-        navigate('/prijava'); // Redirect to login after 15 seconds
-      }, 15000); // Delay redirection to allow user to read the message
-      return;
-    }
-
-    fetch('http://localhost:8080/auth/decodeJwt', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: token,
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data) {
-          setEmail(data.Email);
-          setUsername(data.Username);
-          setRole(data.Role);
+      if (!token) {
+        setDialogMessage('No user found. Please log in.');
+        setOpenDialog(true);
+        setTimeout(() => {
+          navigate('/prijava'); // Redirect to login after 15 seconds
+        }, 15000); // Delay redirection to allow user to read the message
+        return;
+      }
+  
+      fetch('http://localhost:8080/auth/decodeJwt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: token,
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to decode token');
         }
+        return response.json();
+      })
+      .then(data => {
+        if (!data || data.Role !== "REGISTROVANI_KORISNIK") {
+          setDialogMessage('Unauthorized access. Redirecting to login...');
+          setOpenDialog(true);
+          setTimeout(() => {
+            navigate('/prijava');
+          }, 15000);
+          return;
+        }
+  
+        // Set user data only if role is valid
+        setEmail(data.Email);
+        setUsername(data.Username);
+        setRole(data.Role);
       })
       .catch(error => {
         console.error('Error decoding JWT token:', error);
+        setDialogMessage('Session expired or invalid token. Please log in again.');
+        setOpenDialog(true);
+        setTimeout(() => {
+          navigate('/prijava');
+        }, 15000);
       });
   }, [token, navigate]);
+  
 
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyPosts, setNearbyPosts] = useState([]);
@@ -88,15 +107,23 @@ const ObliznjeObjave = () => {
 
     console.log("Fetching user location for:", username);
 
-    axios.get(`http://localhost:8080/registrovaniKorisnik/lokacija/${username}`)
-        .then(response => {
+    axios.get("http://localhost:8080/registrovaniKorisnik/lokacija", {
+      headers: {
+          Authorization: `Bearer ${token}`
+      }
+      })
+          .then(response => {
             if (response.status === 200 && response.data.length === 2) {
                 const [latitude, longitude] = response.data;
                 console.log("User location received:", latitude, longitude);
                 setUserLocation({ lat: latitude, lon: longitude });
 
                 console.log("Fetching nearby posts...");
-                return axios.get(`http://localhost:8080/lokacija/nearby-posts/${username}`);
+                return axios.get("http://localhost:8080/lokacija/nearby-posts", {
+                  headers: {
+                      Authorization: `Bearer ${token}`
+                  }
+              });
             } else {
                 throw new Error("Invalid location response format");
             }
@@ -166,7 +193,7 @@ const ObliznjeObjave = () => {
             <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Trends
             </Button>
-            <Button component={Link} to="/about" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to={`/obliznjeObjave/${username}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Nearby Posts
             </Button>
             <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
