@@ -101,9 +101,16 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
             log.info("Location not found, creating new location...");
             Lokacija novaLokacija = new Lokacija(lokacijaRegistracija);
 
-            double[] coordinates = geocodingService.getCoordinates(
-                    novaLokacija.getUlica() + ", " + novaLokacija.getGrad() + ", " + novaLokacija.getDrzava()
-            );
+            double[] coordinates;
+            try {
+                coordinates = geocodingService.getCoordinates(
+                        novaLokacija.getUlica() + ", " + novaLokacija.getGrad() + ", " + novaLokacija.getDrzava()
+                );
+            } catch (Exception e) {
+                log.error("Error getting coordinates: " + e.getMessage());
+                throw new BadRequestException("Enter valid location.");
+            }
+
 
             novaLokacija.setG_sirina(coordinates[0]);
             novaLokacija.setG_duzina(coordinates[1]);
@@ -316,5 +323,10 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
         return null;
     }
 
+    public class BadRequestException extends RuntimeException {
+        public BadRequestException(String message) {
+            super(message);
+        }
+    }
 
 }

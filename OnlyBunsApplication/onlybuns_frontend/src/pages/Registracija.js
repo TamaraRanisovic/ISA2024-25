@@ -214,8 +214,12 @@ export default function Registracija() {
             navigate("/prijava");
           }
         }, 15000);
+      } else if (response.status === 400) {
+        console.log("Enter valid location.");
+        setErrorMessage("Enter valid location.");
       } else {
-        console.log("Greska prilikom registracije.");
+        console.log("An unexpected error occurred. Please try again.");
+        setErrorMessage("An unexpected error occurred. Please try again.");
       }
     });
   };

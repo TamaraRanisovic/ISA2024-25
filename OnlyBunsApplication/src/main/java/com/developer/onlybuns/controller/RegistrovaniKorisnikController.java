@@ -8,6 +8,7 @@ import com.developer.onlybuns.entity.RegistrovaniKorisnik;
 import com.developer.onlybuns.service.ObjavaService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
 import com.developer.onlybuns.service.UsernameValidationService;
+import com.developer.onlybuns.service.impl.RegistrovaniKorisnikImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -49,15 +50,24 @@ public class RegistrovaniKorisnikController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrovaniKorisnik registrovaniKorisnik) {
-        // Validate and save the user in an "inactive" state
-        String activationToken = UUID.randomUUID().toString();
-        registrovaniKorisnikService.register(registrovaniKorisnik, activationToken);
+        try {
+            // Validate and save the user in an "inactive" state
+            String activationToken = UUID.randomUUID().toString();
+            registrovaniKorisnikService.register(registrovaniKorisnik, activationToken);
 
-        // Send activation email
-        sendActivationEmail(registrovaniKorisnik.getEmail(), activationToken);
+            // Send activation email
+            sendActivationEmail(registrovaniKorisnik.getEmail(), activationToken);
 
-        return ResponseEntity.ok("Registration successful. Please check your email to activate your account.");
+            return ResponseEntity.ok("Registration successful. Please check your email to activate your account.");
+        } catch (RegistrovaniKorisnikImpl.BadRequestException e) {
+            // Handle specific error for invalid location
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            // Handle any other errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        }
     }
+
 
 
     private void sendActivationEmail(String email, String token) {
