@@ -27,7 +27,7 @@ export default function NovaObjava() {
   const [slika, setSlika] = useState('dasdas');
   const [datum_objave, setDatumObjave] = useState(new Date().toISOString());
 
-  const [korisnicko_ime, setKorisnickoIme] = useState('asasa');
+  const [korisnicko_ime, setKorisnickoIme] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
@@ -394,7 +394,7 @@ export default function NovaObjava() {
           </div>
           <Button
             type="submit"
-            sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 7 }}
+            sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 3 }}
             fullWidth
             variant="contained"
             color="secondary"
@@ -402,14 +402,14 @@ export default function NovaObjava() {
             Publish
           </Button>
           {errorMessage && (
-            <Typography color="error" sx={{ mb: 3 }} variant="body2" gutterBottom>
+            <Typography color="error" sx={{ mb: 4 }} variant="body2" gutterBottom>
               {errorMessage}
             </Typography>
           )}
           {successMessage && (
-        <div style={{ color: 'green', marginTop: '7px',  marginBottom: '3px' }}>
-          {successMessage}
-        </div>
+        <Typography color="green" sx={{ mb: 4 }} variant="body2" gutterBottom>
+        {successMessage}
+      </Typography>
         )}
         </Box>
       </Box>

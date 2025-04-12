@@ -22,6 +22,8 @@ const AdminSistemView = () => {
   const [selectedPostIds, setSelectedPostIds] = useState([]);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [dialogMessage2, setDialogMessage2] = useState('');
+  const [openDialog3, setOpenDialog3] = useState(false);
+  const [dialogMessage3, setDialogMessage3] = useState('');
 
   const handleOpenDialog2 = () => {
     setDialogMessage2("Feature Coming Soon...");
@@ -30,6 +32,15 @@ const AdminSistemView = () => {
 
   const handleCloseDialog2 = () => {
     setOpenDialog2(false);
+  };
+
+  const handleOpenDialog3 = () => {
+    setDialogMessage3("Successfully sent to advertisers!");
+    setOpenDialog3(true);
+  };
+
+  const handleCloseDialog3 = () => {
+    setOpenDialog3(false);
   };
 
 
@@ -43,6 +54,8 @@ const AdminSistemView = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    navigate('/prijava');
+
   };
   
   const handleSendToAdvertisers = async () => {
@@ -53,8 +66,7 @@ const AdminSistemView = () => {
           "Authorization": `Bearer ${token}`
          },
       });
-      setDialogMessage('Successfully sent to advertisers!');
-      setOpenDialog(true);
+      handleOpenDialog3();
       setSelectedPostIds([]); // Optionally clear selection
     } catch (error) {
       console.error("Error sending posts:", error);
@@ -156,13 +168,23 @@ const AdminSistemView = () => {
         </DialogActions>
       </Dialog>
       <Dialog open={openDialog2} onClose={handleCloseDialog2}>
-                          <DialogTitle>Notification</DialogTitle>
-                          <DialogContent>{dialogMessage2}</DialogContent>
-                          <DialogActions>
-                            <Button onClick={handleCloseDialog2} color="primary">
-                              OK
-                            </Button>
-                          </DialogActions>
+          <DialogTitle>Notification</DialogTitle>
+          <DialogContent>{dialogMessage2}</DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog2} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialog3} onClose={handleCloseDialog3}>
+          <DialogTitle>Notification</DialogTitle>
+          <DialogContent>{dialogMessage3}</DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog3} color="primary">
+              OK
+            </Button>
+          </DialogActions>
       </Dialog>
 <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -175,7 +197,7 @@ const AdminSistemView = () => {
             </Box>
           </Link>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button component={Link} to="/adminSistemView" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               ADVERTISING
             </Button>
             <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>

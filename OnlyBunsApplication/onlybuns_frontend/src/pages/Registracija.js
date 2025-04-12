@@ -211,7 +211,7 @@ export default function Registracija() {
         setTimeout(() => {
           if (isMounted.current) {
             setSuccessMessage("");
-            navigate("/prijavljeniKorisnikPregled");
+            navigate("/prijava");
           }
         }, 15000);
       } else {
@@ -262,15 +262,15 @@ export default function Registracija() {
             <TextField fullWidth required label="City" onChange={handleCityChange} error={GradError} helperText={GradError ? 'Enter valid city name' : ''} sx={{ mb: 1.5 }}/>
             <TextField fullWidth required label="Country" onChange={handleCountryChange} error={DrzavaError} helperText={DrzavaError ? 'Enter valid country name' : ''} sx={{ mb: 1.5 }} />
             <TextField fullWidth required label="Phone number" value={broj} onChange={handleBrojChange} error={brojError} helperText={brojError ? 'Enter 10-digit phone number' : ''} sx={{ mb: 1.5 }} />
-            <Button type="submit" sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 7 }} fullWidth variant="contained"  color="secondary">
+            <Button type="submit" sx={{ padding: '5px 10px', borderRadius: '15px', fontSize: '1rem', fontWeight: 'bold', mt: 2, mb: 3 }} fullWidth variant="contained"  color="secondary">
               Sign in
             </Button>
             {errorMessage && <Typography color="error" sx={{ mb: 3}} variant="body2" gutterBottom >{errorMessage}</Typography>}
             {successMessage && (
-        <div style={{ color: 'green', marginTop: '7px',  mb: 3 }}>
-          {successMessage}
-        </div>
-      )}
+              <Typography color="green" sx={{ mb: 4 }} variant="body2" gutterBottom>
+                  {successMessage}
+              </Typography>
+            )}
           </Box>
         </Box>
       </Container>
