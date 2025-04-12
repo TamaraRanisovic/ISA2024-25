@@ -16,7 +16,18 @@ const PrijavljeniKorisnikPregled = () => {
   const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [dialogMessage2, setDialogMessage2] = useState('');
   const navigate = useNavigate(); // React Router's navigate function to redirect
+
+  const handleOpenDialog2 = () => {
+    setDialogMessage2("Feature Coming Soon...");
+    setOpenDialog2(true);
+  };
+
+  const handleCloseDialog2 = () => {
+    setOpenDialog2(false);
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -105,6 +116,8 @@ const PrijavljeniKorisnikPregled = () => {
       }
     }, [username]);
 
+    
+
   return (
     <div>
       {/* Dialog box for showing the message */}
@@ -113,6 +126,16 @@ const PrijavljeniKorisnikPregled = () => {
         <DialogContent>{dialogMessage}</DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+        <DialogTitle>Notification</DialogTitle>
+        <DialogContent>{dialogMessage2}</DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog2} color="primary">
             OK
           </Button>
         </DialogActions>
@@ -134,13 +157,13 @@ const PrijavljeniKorisnikPregled = () => {
             <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               New post
             </Button>
-            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Trends
             </Button>
             <Button component={Link} to={`/obliznjeObjave/${username}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Nearby Posts
             </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
             {token && username ? ( 

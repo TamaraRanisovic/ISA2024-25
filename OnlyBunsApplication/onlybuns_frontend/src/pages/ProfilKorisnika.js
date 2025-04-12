@@ -23,6 +23,17 @@ export default function ProfilKorisnika() {
   const [email, setEmail] = useState('');
   const [korisnickoIme, setKorisnickoIme] = useState('');
   const [role, setRole] = useState('');
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [dialogMessage2, setDialogMessage2] = useState('');
+
+  const handleOpenDialog2 = () => {
+    setDialogMessage2("Feature Coming Soon...");
+    setOpenDialog2(true);
+  };
+
+  const handleCloseDialog2 = () => {
+    setOpenDialog2(false);
+  };
 
   const logout = () => {
     localStorage.removeItem("jwtToken"); // Remove token
@@ -160,13 +171,13 @@ const handleButtonClick = async () => {
                 <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   New post
                 </Button>
-                <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Trends
                 </Button>
                 <Button component={Link} to={`/obliznjeObjave/${korisnickoIme}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Nearby Posts
                 </Button>
-                <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Chat
                 </Button>
               </Box>
@@ -279,7 +290,15 @@ const handleButtonClick = async () => {
           </Button>
         </DialogActions>
       </Dialog>
-
+      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+                    <DialogTitle>Notification</DialogTitle>
+                    <DialogContent>{dialogMessage2}</DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseDialog2} color="primary">
+                        OK
+                      </Button>
+                    </DialogActions>
+      </Dialog>
 
     </>
 </Paper>

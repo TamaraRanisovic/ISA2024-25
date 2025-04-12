@@ -20,6 +20,17 @@ const ObliznjeObjave = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const navigate = useNavigate(); // React Router's navigate function
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [dialogMessage2, setDialogMessage2] = useState('');
+
+  const handleOpenDialog2 = () => {
+    setDialogMessage2("Feature Coming Soon...");
+    setOpenDialog2(true);
+  };
+
+  const handleCloseDialog2 = () => {
+    setOpenDialog2(false);
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -173,6 +184,15 @@ const ObliznjeObjave = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+                    <DialogTitle>Notification</DialogTitle>
+                    <DialogContent>{dialogMessage2}</DialogContent>
+                    <DialogActions>
+                      <Button onClick={handleCloseDialog2} color="primary">
+                        OK
+                      </Button>
+                    </DialogActions>
+      </Dialog>
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -190,13 +210,13 @@ const ObliznjeObjave = () => {
             <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               New post
             </Button>
-            <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Trends
             </Button>
             <Button component={Link} to={`/obliznjeObjave/${username}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Nearby Posts
             </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+            <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
             <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>

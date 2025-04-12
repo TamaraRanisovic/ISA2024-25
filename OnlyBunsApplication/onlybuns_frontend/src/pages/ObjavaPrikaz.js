@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
 const ObjavaPrikaz = () => {
   const { postId } = useParams();
@@ -14,6 +15,17 @@ const ObjavaPrikaz = () => {
   const [korisnickoIme, setKorisnickoIme] = useState('');
   const [role, setRole] = useState('');
   const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [dialogMessage2, setDialogMessage2] = useState('');
+
+  const handleOpenDialog2 = () => {
+    setDialogMessage2("Feature Coming Soon...");
+    setOpenDialog2(true);
+  };
+
+  const handleCloseDialog2 = () => {
+    setOpenDialog2(false);
+  };
 
   const logout = () => {
     localStorage.removeItem("jwtToken"); // Remove token
@@ -58,6 +70,15 @@ const ObjavaPrikaz = () => {
 
   return (
     <div>
+      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+              <DialogTitle>Notification</DialogTitle>
+              <DialogContent>{dialogMessage2}</DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDialog2} color="primary">
+                  OK
+                </Button>
+              </DialogActions>
+        </Dialog>
     {/* Navigation Bar */}
 <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -78,13 +99,13 @@ const ObjavaPrikaz = () => {
                 <Button component={Link} to="/novaObjava" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   New post
                 </Button>
-                <Button component={Link} to="/shop" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Trends
                 </Button>
                 <Button component={Link} to={`/obliznjeObjave/${korisnickoIme}`}  color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Nearby Posts
                 </Button>
-                <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Chat
                 </Button>
               </Box>

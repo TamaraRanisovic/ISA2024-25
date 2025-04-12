@@ -20,6 +20,18 @@ const AdminSistemView = () => {
   const navigate = useNavigate(); // React Router's navigate function to redirect
   const [advertisingReady, setAdvertisingReady] = useState({}); // Track post IDs
   const [selectedPostIds, setSelectedPostIds] = useState([]);
+  const [openDialog2, setOpenDialog2] = useState(false);
+  const [dialogMessage2, setDialogMessage2] = useState('');
+
+  const handleOpenDialog2 = () => {
+    setDialogMessage2("Feature Coming Soon...");
+    setOpenDialog2(true);
+  };
+
+  const handleCloseDialog2 = () => {
+    setOpenDialog2(false);
+  };
+
 
   const handleToggle = (postId) => {
     setSelectedPostIds((prevSelected) =>
@@ -143,6 +155,15 @@ const AdminSistemView = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Dialog open={openDialog2} onClose={handleCloseDialog2}>
+                          <DialogTitle>Notification</DialogTitle>
+                          <DialogContent>{dialogMessage2}</DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleCloseDialog2} color="primary">
+                              OK
+                            </Button>
+                          </DialogActions>
+      </Dialog>
 <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -157,8 +178,8 @@ const AdminSistemView = () => {
             <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               ADVERTISING
             </Button>
-            <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-              CONTACT
+            <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Trends
             </Button>
             {token && username ? ( 
               <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
