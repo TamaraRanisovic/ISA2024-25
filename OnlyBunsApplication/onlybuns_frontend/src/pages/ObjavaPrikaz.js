@@ -114,8 +114,8 @@ const ObjavaPrikaz = () => {
                 <Button component={Link} to="/prijavljeniKorisnikPregled" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   ADVERTISING
                 </Button>
-                <Button component={Link} to="/contact" color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
-                  CONTACT
+                <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Trends
                 </Button>
               </>
             ) : (
