@@ -1,19 +1,15 @@
-import * as React from 'react';
 import { useEffect, useState, useRef } from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import MenuItem from '@mui/material/MenuItem';
 import { AppBar, Toolbar} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './photos/posticon.png';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import axios from "axios";
 
@@ -30,20 +26,16 @@ export default function NovaObjava() {
   const [korisnicko_ime, setKorisnickoIme] = useState('');
 
   const [errorMessage, setErrorMessage] = useState('');
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const token = localStorage.getItem('jwtToken');
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
-  const formData = new FormData();
-  const [message, setMessage] = useState('');
   const [file, setFile] = useState(null);
-  const [selectedPosition, setSelectedPosition] = useState(null);
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState('');
   const isMounted = useRef(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
-  const navigate2 = useNavigate(); // React Router's navigate function to redirect
+  const navigate2 = useNavigate();
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
@@ -65,14 +57,13 @@ export default function NovaObjava() {
   };
 
   const logout = () => {
-    localStorage.removeItem("jwtToken"); // Remove token
+    localStorage.removeItem("jwtToken");
 
-    // Redirect to login page
-    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+    window.location.href = "/prijava";
   };
 
   const handleGeocode = async (street, city, state) => {
-    if (!street || !city || !state) return; // Ensure all fields are filled before making the request
+    if (!street || !city || !state) return;
   
     try {
       const response = await axios.post("http://localhost:8080/geocode/get-coordinates", {
@@ -106,16 +97,13 @@ export default function NovaObjava() {
     return <Marker position={[latitude, longitude]} />;
   };
   
-  // Automatically call `handleGeocode` when user types in address fields
   useEffect(() => {
     handleGeocode(street, city, state);
   }, [street, city, state]);
 
 
-  // 📌 Function to Reverse Geocode (Coordinates → Address)
   const handleReverseGeocode = async (lat, lon) => {
     try {
-      // Ensure lat/lon values are valid before making a request
       if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
         setErrorMessage("Invalid latitude or longitude.");
         return;
@@ -144,8 +132,8 @@ export default function NovaObjava() {
         setDialogMessage('No user found. Please log in.');
         setOpenDialog(true);
         setTimeout(() => {
-          navigate('/prijava'); // Redirect to login after 15 seconds
-        }, 15000); // Delay redirection to allow user to read the message
+          navigate('/prijava');
+        }, 15000);
         return;
       }
   
@@ -172,7 +160,6 @@ export default function NovaObjava() {
           return;
         }
   
-        // Set user data only if role is valid
         setEmail(data.Email);
         setKorisnickoIme(data.Username);
         setRole(data.Role);
@@ -191,7 +178,7 @@ export default function NovaObjava() {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setSlika(selectedFile.name); // Set `slika` to the file name for reference
+      setSlika(selectedFile.name);
     }
   };
 
@@ -215,18 +202,6 @@ export default function NovaObjava() {
     }
   };
 
-  function LocationMarker() {
-    const map = useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        setG_sirina(lat);
-        setG_duzina(lng);
-        handleReverseGeocode(lat, lng);
-      },
-    });
-  
-    return g_sirina && g_duzina ? <Marker position={[g_sirina, g_duzina]} /> : null;
-  }
 
   useEffect(() => {
     isMounted.current = true;
@@ -267,7 +242,6 @@ export default function NovaObjava() {
       if (response.ok) {
         console.log("New post created successfully");
         
-        // Now, upload the photo after the objava is created
         await handlePhotoUpload();
 
         setSuccessMessage("New post created successfully. Redirecting to feed...");
@@ -290,7 +264,6 @@ export default function NovaObjava() {
 
   return (
     <div>
-      {/* Dialog box for showing the message */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{dialogMessage}</DialogContent>
@@ -336,6 +309,9 @@ export default function NovaObjava() {
               <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                 Chat
               </Button>
+              <Button component={Link} to={`/profilKorisnika/${korisnicko_ime}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                Profile
+              </Button>
               {token && korisnicko_ime ? ( 
                 <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
                   Logout
@@ -372,22 +348,18 @@ export default function NovaObjava() {
             Select location on the map or enter an address manually.
           </Typography>
 
-          {/* Address Fields */}
           <TextField fullWidth label="Street Name" value={street} onChange={(e) => setStreet(e.target.value)} sx={{ mb: 1.5 }} />
           <TextField fullWidth label="City" value={city} onChange={(e) => setCity(e.target.value)} sx={{ mb: 1.5 }} />
           <TextField fullWidth label="State" value={state} onChange={(e) => setState(e.target.value)} sx={{ mb: 1.5 }} />
 
-          {/* Map */}
           <MapContainer center={[g_sirina, g_duzina]} zoom={13} style={{ height: "200px", width: "100%", marginBottom: "15px" }}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <UpdateMapCenter latitude={g_sirina} longitude={g_duzina} />
           </MapContainer>
 
-          {/* Coordinates */}
           <TextField fullWidth InputProps={{ readOnly: true }} label="Latitude" value={g_sirina} onChange={(e) => setG_sirina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
           <TextField fullWidth InputProps={{ readOnly: true }} label="Longitude" value={g_duzina} onChange={(e) => setG_duzina(parseFloat(e.target.value))} sx={{ mb: 1.5 }} />
 
-          {/* File Upload */}
           <div style={{ marginBottom: '15px' }}>
             <label>Upload Photo:</label>
             <input type="file" accept="image/*" onChange={handlePhotoChange} />

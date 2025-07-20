@@ -1,10 +1,7 @@
 package com.developer.onlybuns;
 
 import com.developer.onlybuns.controller.RegistrovaniKorisnikController;
-import com.developer.onlybuns.entity.Komentar;
-import com.developer.onlybuns.entity.Objava;
-import com.developer.onlybuns.entity.Pratioci;
-import com.developer.onlybuns.entity.RegistrovaniKorisnik;
+import com.developer.onlybuns.entity.*;
 import com.developer.onlybuns.enums.Uloga;
 import com.developer.onlybuns.repository.KorisnikRepository;
 import com.developer.onlybuns.repository.RegistrovaniKorisnikRepository;
@@ -16,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -39,18 +37,29 @@ class OnlyBunsApplicationTests {
 	@Transactional
 	void testConcurrentRegistration() throws InterruptedException {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
+		CountDownLatch latch = new CountDownLatch(1);
 
-		// Define two tasks trying to register the same username
-		List<Objava> objave = new ArrayList<Objava>();
-		List<Komentar> komentari = new ArrayList<Komentar>();
-		List<Pratioci> followers = new ArrayList<Pratioci>();
-		List<Pratioci> following = new ArrayList<Pratioci>();
+		List<Objava> objave = new ArrayList<>();
+		List<Komentar> komentari = new ArrayList<>();
+		List<Pratioci> followers = new ArrayList<>();
+		List<Pratioci> following = new ArrayList<>();
 
-		RegistrovaniKorisnik korisnik1 = new RegistrovaniKorisnik("testUser", "test@gmail.com", "test", "test name", "test lastname", "test street", "test city", "test state", "1234567890", Uloga.REGISTROVANI_KORISNIK, false, objave, komentari, following, followers);
-		RegistrovaniKorisnik korisnik2 = new RegistrovaniKorisnik("testUser", "test2@gmail.com", "test2", "test name2", "test lastname2", "test street2", "test city2", "test state2", "1234567800", Uloga.REGISTROVANI_KORISNIK, false, objave, komentari, following, followers);
+		Lokacija lokacija1 = new Lokacija("Bulevar Oslobodjenja 120", "Novi Sad", "Srbija");
+		Lokacija lokacija2 = new Lokacija("Bulevar Oslobodjenja 50", "Novi Sad", "Srbija");
+
+		RegistrovaniKorisnik korisnik1 = new RegistrovaniKorisnik(
+				"testUser", "test@gmail.com", "test", "test name", "test lastname", "1234567890",
+				Uloga.REGISTROVANI_KORISNIK, false, lokacija1, objave, komentari, following, followers
+		);
+
+		RegistrovaniKorisnik korisnik2 = new RegistrovaniKorisnik(
+				"testUser", "test2@gmail.com", "test2", "test name2", "test lastname2", "1234567800",
+				Uloga.REGISTROVANI_KORISNIK, false, lokacija2, objave, komentari, following, followers
+		);
 
 		Runnable task1 = () -> {
 			try {
+				latch.await();
 				registrovaniKorisnikController.register(korisnik1);
 				System.out.println("Task 1: User registered successfully.");
 			} catch (Exception e) {
@@ -60,6 +69,7 @@ class OnlyBunsApplicationTests {
 
 		Runnable task2 = () -> {
 			try {
+				latch.await();
 				registrovaniKorisnikController.register(korisnik2);
 				System.out.println("Task 2: User registered successfully.");
 			} catch (Exception e) {
@@ -67,19 +77,17 @@ class OnlyBunsApplicationTests {
 			}
 		};
 
-		// Run both tasks concurrently
 		executor.submit(task1);
 		executor.submit(task2);
 
-		executor.shutdown();
-		executor.awaitTermination(10, TimeUnit.SECONDS);
+		latch.countDown();
 
+		executor.shutdown();
+		executor.awaitTermination(20, TimeUnit.SECONDS);
 
 		Integer userCount = registrovaniKorisnikRepository.countByKorisnickoIme("testUser");
-
 		System.out.println("User count with username 'testUser': " + userCount);
 
-		// Ensure only one user with the username 'testUser' exists
 		assertEquals(1, userCount, "Expected exactly one user to be saved.");
 	}
 

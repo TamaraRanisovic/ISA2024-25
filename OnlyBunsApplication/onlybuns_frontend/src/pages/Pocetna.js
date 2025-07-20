@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Grid, Paper, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
@@ -7,7 +6,7 @@ import { useEffect, useState } from 'react';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 export default function HomePage() {
-  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
+  const [rabbitPosts, setRabbitPosts] = useState([]);
 
   useEffect(() => {
     fetch('http://localhost:8080/objava', {
@@ -17,7 +16,7 @@ export default function HomePage() {
     })
       .then(response => response.json())
       .then(data => {
-        setRabbitPosts(data); // Store the fetched posts in state
+        setRabbitPosts(data);
       })
       .catch(error => {
         console.error('Error fetching posts:', error);
@@ -26,7 +25,6 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* Navigation Bar */}
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -48,7 +46,6 @@ export default function HomePage() {
         </Toolbar>
       </AppBar>
 
-      {/* Main Content */}
       <Box sx={{ padding: 3, textAlign: 'center' }}>
         <Typography variant="h4" sx={{ mt: 5, mb: 2 }}>
           Welcome to OnlyBuns!
@@ -60,7 +57,6 @@ export default function HomePage() {
           Start Sharing
         </Button>
 
-        {/* Rabbit Post Cards */}
         <Grid container spacing={3} sx={{ mt: 4 }}>
         {rabbitPosts.map((post, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
@@ -68,7 +64,6 @@ export default function HomePage() {
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
             <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
               
-              {/* Likes and Comments Row */}
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   
@@ -89,7 +84,6 @@ export default function HomePage() {
                 </Box>
               </Box>
 
-              {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: 'none' }}>
                   <Typography sx={{ fontWeight: 'bold' }}>

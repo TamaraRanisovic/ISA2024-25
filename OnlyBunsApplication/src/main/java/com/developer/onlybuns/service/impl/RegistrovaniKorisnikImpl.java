@@ -115,7 +115,6 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
             novaLokacija.setG_sirina(coordinates[0]);
             novaLokacija.setG_duzina(coordinates[1]);
 
-            // Save new location and flush
             lokacijaRepository.save(novaLokacija);
             lokacijaRepository.flush();
             log.info("New location saved with coordinates: {}, {}", coordinates[0], coordinates[1]);
@@ -132,9 +131,7 @@ public class RegistrovaniKorisnikImpl implements RegistrovaniKorisnikService {
 
         }
 
-        // Link user to location
 
-        // Save user
         registrovaniKorisnikRepository.save(noviKorisnik);
         log.info("User successfully registered: {}", noviKorisnik.getEmail());
     }

@@ -111,20 +111,16 @@ public class ObjavaController {
     public ResponseEntity<?> findAllUserFollows(
             @RequestHeader("Authorization") String authHeader
     ) {
-        // 1. Check for token format
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Missing or invalid Authorization header.");
         }
 
-        // 2. Extract token
         String token = authHeader.substring(7);
 
-        // 3. Validate token
         if (!JwtUtil.validateToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid JWT token.");
         }
 
-        // 4. Extract username from token
         String username = JwtUtil.getUsernameFromToken(token);
         String role = JwtUtil.getRoleFromToken(token);
 
@@ -132,7 +128,6 @@ public class ObjavaController {
             return ResponseEntity.status(403).body("Access denied. Only registered users can post.");
         }
 
-        // 5. Fetch and return user feed
         List<ObjavaDTO> feed = registrovaniKorisnikService.findAllUserFollows(username);
         return ResponseEntity.ok(feed);
     }
@@ -157,9 +152,5 @@ public class ObjavaController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred: " + e.getMessage());
         }
     }
-
-
-
-
 
 }

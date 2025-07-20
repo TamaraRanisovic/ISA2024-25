@@ -1,5 +1,4 @@
-import React from 'react';
-import { AppBar, Toolbar, Avatar, Typography, Button, Box, Grid, Paper, IconButton, Snackbar } from '@mui/material';
+import { AppBar, Toolbar, Avatar, Typography, Button, Box, Grid, Paper, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -11,15 +10,15 @@ import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material
 
 export default function ProfilKorisnika() {
   const { username } = useParams();
-  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
+  const [rabbitPosts, setRabbitPosts] = useState([]);
   const [user, setUser] = useState(null);
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
-  const navigate = useNavigate();  // For redirection if the user is not logged in
-  const [openDialog, setOpenDialog] = useState(false);  // To control Dialog visibility
-  const [dialogMessage, setDialogMessage] = useState('');  // To store dialog message
-  const [redirectToLogin, setRedirectToLogin] = useState(false);  // Flag to trigger redirection
+  const token = localStorage.getItem('jwtToken');
+  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState('');
+  const [redirectToLogin, setRedirectToLogin] = useState(false);
   const isMounted = useRef(true);
-  const timeoutIdRef = useRef(null); // To store the timeout ID
+  const timeoutIdRef = useRef(null);
   const [email, setEmail] = useState('');
   const [korisnickoIme, setKorisnickoIme] = useState('');
   const [role, setRole] = useState('');
@@ -36,10 +35,8 @@ export default function ProfilKorisnika() {
   };
 
   const logout = () => {
-    localStorage.removeItem("jwtToken"); // Remove token
-
-    // Redirect to login page
-    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+    localStorage.removeItem("jwtToken");
+    window.location.href = "/prijava";
   };
 
     useEffect(() => {
@@ -73,40 +70,36 @@ export default function ProfilKorisnika() {
  
 
   useEffect(() => {
-    // Fetch user details
     fetch(`http://localhost:8080/registrovaniKorisnik/username/${username}`) 
       .then(response => response.json())
       .then(data => setUser(data))
       .catch(error => console.error('Error fetching user:', error));
 
-    // Fetch user posts
     fetch(`http://localhost:8080/objava/user/${username}`, {
       headers: {
-        //'Authorization': `Bearer ${token}`, // Include JWT token if needed for authentication
         'Content-Type': 'application/json',
       }
     })
       .then(response => response.json())
       .then(data => {
-        setRabbitPosts(data); // Store the fetched posts in state
+        setRabbitPosts(data);
       })
       .catch(error => {
         console.error('Error fetching posts:', error);
       });
-  }, []);
+  }, [username]);
 
   const handleDialogClose = () => {
-    setOpenDialog(false);  // Close the dialog
+    setOpenDialog(false);
     setRedirectToLogin(false);
     isMounted.current = false;
   };
 
 const handleButtonClick = async () => {
-    const token = localStorage.getItem('jwtToken');  // Check for JWT token in localStorage
+    const token = localStorage.getItem('jwtToken');
 
     if (token) {
       try {
-        // Send the token to the backend for decoding
         const response = await fetch('http://localhost:8080/auth/decodeJwt', {
           method: 'POST',
           headers: {
@@ -117,23 +110,21 @@ const handleButtonClick = async () => {
 
         if (!response.ok) {
           setDialogMessage('Session expired. Please log in again.');
-          setOpenDialog(true);  // Show the Dialog
+          setOpenDialog(true);
         }
 
-        // If token is decoded successfully, show the dialog box for the upcoming feature
         setDialogMessage('Feature Coming Soon: Follow functionality');
-        setOpenDialog(true);  // Show the Dialog
+        setOpenDialog(true);
 
       } catch (error) {
         console.error('Error decoding JWT:', error);
         setDialogMessage('Failed to decode the token. Please log in again.');
-        setOpenDialog(true);  // Show the Dialog
+        setOpenDialog(true);
       }
     } else {
-      // If no token, show dialog box and set flag to redirect
       setDialogMessage('No user found. Please log in.');
-      setOpenDialog(true);  // Show the Dialog
-      setRedirectToLogin(true);  // Set the flag to trigger redirection
+      setOpenDialog(true);
+      setRedirectToLogin(true);
       setTimeout(() => {
         if (isMounted.current) {
           navigate("/prijava");
@@ -144,14 +135,11 @@ const handleButtonClick = async () => {
   };
 
 
-
-
   if (!user) return <Typography>Loading profile...</Typography>;
 
 
   return (
     <div>
-      {/* Navigation Bar */}
 <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -179,6 +167,9 @@ const handleButtonClick = async () => {
                 </Button>
                 <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Chat
+                </Button>
+                <Button component={Link} to={`/profilKorisnika/${korisnickoIme}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Profile
                 </Button>
               </Box>
             ) : role === "ADMIN_SISTEMA" ? (
@@ -219,32 +210,28 @@ const handleButtonClick = async () => {
         </Toolbar>
       </AppBar>
 
-      {/* Page Content */}
       <Box sx={{ padding: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         
       <Paper
   elevation={3}
   sx={{
     textAlign: 'center',
-    padding: 3, // Reduced padding
+    padding: 3,
     bgcolor: '#fff',
     borderRadius: '16px',
     boxShadow: '0px 4px 12px rgba(0,0,0,0.1)',
-    maxWidth: 320, // Reduced maxWidth
+    maxWidth: 320,
     width: '100%',
   }}
 >
   <Avatar
   src={logo}
   alt={user.korisnickoIme || 'User'}
-    sx={{ width: 80, height: 80, margin: 'auto', border: '3px solid #b4a7d6' }} // Reduced avatar size
+    sx={{ width: 80, height: 80, margin: 'auto', border: '3px solid #b4a7d6' }}
   />
 
   <Typography variant="h6" sx={{ fontWeight: 'bold', mt: 1.5 }}>{user.korisnickoIme || 'Unknown User'}</Typography>
 
-
-
-  {/* Follow Stats */}
   <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 2 }}>
     <Box sx={{ textAlign: 'center' }}>
       <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#b4a7d6' }}>
@@ -261,12 +248,11 @@ const handleButtonClick = async () => {
     </Box>
   </Box>
 
-  {/* Follow Button */}
    <>
       <Button
         variant="contained"
         color="secondary"
-        onClick={handleButtonClick}  // Trigger the handleButtonClick function on button click
+        onClick={handleButtonClick}
         sx={{
           mt: 2,
           padding: '6px 14px',
@@ -278,11 +264,10 @@ const handleButtonClick = async () => {
         Follow
       </Button>
 
-      {/* Dialog for showing the message */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>
-          {dialogMessage}  {/* Show the appropriate message based on the user's state */}
+          {dialogMessage}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">
@@ -305,7 +290,6 @@ const handleButtonClick = async () => {
 
 
 
-          {/* Rabbit Post Cards */}
         <Grid container spacing={3} sx={{ mt: 0 }}>
         {rabbitPosts.map((post, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
@@ -313,7 +297,6 @@ const handleButtonClick = async () => {
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
             <img src={`http://localhost:8080/images/${post.slika}`} alt={post.opis} style={{height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }} />
               
-              {/* Likes and Comments Row */}
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   
@@ -334,7 +317,6 @@ const handleButtonClick = async () => {
                 </Box>
               </Box>
 
-              {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: 'none' }}>
                   <Typography sx={{ fontWeight: 'bold' }}>

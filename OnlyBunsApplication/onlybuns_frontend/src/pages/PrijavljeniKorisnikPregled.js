@@ -12,13 +12,13 @@ const PrijavljeniKorisnikPregled = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
-  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
+  const token = localStorage.getItem('jwtToken');
+  const [rabbitPosts, setRabbitPosts] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
   const [openDialog2, setOpenDialog2] = useState(false);
   const [dialogMessage2, setDialogMessage2] = useState('');
-  const navigate = useNavigate(); // React Router's navigate function to redirect
+  const navigate = useNavigate();
 
   const handleOpenDialog2 = () => {
     setDialogMessage2("Feature Coming Soon...");
@@ -35,20 +35,17 @@ const PrijavljeniKorisnikPregled = () => {
   };
 
     const logout = () => {
-      localStorage.removeItem("jwtToken"); // Remove token
-  
-      // Redirect to login page
-      window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+      localStorage.removeItem("jwtToken");
+      window.location.href = "/prijava";
     };
 
-  // Function to decode the JWT token by calling the backend endpoint
   useEffect(() => {
     if (!token) {
       setDialogMessage('No user found. Please log in.');
       setOpenDialog(true);
       setTimeout(() => {
-        navigate('/prijava'); // Redirect to login after 15 seconds
-      }, 15000); // Delay redirection to allow user to read the message
+        navigate('/prijava');
+      }, 15000);
       return;
     }
 
@@ -75,7 +72,6 @@ const PrijavljeniKorisnikPregled = () => {
         return;
       }
 
-      // Set user data only if role is valid
       setEmail(data.Email);
       setUsername(data.Username);
       setRole(data.Role);
@@ -93,11 +89,11 @@ const PrijavljeniKorisnikPregled = () => {
 
 
     useEffect(() => {
-      if (username) { // Only fetch if username is available
+      if (username) {
         fetch("http://localhost:8080/objava/feed", {
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Uncomment if you have a token
+            'Authorization': `Bearer ${token}`,
           }
         })
           .then(response => {
@@ -107,8 +103,8 @@ const PrijavljeniKorisnikPregled = () => {
             return response.json();
           })
           .then(data => {
-            console.log('Fetched data:', data); // Log data to check if it's correct
-            setRabbitPosts(Array.isArray(data) ? data : []); // Ensure data is an array
+            console.log('Fetched data:', data);
+            setRabbitPosts(Array.isArray(data) ? data : []);
           })
           .catch(error => {
             console.error('Error fetching posts:', error);
@@ -120,7 +116,6 @@ const PrijavljeniKorisnikPregled = () => {
 
   return (
     <div>
-      {/* Dialog box for showing the message */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{dialogMessage}</DialogContent>
@@ -166,6 +161,9 @@ const PrijavljeniKorisnikPregled = () => {
             <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
+            <Button component={Link} to={`/profilKorisnika/${username}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Profile
+            </Button>
             {token && username ? ( 
               <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold'}}>
                 Logout
@@ -190,11 +188,9 @@ const PrijavljeniKorisnikPregled = () => {
           </Box>
         </Toolbar>
       </AppBar>
-      {/* Rabbit Post Cards */}
       <Grid container spacing={3} sx={{ mt: 4 }}>
       {rabbitPosts.map((post, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
-          {/* Link to Detailed View */}
           <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none' }}>
             <Paper elevation={6} sx={{ padding: 3, borderRadius: '15px', textAlign: 'center', boxShadow: '0 12px 24px rgba(0, 0, 0, 0.1)' }}>
               <img
@@ -203,7 +199,6 @@ const PrijavljeniKorisnikPregled = () => {
                 style={{ height: '240px', width: '100%', borderRadius: '10px', marginBottom: '15px' }}
               />
 
-              {/* Likes and Comments Row */}
               <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, alignItems: 'center', mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <IconButton sx={{ color: '#e91e63' }}>
@@ -223,7 +218,6 @@ const PrijavljeniKorisnikPregled = () => {
                 </Box>
               </Box>
 
-              {/* Description Row */}
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                  <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
                             <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>

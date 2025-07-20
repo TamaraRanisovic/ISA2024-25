@@ -14,7 +14,7 @@ const ObjavaPrikaz = () => {
   const [email, setEmail] = useState('');
   const [korisnickoIme, setKorisnickoIme] = useState('');
   const [role, setRole] = useState('');
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const token = localStorage.getItem('jwtToken');
   const [openDialog2, setOpenDialog2] = useState(false);
   const [dialogMessage2, setDialogMessage2] = useState('');
 
@@ -28,10 +28,9 @@ const ObjavaPrikaz = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("jwtToken"); // Remove token
+    localStorage.removeItem("jwtToken");
 
-    // Redirect to login page
-    window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+    window.location.href = "/prijava"; 
   };
   
   useEffect(() => {
@@ -57,7 +56,6 @@ const ObjavaPrikaz = () => {
       }, [token]);
   
   useEffect(() => {
-    // Fetch post details using postId
     fetch(`http://localhost:8080/objava/${postId}`)
       .then(response => response.json())
       .then(data => setPost(data))
@@ -79,7 +77,6 @@ const ObjavaPrikaz = () => {
                 </Button>
               </DialogActions>
         </Dialog>
-    {/* Navigation Bar */}
 <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -107,6 +104,9 @@ const ObjavaPrikaz = () => {
                 </Button>
                 <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
                   Chat
+                </Button>
+                <Button component={Link} to={`/profilKorisnika/${korisnickoIme}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+                  Profile
                 </Button>
               </Box>
             ) : role === "ADMIN_SISTEMA" ? (
@@ -160,7 +160,6 @@ const ObjavaPrikaz = () => {
         mt: 2,
       }}
     >
-      {/* Post Section */}
       <Box sx={{ width: "60%", textAlign: "center" }}>
         <img
           src={`http://localhost:8080/images/${post.slika}`}
@@ -168,7 +167,6 @@ const ObjavaPrikaz = () => {
           style={{ height: "310px", width: "100%", borderRadius: "10px", marginBottom: "15px" }}
         />
         
-        {/* Likes and Comments Row */}
         <Box sx={{ display: "flex", justifyContent: "center", gap: 1, alignItems: "center", mb: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <IconButton sx={{ color: "#e91e63" }}>
@@ -188,7 +186,6 @@ const ObjavaPrikaz = () => {
           </Box>
         </Box>
 
-        {/* Description Row */}
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
             <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>
@@ -207,8 +204,8 @@ const ObjavaPrikaz = () => {
   width: "45%", 
   paddingLeft: 2, 
   borderLeft: "1px solid #ddd", 
-  maxHeight: "400px",  // Set a fixed height for the scrollable area
-  overflowY: "auto",   // Enable vertical scrolling
+  maxHeight: "400px",
+  overflowY: "auto",
 }}>
   <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1.5 }}>
     Comments
@@ -220,7 +217,7 @@ const ObjavaPrikaz = () => {
         alignItems="flex-start"
         sx={{
           transition: "background-color 0.3s ease",
-          "&:hover": { backgroundColor: "#f5f5f5" }, // Light grey hover effect
+          "&:hover": { backgroundColor: "#f5f5f5" },
           borderRadius: "10px",
           padding: "8px 12px",
         }}

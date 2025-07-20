@@ -114,12 +114,12 @@ public class LokacijaController {
 
             if (coordinates != null) {
                 Object[] data = {
-                        coordinates[0],  // Latitude
-                        coordinates[1],  // Longitude
-                        objavaDTO.getId(),  // Post ID
-                        objavaDTO.getOpis(),  // Post Description
-                        objavaDTO.getKorisnicko_ime(),   // Username
-                        objavaDTO.getSlika()   // Image path
+                        coordinates[0],
+                        coordinates[1],
+                        objavaDTO.getId(),
+                        objavaDTO.getOpis(),
+                        objavaDTO.getKorisnicko_ime(),
+                        objavaDTO.getSlika()
                 };
                 nearbyPostsInfo.add(data);
             }

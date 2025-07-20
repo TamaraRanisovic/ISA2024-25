@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import {Grid, Paper, IconButton } from '@mui/material';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -16,10 +13,10 @@ const ObliznjeObjave = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
+  const token = localStorage.getItem('jwtToken'); 
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
-  const navigate = useNavigate(); // React Router's navigate function
+  const navigate = useNavigate();
   const [openDialog2, setOpenDialog2] = useState(false);
   const [dialogMessage2, setDialogMessage2] = useState('');
 
@@ -39,7 +36,7 @@ const ObliznjeObjave = () => {
 
   const logout = () => {
     localStorage.removeItem('jwtToken');
-    window.location.href = '/prijava'; // Redirect to login
+    window.location.href = '/prijava';
   };
 
   const postIcon = L.icon({
@@ -57,17 +54,16 @@ const ObliznjeObjave = () => {
       </svg>
     `,
     iconSize: [40, 40],
-    iconAnchor: [20, 40], // the tip of the pin touches the location
+    iconAnchor: [20, 40],
   });
 
-  // Decode JWT token by calling the backend
   useEffect(() => {
       if (!token) {
         setDialogMessage('No user found. Please log in.');
         setOpenDialog(true);
         setTimeout(() => {
-          navigate('/prijava'); // Redirect to login after 15 seconds
-        }, 15000); // Delay redirection to allow user to read the message
+          navigate('/prijava');
+        }, 15000);
         return;
       }
   
@@ -94,7 +90,6 @@ const ObliznjeObjave = () => {
           return;
         }
   
-        // Set user data only if role is valid
         setEmail(data.Email);
         setUsername(data.Username);
         setRole(data.Role);
@@ -146,7 +141,6 @@ const ObliznjeObjave = () => {
             } else {
                 console.log("Nearby posts received:", response.data);
 
-                // Validate if response contains valid data
                 if (Array.isArray(response.data) && response.data.length > 0) {
                     setNearbyPosts(response.data);
                 } else {
@@ -174,7 +168,6 @@ const ObliznjeObjave = () => {
 
   return (
     <div>
-      {/* Dialog box for showing the message */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{dialogMessage}</DialogContent>
@@ -219,6 +212,9 @@ const ObliznjeObjave = () => {
             <Button onClick={handleOpenDialog2} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Chat
             </Button>
+            <Button component={Link} to={`/profilKorisnika/${username}`} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
+              Profile
+            </Button>
             <Button onClick={logout} color="inherit" variant="outlined" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>
               Logout
             </Button>
@@ -248,12 +244,10 @@ const ObliznjeObjave = () => {
                 <MapContainer center={[userLocation.lat, userLocation.lon]} zoom={13} style={{ height: "500px", width: "100%" }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-                    {/* Marker for user location */}
                     <Marker position={[userLocation.lat, userLocation.lon]} icon={locationIcon}>
                         <Popup>Your Location</Popup>
                     </Marker>
 
-                    {/* Nearby posts markers */}
                     {nearbyPosts.length > 0 ? (
                         nearbyPosts.map((post, index) => {
                             const [lat, lon, postId, description, user, imageUrl] = post;
@@ -266,7 +260,6 @@ const ObliznjeObjave = () => {
                                         {" "}
                                         <i>{description || "No description available"}</i> <br />
                                         
-                                        {/* Make image clickable to navigate to the post view page */}
                                         {imageUrl && (
                                             <Link to={`/objavaPrikaz/${postId}`}>
                                                 <img

@@ -51,19 +51,16 @@ public class RegistrovaniKorisnikController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistrovaniKorisnik registrovaniKorisnik) {
         try {
-            // Validate and save the user in an "inactive" state
+            Thread.sleep(2000);
             String activationToken = UUID.randomUUID().toString();
             registrovaniKorisnikService.register(registrovaniKorisnik, activationToken);
 
-            // Send activation email
             sendActivationEmail(registrovaniKorisnik.getEmail(), activationToken);
 
             return ResponseEntity.ok("Registration successful. Please check your email to activate your account.");
         } catch (RegistrovaniKorisnikImpl.BadRequestException e) {
-            // Handle specific error for invalid location
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            // Handle any other errors
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
@@ -80,21 +77,19 @@ public class RegistrovaniKorisnikController {
         message.setText("Click the following link to activate your account: " + activationLink);
         mailSender.send(message);
     }
-/*
 
+/*
     @GetMapping("/send-report")
     public ResponseEntity<?> sendReportEmail(@RequestParam String username) {
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(username);
         if (registrovaniKorisnik != null) {
-            SevenDaysReportDTO sevenDaysReportDTO = registrovaniKorisnikService.generateSevenDaysReport(username, registrovaniKorisnik.get().getLast_login().toString());
-            sendSevenDaysReportEmail(registrovaniKorisnik.get().getEmail(), registrovaniKorisnik.get().getKorisnickoIme(), sevenDaysReportDTO);
+            SevenDaysReportDTO sevenDaysReportDTO = registrovaniKorisnikService.generateSevenDaysReport(username, registrovaniKorisnik.get().getLast_login());
+            registrovaniKorisnikService.sendSevenDaysReportEmail(registrovaniKorisnik.get().getEmail(), registrovaniKorisnik.get().getKorisnickoIme(), sevenDaysReportDTO);
             return ResponseEntity.ok("Report successfully sent.");
         }
         return ResponseEntity.badRequest().body("User doesn't exist.");
+    }*/
 
-
-    }
-*/
 
 
     @GetMapping("/activate")
@@ -169,13 +164,11 @@ public class RegistrovaniKorisnikController {
 
     @GetMapping("/check-username")
     public ResponseEntity<List<String>> checkUsername(@RequestParam String username) {
-        // First check in the Bloom Filter
         usernameValidationService.loadUsernamesFromDatabase();
         List<String> exists = new ArrayList<String>();
 
         if (usernameValidationService.isUsernameValid(username)) {
             exists.add("true");
-            // Username exists, return true for existence
             return ResponseEntity.ok(exists);
         }
         exists.add("false");

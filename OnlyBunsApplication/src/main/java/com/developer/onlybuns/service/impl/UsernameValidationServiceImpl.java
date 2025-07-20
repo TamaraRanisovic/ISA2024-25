@@ -15,29 +15,25 @@ public class UsernameValidationServiceImpl implements UsernameValidationService 
 
     private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
-    // Initialize Bloom Filter with expected size and false positive probability
     public UsernameValidationServiceImpl(RegistrovaniKorisnikService registrovaniKorisnikService) {
         this.bloomFilter = BloomFilter.create(
                 Funnels.stringFunnel(StandardCharsets.UTF_8),
-                15,
-                0.01
+                15, // expected insertions
+                0.01   // 1% false positive probability
         );
         this.registrovaniKorisnikService = registrovaniKorisnikService;
     }
 
-    // Add a username to the Bloom Filter
     @Override
     public void addUsername(String username) {
         bloomFilter.put(username);
     }
 
-    // Check if a username exists (probabilistic)
     @Override
     public boolean mightContainUsername(String username) {
         return bloomFilter.mightContain(username);
     }
 
-    // Validate username against database if Bloom Filter indicates presence
     @Override
     public boolean isUsernameValid(String username) {
         if (mightContainUsername(username)) {

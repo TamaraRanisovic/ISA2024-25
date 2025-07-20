@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, FormControlLabel, Checkbox } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Checkbox } from '@mui/material';
 import { Link } from 'react-router-dom';
 import logo from './photos/posticon.png';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -13,12 +13,11 @@ const AdminSistemView = () => {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [role, setRole] = useState('');
-  const token = localStorage.getItem('jwtToken'); // Get JWT token from localStorage
-  const [rabbitPosts, setRabbitPosts] = useState([]); // State to store posts from the database
+  const token = localStorage.getItem('jwtToken');
+  const [rabbitPosts, setRabbitPosts] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState('');
-  const navigate = useNavigate(); // React Router's navigate function to redirect
-  const [advertisingReady, setAdvertisingReady] = useState({}); // Track post IDs
+  const navigate = useNavigate();
   const [selectedPostIds, setSelectedPostIds] = useState([]);
   const [openDialog2, setOpenDialog2] = useState(false);
   const [dialogMessage2, setDialogMessage2] = useState('');
@@ -67,7 +66,7 @@ const AdminSistemView = () => {
          },
       });
       handleOpenDialog3();
-      setSelectedPostIds([]); // Optionally clear selection
+      setSelectedPostIds([]);
     } catch (error) {
       console.error("Error sending posts:", error);
       alert("Failed to send posts.");
@@ -76,20 +75,17 @@ const AdminSistemView = () => {
 
 
     const logout = () => {
-      localStorage.removeItem("jwtToken"); // Remove token
-  
-      // Redirect to login page
-      window.location.href = "/prijava";  // or use `useNavigate` from React Router v6
+      localStorage.removeItem("jwtToken");
+      window.location.href = "/prijava";
     };
 
-  // Function to decode the JWT token by calling the backend endpoint
  useEffect(() => {
     if (!token) {
       setDialogMessage('No user found. Please log in.');
       setOpenDialog(true);
       setTimeout(() => {
-        navigate('/prijava'); // Redirect to login after 15 seconds
-      }, 15000); // Delay redirection to allow user to read the message
+        navigate('/prijava');
+      }, 15000);
       return;
     }
 
@@ -116,7 +112,6 @@ const AdminSistemView = () => {
         return;
       }
 
-      // Set user data only if role is valid
       setEmail(data.Email);
       setUsername(data.Username);
       setRole(data.Role);
@@ -133,7 +128,7 @@ const AdminSistemView = () => {
 
 
     useEffect(() => {
-      if (username) { // Only fetch if username is available
+      if (username) {
         fetch(`http://localhost:8080/objava`, {
           headers: {
             'Content-Type': 'application/json',
@@ -146,8 +141,8 @@ const AdminSistemView = () => {
             return response.json();
           })
           .then(data => {
-            console.log('Fetched data:', data); // Log data to check if it's correct
-            setRabbitPosts(Array.isArray(data) ? data : []); // Ensure data is an array
+            console.log('Fetched data:', data);
+            setRabbitPosts(Array.isArray(data) ? data : []);
           })
           .catch(error => {
             console.error('Error fetching posts:', error);
@@ -157,7 +152,6 @@ const AdminSistemView = () => {
 
   return (
     <div>
-      {/* Dialog box for showing the message */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Notification</DialogTitle>
         <DialogContent>{dialogMessage}</DialogContent>
@@ -237,7 +231,6 @@ const AdminSistemView = () => {
         </Button>
       </Box>
 
-      {/* Rabbit Post Cards */}
       <Grid container spacing={3} sx={{ mt: 1}}>
       {rabbitPosts.map((post, index) => (
         <Grid item xs={12} sm={6} md={3} key={index}>
@@ -252,7 +245,6 @@ const AdminSistemView = () => {
               overflow: 'hidden'
             }}
           >
-            {/* Checkbox in top-right corner */}
             <Checkbox
               checked={selectedPostIds.includes(post.id)}
               onChange={() => handleToggle(post.id)}
@@ -272,7 +264,6 @@ const AdminSistemView = () => {
               }}
             />
 
-            {/* Post image */}
             <Link to={`/objavaPrikaz/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
               <img
                 src={`http://localhost:8080/images/${post.slika}`}
@@ -287,7 +278,6 @@ const AdminSistemView = () => {
               />
             </Link>
 
-            {/* Likes and Comments */}
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, alignItems: 'center', mb: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <IconButton sx={{ color: '#e91e63' }}>
@@ -307,7 +297,6 @@ const AdminSistemView = () => {
               </Box>
             </Box>
 
-            {/* Username and Description */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
               <Link to={`/profilKorisnika/${post.korisnicko_ime}`} style={{ textDecoration: "none" }}>
                 <Typography sx={{ fontWeight: "bold" }}>{post.korisnicko_ime}</Typography>

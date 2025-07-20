@@ -1,10 +1,9 @@
-// Importuj potrebne biblioteke
-import React, { useState, useEffect  } from 'react';
+import { useState, useEffect  } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import { Link, useNavigate } from 'react-router-dom'; // Dodaj useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
@@ -18,15 +17,14 @@ export default function Prijava() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [ipAddress, setIpAddress] = useState(null); // To store the IP address
+  const [ipAddress, setIpAddress] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch the IP address from an external API
   useEffect(() => {
     fetch("https://api.ipify.org?format=json")
       .then(response => response.json())
       .then(data => {
-        console.log('Fetched IP:', data.ip); // Log fetched IP
+        console.log('Fetched IP:', data.ip);
         setIpAddress(data.ip);
       })
       .catch(error => console.error('Error fetching IP:', error));
@@ -88,7 +86,6 @@ export default function Prijava() {
   
   return (
     <ThemeProvider theme={defaultTheme}>
-      {/* Navigation Bar */}
       <AppBar position="static" sx={{ bgcolor: '#b4a7d6' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', color: 'inherit' }}>
@@ -134,7 +131,7 @@ export default function Prijava() {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            error={Boolean(error)} // Show error style if there's an error
+            error={Boolean(error)}
           />
           <TextField
             margin="normal"
@@ -147,7 +144,7 @@ export default function Prijava() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            error={Boolean(error)} // Show error style if there's an error
+            error={Boolean(error)}
           />
           {error && (
             <Typography variant="body2" color="error" align="center" sx={{ mt: 1 }}>
