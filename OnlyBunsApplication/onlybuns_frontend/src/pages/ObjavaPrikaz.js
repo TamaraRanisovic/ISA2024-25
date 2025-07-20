@@ -32,6 +32,18 @@ const ObjavaPrikaz = () => {
 
     window.location.href = "/prijava"; 
   };
+
+const formatDatumKreiranja = (raw) => {
+
+  if (!raw) return "";
+
+  const parts = raw.toString().split(",");
+  const [year, month, day, hour, minute] = parts;
+  const shortYear = year.slice(-2);
+  const pad = (num) => num.toString().padStart(2, "0");
+
+  return `${pad(day)}/${pad(month)}/${shortYear} ${pad(hour)}:${pad(minute)}`;
+};
   
   useEffect(() => {
   
@@ -200,7 +212,7 @@ const ObjavaPrikaz = () => {
         </Box>
       </Box>
 
-      <Box sx={{ 
+  <Box sx={{ 
   width: "45%", 
   paddingLeft: 2, 
   borderLeft: "1px solid #ddd", 
@@ -224,21 +236,24 @@ const ObjavaPrikaz = () => {
       >
         <ListItemText
           primary={
-            <Link
-              to={`/profilKorisnika/${komentar.korisnicko_ime}`}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <Typography sx={{ fontWeight: "bold", "&:hover": { color: "#1976d2" } }}>
-                {komentar.korisnicko_ime}
+            <Box display="flex" alignItems="center" gap={1}>
+              <Link
+                to={`/profilKorisnika/${komentar.korisnicko_ime}`}
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <Typography sx={{ fontWeight: "bold", "&:hover": { color: "#1976d2" } }}>
+                  {komentar.korisnicko_ime}
+                </Typography>
+              </Link>
+              <Typography variant="caption" color="textSecondary">
+                  {formatDatumKreiranja(komentar.datum_kreiranja)}
               </Typography>
-            </Link>
+            </Box>
           }
           secondary={
-            <>
-              <Typography variant="body2" color="textPrimary">
-                {komentar.opis}
-              </Typography>
-            </>
+            <Typography variant="body2" color="textPrimary">
+              {komentar.opis}
+            </Typography>
           }
         />
       </ListItem>
