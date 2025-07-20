@@ -9,12 +9,7 @@ import org.springframework.stereotype.Component;
 public class Consumer {
 
 	private static final Logger log = LoggerFactory.getLogger(Consumer.class);
-	/*
-	 * @RabbitListener anotira metode za kreiranje handlera za bilo koju poruku koja pristize,
-	 * sto znaci da ce se kreirati listener koji je konektovan na RabbitQM queue i koji ce
-	 * prosledjivati poruke metodi. Listener ce konvertovati poruku u odgovorajuci tip koristeci
-	 * odgovarajuci konvertor poruka (implementacija org.springframework.amqp.support.converter.MessageConverter interfejsa).
-	 */
+
 	@RabbitListener(queues = "#{anonymousQueue.name}")
 	public void receiveMessage(String message) {
 		log.info("Primljena reklama:\n " + message);
