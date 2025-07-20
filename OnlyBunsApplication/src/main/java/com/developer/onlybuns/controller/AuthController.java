@@ -43,7 +43,7 @@ public class AuthController {
         if (ipAddress == null) {
             return ResponseEntity.status(401).body("{\"message\": \"No IP address found.\"}");
         }
-        if (rateLimiterService.isRateLimited(ipAddress)) {
+        if (rateLimiterService.isLoginRateLimited(ipAddress)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("{\"message\": \"Too many login attempts. Please try again later.\"}");
         }
 
@@ -110,7 +110,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
     }
 
-    @GetMapping("/rate-limiters")
+    /*@GetMapping("/rate-limiters")
     public ResponseEntity<Map<String, String>> listRateLimiters() {
         Map<String, RateLimiter> limiters = rateLimiterService.listAllRateLimiters();
         Map<String, String> result = new HashMap<>();
@@ -118,7 +118,7 @@ public class AuthController {
             result.put(ip, limiter.getMetrics().toString());
         });
         return ResponseEntity.ok(result);
-    }
+    }*/
 }
 
 

@@ -5,7 +5,9 @@ import com.developer.onlybuns.dto.request.NovaObjavaDTO;
 import com.developer.onlybuns.dto.request.ObjavaDTO;
 import com.developer.onlybuns.entity.*;
 import com.developer.onlybuns.service.ObjavaService;
+import com.developer.onlybuns.service.RateLimiterService;
 import com.developer.onlybuns.service.RegistrovaniKorisnikService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +24,13 @@ public class ObjavaController {
 
     private final RegistrovaniKorisnikService registrovaniKorisnikService;
 
+    private final RateLimiterService rateLimiterService;
 
-    public ObjavaController(ObjavaService objavaService, RegistrovaniKorisnikService registrovaniKorisnikService) {
+
+    public ObjavaController(ObjavaService objavaService, RegistrovaniKorisnikService registrovaniKorisnikService, RateLimiterService rateLimiterService) {
         this.objavaService = objavaService;
         this.registrovaniKorisnikService = registrovaniKorisnikService;
+        this.rateLimiterService = rateLimiterService;
     }
 
     @GetMapping
@@ -63,7 +68,6 @@ public class ObjavaController {
 
         Optional<RegistrovaniKorisnik> registrovaniKorisnik = registrovaniKorisnikService.findByUsername(novaObjavaDTO.getKorisnicko_ime());
 
-
         String username = JwtUtil.getUsernameFromToken(token);
         String role = JwtUtil.getRoleFromToken(token);
 
@@ -76,6 +80,10 @@ public class ObjavaController {
         }
 
         if (registrovaniKorisnik != null) {
+            if (rateLimiterService.isPostCreationRateLimited(registrovaniKorisnik.get().getId())) {
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body("{\"message\": \"You can only create 5 posts per minute. Please try again later.\"}");
+            }
+
             objavaService.saveObjava(novaObjavaDTO, registrovaniKorisnik.get());
 
             return ResponseEntity.ok("{\"message\": \"Uspesno kreiran novi post.\"}");

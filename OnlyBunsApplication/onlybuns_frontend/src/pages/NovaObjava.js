@@ -252,7 +252,9 @@ export default function NovaObjava() {
             navigate("/prijavljeniKorisnikPregled");
           }
         }, 15000);
-      } else {
+      } else if (response.status === 429) {
+        setErrorMessage("You can only create 5 posts per minute. Please try again later.");
+    } else {
         console.error("Failed to create post");
       }
     } catch (error) {

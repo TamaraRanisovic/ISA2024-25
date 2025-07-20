@@ -16,28 +16,29 @@ public class RateLimiterServiceImpl implements RateLimiterService {
     private final ConcurrentHashMap<String, RateLimiter> rateLimiterMap = new ConcurrentHashMap<>();
     private final RateLimiterRegistry rateLimiterRegistry;
 
-
     public RateLimiterServiceImpl() {
-        // Default RateLimiter config: max 5 calls in 3 minutes
         RateLimiterConfig config = RateLimiterConfig.custom()
-                .limitForPeriod(5)
-                .limitRefreshPeriod(Duration.ofMinutes(1))
-                .timeoutDuration(Duration.ofMillis(0)) // No waiting allowed
+                .limitForPeriod(3) // 3 requests for quicker testing, later update to 5
+                .limitRefreshPeriod(Duration.ofMinutes(3)) // per 1 minute
+                .timeoutDuration(Duration.ofMillis(0))
                 .build();
 
         this.rateLimiterRegistry = RateLimiterRegistry.of(config);
     }
 
-    @Override
-    public boolean isRateLimited(String ipAddress) {
-        RateLimiter rateLimiter = rateLimiterMap.computeIfAbsent(ipAddress, ip ->
-                rateLimiterRegistry.rateLimiter(ip)
-        );
+    private boolean isRateLimited(String key) {
+        RateLimiter rateLimiter = rateLimiterMap.computeIfAbsent(key,
+                k -> rateLimiterRegistry.rateLimiter(k));
         return !rateLimiter.acquirePermission();
     }
 
-    public Map<String, RateLimiter> listAllRateLimiters() {
-        return Collections.unmodifiableMap(rateLimiterMap);
+    @Override
+    public boolean isLoginRateLimited(String ipAddress) {
+        return isRateLimited("LOGIN_" + ipAddress);
     }
 
+    @Override
+    public boolean isPostCreationRateLimited(Integer userId) {
+        return isRateLimited("POST_" + userId);
+    }
 }

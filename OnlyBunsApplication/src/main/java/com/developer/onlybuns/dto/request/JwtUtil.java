@@ -18,9 +18,8 @@ import java.util.Map;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "your_secret_key";
-    private static final long EXPIRATION_TIME = 600000; // 10 minutes in milliseconds
+    private static final long EXPIRATION_TIME = 600000;
 
-    // Generate JWT token
     public String generateToken(String email, String username, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("username", username);
@@ -35,7 +34,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Validate JWT token
     public static boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
@@ -45,7 +43,6 @@ public class JwtUtil {
         }
     }
 
-    // Extract korisnik data from JWT token
     public static String getKorisnikFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(SECRET_KEY)
