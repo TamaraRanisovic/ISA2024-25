@@ -10,6 +10,8 @@ import com.developer.onlybuns.service.LokacijaService;
 import com.developer.onlybuns.service.ObjavaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,16 +26,21 @@ public class LokacijaServiceImpl implements LokacijaService {
     private final Logger LOG = LoggerFactory.getLogger(ObjavaServiceImpl.class);
 
 
+    @Autowired
+    @Lazy
+    private LokacijaService self;
+
     public LokacijaServiceImpl(LokacijaRepository lokacijaRepository) {
         this.lokacijaRepository = lokacijaRepository;
     }
 
     public List<Lokacija> findAll() {
+        LOG.info("Fetching all locations from DB (cache not used)");
         return lokacijaRepository.findAll();
     }
 
     public Optional<Lokacija> findById(Integer id) {
-        LOG.info("Location with id: " + id + " successfully cached!");
+        LOG.info("Location data not found in cache – loading from database");
         return lokacijaRepository.findById(id);
     }
 
@@ -62,10 +69,9 @@ public class LokacijaServiceImpl implements LokacijaService {
 
     @Override
     public Lokacija findByAddress(String ulica, String grad, String drzava) {
-        List<Lokacija> lokacije = findAll();
+        List<Lokacija> lokacije = self.findAll();
         for (Lokacija lokacija : lokacije) {
             if (lokacija.getUlica().equals(ulica) && lokacija.getGrad().equals(grad) && lokacija.getDrzava().equals(drzava)) {
-               // Lokacija pronadjenaLokacija = new Lokacija(lokacija.getId(), ulica, grad, drzava, lokacija.getG_sirina(), lokacija);
                 return lokacija;
             }
         }

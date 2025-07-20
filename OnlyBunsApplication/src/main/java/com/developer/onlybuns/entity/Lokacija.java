@@ -31,7 +31,7 @@ public class Lokacija {
     private String drzava;
 
     @Column(name = "g_sirina", nullable = false)
-    private Double g_sirina;  // To store latitude coordinate
+    private Double g_sirina;
 
     @Column(name = "g_duzina", nullable = false)
     private Double g_duzina;

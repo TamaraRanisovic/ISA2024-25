@@ -20,7 +20,7 @@ export default function NovaObjava() {
   const [opis, setOpis] = useState('');
   const [g_sirina, setG_sirina] = useState('');
   const [g_duzina, setG_duzina] = useState('');
-  const [slika, setSlika] = useState('dasdas');
+  const [slika, setSlika] = useState('');
   const [datum_objave, setDatumObjave] = useState(new Date().toISOString());
 
   const [korisnicko_ime, setKorisnickoIme] = useState('');
@@ -214,7 +214,7 @@ export default function NovaObjava() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     
-    if (!korisnicko_ime || !opis || !g_sirina || !g_duzina || !slika) {
+    if (!korisnicko_ime || !opis || !g_sirina || !g_duzina || slika === '') {
       setErrorMessage('Enter valid data.');
       return;
     }
