@@ -19,7 +19,7 @@ public class RateLimiterServiceImpl implements RateLimiterService {
     public RateLimiterServiceImpl() {
         RateLimiterConfig config = RateLimiterConfig.custom()
                 .limitForPeriod(3) // 3 requests for quicker testing, later update to 5
-                .limitRefreshPeriod(Duration.ofMinutes(3)) // per 1 minute
+                .limitRefreshPeriod(Duration.ofMinutes(3)) // for easier testing 3mins, later update to 1 minute
                 .timeoutDuration(Duration.ofMillis(0))
                 .build();
 
